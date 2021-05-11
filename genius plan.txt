@@ -46,4 +46,7 @@ pull from git
 Run the app.
 
 
-Make a bash script that when run, runs npm run make, moves to folder and runs git commit and git push
+Make a bash script that when run, runs 
+    npm run make
+    git commit
+    nangit push
