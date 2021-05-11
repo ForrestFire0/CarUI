@@ -49,4 +49,4 @@ Run the app.
 Make a bash script that when run, runs 
     npm run make
     git commit
-    nangit push
+    git push
