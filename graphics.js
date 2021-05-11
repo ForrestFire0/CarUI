@@ -19,6 +19,8 @@ gauges = {
     lowerBoundsText: null,
 }
 
+let currentOffset = 0;
+
 let voltages = []
 let powers = []
 
@@ -172,6 +174,12 @@ $(document).ready(function () {
         color: function (value) { return getColor(value, 0, 400); }
     });
 
+    document.getElementById("current").onclick = () => {
+        currentOffset += (data.pC - currentOffset);
+        // data.pC - currentOffset
+        console.log(currentOffset)
+    }
+
     ipcRenderer.send('ready_for_data')
 });
 
@@ -180,7 +188,7 @@ function onUpdate() {
 
     if (!hidden) {
         hidden = true;
-        $('#photo').animate({ opacity: 0 }, 4000)
+        $('#photo').animate({ opacity: 0 }, 4000, () => $('#photo').remove())
     }
 
     let min = 5, max = 0, sum = 0;
@@ -205,7 +213,7 @@ function onUpdate() {
         }
         battFan = data.f;
         battHeater = data.h;
-        current = data.pC;
+        current = data.pC - currentOffset;
         charging = data.ch;
         animationDuration = data.i;
         bS = data.bS.toString(2).split("").reverse().join("");
