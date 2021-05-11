@@ -7,7 +7,7 @@ const { ipcMain } = require('electron')
 const Readline = require('@serialport/parser-readline');
 const fs = require('fs');
 
-const send_fake_data = true;
+const send_fake_data = false;
 
 let port;
 function createPort(portID) {
