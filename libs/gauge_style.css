@@ -1,0 +1,23 @@
+.gauge-container {
+  width: 13vw;
+  height: 11vw;
+  display: block;
+}
+
+.gauge-container>.gauge .dial {
+  stroke: #566675;
+  stroke-width: 5;
+  stroke-linecap: round;
+  fill: rgba(0, 0, 0, 0.267);
+}
+
+.gauge-container>.gauge .value {
+  stroke-width: 7;
+  stroke-linecap: round;
+}
+
+.gauge-container>.gauge .value-text {
+  fill: black;
+  font-weight: bold;
+  font-size: 3vh;
+}

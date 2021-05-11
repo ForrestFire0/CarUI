@@ -1,0 +1,49 @@
+All the time:
+Show temperature, probably using box plot to show max and mid with median and spread.
+Show voltage of the battery pack
+Show whether charging or not.
+
+When charging:
+Show charge current out of 20 amps
+
+When discharging:
+Show discharge current and discharge power
+Show current speed / power in miles per kWh
+Show estimated range.
+
+When in reverse:
+show camera feed.
+https://www.kirupa.com/html5/accessing_your_webcam_in_html5.htm
+
+Show GPS
+Show current song?
+
+Things the Bolt does that is cool:
+Shows expected range (Need speed travelled or even better total distance travelled somehow.)
+Has GPS
+Shows the current song and allows you to go to the next song.
+Shows heat power.
+Animations for turning on and turning off.
+
+Not modular, fixed.
+Can be SVG if we want, but more likly than not ill be too lazy. Not self updating, but stored.
+
+Car UI improvements
+
+Short Term
+Move to github
+Automatically reset current on startup.
+Record power use over trip
+Click on a gauge to make it bigger and to edit settings
+Start the app full screen.
+
+Long term
+Svelte? It would probably be better but who the fuck knows how I would mangle that to work.
+
+Script that will
+If a network connection
+pull from git
+Run the app.
+
+
+Make a bash script that when run, runs npm run make, moves to folder and runs git commit and git push
