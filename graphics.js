@@ -181,6 +181,7 @@ $(document).ready(function () {
     }
 
     ipcRenderer.send('ready_for_data')
+    console.log('1) Sent ready')
 });
 
 let hidden = false;
@@ -188,6 +189,7 @@ function onUpdate() {
 
     if (!hidden) {
         hidden = true;
+        console.log('2/4) Got data')
         $('#photo').animate({ opacity: 0 }, 4000, () => $('#photo').remove())
     }
 

@@ -37,13 +37,14 @@ if (!fake_data) {
 
     ipcRenderer.on('select_port', (event, _data) => {
         $('#overlay').show();
+        console.log('2) Selecting port')
     })
 }
 
 
 
 function sendPort() {
-    console.log('Sending port ' + $('#portsSelect').val())
+    console.log('3) Sending port ' + $('#portsSelect').val())
     ipcRenderer.send('selected_port', $('#portsSelect').val())
     $('#overlay').hide();
 }
