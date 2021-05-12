@@ -2,7 +2,6 @@ let data;
 let lastUpdateDate;
 var fake_data = typeof require === 'undefined';
 console.log(fake_data ? "Faking data.." : "Not faking data.")
-const do_title = false;
 const do_time_based_themes = false;
 
 Math.clamp = function (number, min, max) {
