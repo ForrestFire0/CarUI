@@ -59,7 +59,7 @@ function createWindow() {
         },
         width: 1280,
         height: 800,
-        // fullscreen: true,
+        fullscreen: true,
     })
 
     win.loadFile('index.html')

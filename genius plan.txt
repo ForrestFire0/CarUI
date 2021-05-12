@@ -29,4 +29,5 @@ Svelte? It would probably be better but who the fuck knows how I would mangle th
 The issue is that the touch screen times out. Probably a USB issue
 We need the screen to sleep
 
-Really what we need is the batteries. We need to put them in before we can really finalize anything.
+Things to do - Hook up 220 cause we gonna need it in the end wherever we stick the charger
+Make the screen a little more spiffy - make animation speed a little less choppy. Display used amp hours

@@ -17,7 +17,6 @@ rgb(80, 0, 0) - dark red
     text-align: center;
     width: 6.5vw;
     height: 3.9vh;
-    /* line-height: 3vh; */
     border-style: solid;
     border-radius: 5px;
     font-size: 1.3vw;
@@ -67,6 +66,9 @@ rgb(80, 0, 0) - dark red
 body {
     background-color: rgb(255, 200, 200);
     font-family: comfortaa;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 8.5% 14% 30% 25% 5% 5%;
 }
 
 #photo {
