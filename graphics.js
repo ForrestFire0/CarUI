@@ -1,4 +1,5 @@
-const { ipcRenderer } = require("electron");
+if (!fake_data)
+    var { ipcRenderer } = require("electron");
 
 gauges = {
     packVoltage: null,
@@ -57,7 +58,7 @@ $(document).ready(function () {
     }
 
     gauges.packVoltage = Gauge(document.getElementById("packVoltage"), {
-        max: 90, min: 60,
+        max: 90, min: 50,
         label: function (value) { return value.toFixed(1); },
         color: function (value) { return getColor(value, 88.1, 65); },
     }); gauges.packVoltage.setValue(60);
@@ -174,13 +175,20 @@ $(document).ready(function () {
         color: function (value) { return getColor(value, 0, 400); }
     });
 
+    gauges.power = Gauge(document.getElementById("power"), {
+        min: 0, max: 40,
+        label: function (value) { return value.toFixed(0) + 'kW'; },
+        color: function (value) { return getColor(value, 0, 40); }
+    });
+
     document.getElementById("current").onclick = () => {
         currentOffset += (data.pC - currentOffset);
         // data.pC - currentOffset
         console.log(currentOffset)
     }
 
-    ipcRenderer.send('ready_for_data')
+    if (!fake_data)
+        ipcRenderer.send('ready_for_data')
     console.log('1) Sent ready')
 });
 
@@ -195,7 +203,7 @@ function onUpdate() {
 
     let min = 5, max = 0, sum = 0;
     let Q0, Q1, Q2, Q3, Q4;
-    let battFan, battHeater, current, charging, temps, animationDuration;
+    let battFan, battHeater, current, power, charging, temps, animationDuration;
     if (fake_data) {
         animationDuration = 1;
         Q0 = 12, Q1 = 14, Q2 = 16, Q3 = 18, Q4 = 26;
@@ -252,6 +260,7 @@ function onUpdate() {
     gauges.minVoltage.setValueAnimated(min, animationDuration);
     gauges.packVoltage.setValueAnimated(sum, animationDuration);
     gauges.current.setValueAnimated(current, animationDuration);
+    gauges.power.setValueAnimated(Math.abs((current * sum) / 1000), animationDuration);
 
     centerX = document.getElementById("temps").width.baseVal.value / 2;
     gauges.temps.Q0Q4.animate({
