@@ -21,7 +21,6 @@ Car UI improvements
 Short Term
 Record power use over trip
 Click on a gauge to make it bigger and to edit settings
-Start the app full screen.
 
 Long term
 Svelte? It would probably be better but who the fuck knows how I would mangle that to work.
