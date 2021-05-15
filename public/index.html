@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<script>
+    Math.clamp = function (number, min, max) {
+        return Math.max(min, Math.min(number, max));
+    }
+
+    Array.prototype.last = function () {
+        return this[this.length - 1];
+    }
+
+    Math.map = function (in_min, in_max, out_min, out_max, val) {
+        return (val - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+    }
+</script>
+
+<head>
+    <meta charset='utf-8'>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@500&display=swap" rel="stylesheet" />
+    <title> Car UI</title>
+    <script src="./libs/gauge.min.js"></script>
+    <script src="./libs/snap.svg-min.js"></script>
+    <link rel="stylesheet" href="libs/bootstrap.min.css" />
+    <link rel='stylesheet' href='./global.css'>
+    <link rel='stylesheet' href='./build/bundle.css'>
+
+    <script defer src='./build/bundle.js'></script>
+</head>
+
+<body>
+</body>
+
+</html>

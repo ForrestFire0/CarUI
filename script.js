@@ -1,20 +1,8 @@
-let data;
 let lastUpdateDate;
 var fake_data = typeof require === 'undefined';
 console.log(fake_data ? "Faking data.." : "Not faking data.")
 const do_time_based_themes = false;
 
-Math.clamp = function (number, min, max) {
-    return Math.max(min, Math.min(number, max));
-}
-
-Array.prototype.last = function () {
-    return this[this.length - 1];
-}
-
-Math.map = function (in_min, in_max, out_min, out_max, val) {
-    return (val - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
-}
 
 if (!fake_data) {
     const { ipcRenderer, Renderer } = require('electron')
@@ -42,8 +30,8 @@ if (!fake_data) {
 
 
 
-function sendPort() {
-    console.log('3) Sending port ' + $('#portsSelect').val())
-    ipcRenderer.send('selected_port', $('#portsSelect').val())
+function sendPort(portName) {
+    console.log('3) Sending port ' + portName)
+    ipcRenderer.send('selected_port', portName)
     $('#overlay').hide();
 }
