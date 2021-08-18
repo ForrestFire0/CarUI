@@ -14,7 +14,7 @@ const send_fake_data = true; let enabled = false;
 let port;
 function createPort(portID) {
     console.log('creating port with id ' + portID);
-    if (send_fake_data) {enabled = true; return}
+    if (send_fake_data) { enabled = true; return }
     while (!port) {
         port = new SerialPort(portID, { baudRate: 115200 }, (err) => {
             if (err) return console.log('Error: ', err.message)
@@ -82,7 +82,8 @@ function parseAndSend(string) {
     } catch (error) {
         console.log(string)
     }
-    jsonData.pC = 100 * Math.random();
+    jsonData.f = 100 * Math.random();
+    if (jsonData.f < 50) jsonData.f = 0;
     win.webContents.send('data', jsonData)
 }
 
