@@ -6,6 +6,7 @@
     import Gauge from "./SvelteComponents/Gauge.svelte";
     import TempGauge from "./SvelteComponents/TempGauge.svelte";
     import Graph from "./SvelteComponents/Graph.svelte";
+    import Slider from "./SvelteComponents/Slider.svelte";
 
     import { getColor } from "./graphicstwo";
 
@@ -73,7 +74,6 @@
     let portName = "";
     let showOverlay = false;
 </script>
-
 
 {#if showImage}
     <div id="photo" transition:fade={{ duration: 3000 }}>
@@ -189,14 +189,23 @@
         <TempGauge data={data.t} />
         <div style="display: flex;">
             <div style="width:50%; font-weight: bolder; text-align: center;">
-                <Gauge name="Current" value={data.pC} bounds={[-50, 500]} />
+                <Gauge
+                    name="Current (Amps)"
+                    value={data.pC}
+                    bounds={[-50, 500]} />
             </div>
             <div style="width:50%; font-weight: bolder; text-align: center;">
                 <Gauge
-                    name="Power"
+                    name="Power (kW)"
                     value={Math.abs((data.pC * voltage) / 1000)}
                     bounds={[0, 40]} />
             </div>
         </div>
+    {/if}
+</div>
+
+<div>
+    {#if data}
+        <Slider value={data.f} color="#4fc3f7" iconPath="static/fan.svg" />
     {/if}
 </div>
