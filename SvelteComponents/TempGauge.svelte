@@ -25,7 +25,7 @@
         const Q1 = sorted[Math.round(data.length / 4)];
         const Q3 = sorted[Math.round((3 * data.length) / 4)];
         const Q4 = sorted.last();
-
+        console.log(sorted);
         Q0Q4.animate(
             {
                 d: [

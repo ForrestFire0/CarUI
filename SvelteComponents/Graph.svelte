@@ -48,8 +48,8 @@
             objects[i][0].attr({
                 points: getPathString(datas[i], minY, maxY),
             });
-            objects[i][1].attr({ text: minY + axisSettings[i].units });
-            objects[i][2].attr({ text: maxY + axisSettings[i].units });
+            objects[i][2].attr({ text: minY + axisSettings[i].units });
+            objects[i][1].attr({ text: maxY + axisSettings[i].units });
 
         }
     }

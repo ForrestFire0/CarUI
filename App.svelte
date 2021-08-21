@@ -63,6 +63,7 @@
 
     ipcRenderer.on("select_port", (event, _data) => {
         showOverlay = true;
+        availablePorts = _data;
         console.log("2) Selecting port");
     });
 
@@ -72,6 +73,7 @@
         showOverlay = false;
     }
     let portName = "";
+    let availablePorts;
     let showOverlay = false;
 </script>
 
@@ -84,7 +86,7 @@
 <Overlay bind:shown={showOverlay}>
     <h1>Error: Unable to find port.</h1>
     <div>Ports found:</div>
-    <div id="ports" />
+    <div id="ports">{availablePorts}</div>
     <input
         style="padding: 10px; font-size: 20px;"
         type="button"
