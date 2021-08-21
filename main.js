@@ -9,7 +9,7 @@ const { ipcMain } = require('electron')
 const Readline = require('@serialport/parser-readline');
 const fs = require('fs');
 
-const send_fake_data = true; let enabled = false;
+const send_fake_data = false; let enabled = false;
 
 let port;
 function createPort(portID) {
@@ -82,8 +82,6 @@ function parseAndSend(string) {
     } catch (error) {
         console.log(string)
     }
-    jsonData.f = 100 * Math.random();
-    if (jsonData.f < 50) jsonData.f = 0;
     win.webContents.send('data', jsonData)
 }
 
