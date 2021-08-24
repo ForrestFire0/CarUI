@@ -9,6 +9,8 @@
     import Slider from "./SvelteComponents/Slider.svelte";
 
     import { getColor } from "./graphicstwo";
+    import Message from "./SvelteComponents/Message.svelte";
+import Console from "./SvelteComponents/Console.svelte";
 
     const { ipcRenderer } = require("electron");
 
@@ -21,9 +23,9 @@
 
     let status = "Waiting for data...";
     let chgstatus = "Waiting for charging data...";
+    let chargeConsoleText = "";
     let time = new Date();
     let lastUpdateDate;
-    let showGauges;
     onMount(() => {
         const interval = setInterval(() => {
             time = new Date();
@@ -51,8 +53,17 @@
                 graphData[1].push(Math.abs((_data.pC * voltage) / 1000));
                 graphData = graphData;
             }
+            messageShown = false;
+            _data.fan = Math.round(_data.fan * 100 /256);
             data = _data;
             status = "Got last data " + new Date().toLocaleTimeString();
+
+
+            const options = ["Waiting for plug", "Plugged in, not charging", "Charging paused, balancing cells", "Charging!", "Waiting For Charger"];
+            if(chgstatus != options[_data.ch]) {
+                chgstatus = options[_data.ch];
+                chargeConsoleText += new Date().toLocaleTimeString() + " " + chgstatus + '\n'
+            }
             lastUpdateDate = new Date();
         } else if (_data.s == "bms_error") {
             console.log("BMS Error: " + _data.error);
@@ -65,6 +76,13 @@
         showOverlay = true;
         availablePorts = _data;
         console.log("2) Selecting port");
+    });
+    let messageContent = "";
+    let messageShown = false;
+    ipcRenderer.on("response", (event, _data) => {
+        messageContent = _data;
+        messageShown = true;
+        console.log("5) Got response.");
     });
 
     function sendPort(portName) {
@@ -107,6 +125,11 @@
         }} />
 </Overlay>
 
+<Message
+    bind:shown={messageShown}
+    onClose={() => ipcRenderer.send("ready_for_data")}
+    >{@html messageContent}</Message>
+
 <div id="cells">
     {#if data?.c}
         {#each data.c as cell, index}
@@ -125,7 +148,7 @@
             name="Pack Voltage"
             value={voltage}
             bounds={[50, 90]}
-            colorBounds={[88.1, 65]} />
+            colorBounds={[65, 90]} />
         <Gauge
             name="Min Cell Voltage"
             value={Math.min(...data.c)}
@@ -203,6 +226,7 @@
                     bounds={[0, 40]} />
             </div>
         </div>
+        <Console text={chargeConsoleText}/>
     {/if}
 </div>
 

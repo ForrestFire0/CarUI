@@ -15,12 +15,18 @@ let port;
 function createPort(portID) {
     console.log('creating port with id ' + portID);
     if (send_fake_data) { enabled = true; return }
-    while (!port) {
-        port = new SerialPort(portID, { baudRate: 115200 }, (err) => {
-            if (err) return console.log('Error: ', err.message)
-            else return console.log('Successfully opened port.')
-        });
-    }
+
+    port = new SerialPort(portID, { baudRate: 115200 }, (err) => {
+        if (err) {
+            console.log('Unable to open port: ', err.message);
+            win.webContents.send('response', '<h1>Fail!</h1><p>Port unable to be opened.</p><small>' + err.message + '</small>')
+        }
+        else {
+            win.webContents.send('response', '<h1>Success!</h1><p>Port successfully opened.</p>')
+            console.log('Successfully opened port.')
+        }
+    });
+    if (!port) return;
     const parser = port.pipe(new Readline({ delimiter: '\n' }));
     parser.on('data', data => {
         parseAndSend(data);

@@ -25,7 +25,6 @@
         const Q1 = sorted[Math.round(data.length / 4)];
         const Q3 = sorted[Math.round((3 * data.length) / 4)];
         const Q4 = sorted.last();
-        console.log(sorted);
         Q0Q4.animate(
             {
                 d: [
@@ -180,4 +179,4 @@
 <svg
     bind:this={element}
     viewBox="0 0 400 200"
-    style="width: 100%; height: 20%" />
+    style="width: 100%; height: 23%" />
