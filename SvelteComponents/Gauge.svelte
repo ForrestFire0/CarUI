@@ -24,16 +24,17 @@
             },
         });
         if (value) gaugeObject.setValue(value);
+        height = gaugeElement.offsetWidth * 0.85 + "px"
     });
+    let height = "12vw"
 </script>
 
-<div bind:this={gaugeElement} class="gauge-container" />
+<div bind:this={gaugeElement} class="gauge-container" style="height: {height}"/>
 {name}
 
 <style>
     .gauge-container {
         width: 100%;
-        height: 12vw;
         display: block;
     }
 
