@@ -43,12 +43,12 @@ import Console from "./SvelteComponents/Console.svelte";
     console.log(fake_data ? "Faking data.." : "Not faking data.");
     let showImage = true;
     ipcRenderer.on("data", (event, _data) => {
-        if (_data.s == "normal") {
+        if (_data.s === "normal") {
             if (showImage) {
                 showImage = false;
                 console.log("2/4) Got data");
             }
-            if (voltage && _data.pC) {
+            if (voltage && _data["pC"]) {
                 graphData[0].push(voltage);
                 graphData[1].push(Math.abs((_data.pC * voltage) / 1000));
                 graphData = graphData;
@@ -60,14 +60,14 @@ import Console from "./SvelteComponents/Console.svelte";
 
 
             const options = ["Waiting for plug", "Plugged in, not charging", "Charging paused, balancing cells", "Charging!", "Waiting For Charger"];
-            if(chgstatus != options[_data.ch]) {
+            if(chgstatus !== options[_data.ch]) {
                 chgstatus = options[_data.ch];
                 chargeConsoleText += new Date().toLocaleTimeString() + " " + chgstatus + '\n'
             }
             lastUpdateDate = new Date();
-        } else if (_data.s == "bms_error") {
+        } else if (_data.s === "bms_error") {
             console.log("BMS Error: " + _data.error);
-        } else if (_data.s == "log") {
+        } else if (_data.s === "log") {
             console.log(_data.m);
         }
     });
@@ -135,7 +135,7 @@ import Console from "./SvelteComponents/Console.svelte";
         {#each data.c as cell, index}
             <div
                 class="cell"
-                class:balancing={bS[index] == "1"}
+                class:balancing={bS[index] === "1"}
                 style={"background-color: " + getColor(cell)}>
                 {cell}
             </div>

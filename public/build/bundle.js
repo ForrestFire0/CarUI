@@ -2445,9 +2445,9 @@ var app = (function () {
     			attr_dev(img, "height", "100%");
     			if (img.src !== (img_src_value = "static/logo.png")) attr_dev(img, "src", img_src_value);
     			attr_dev(img, "alt", "img");
-    			add_location(img, file, 99, 8, 3416);
+    			add_location(img, file, 99, 8, 3522);
     			attr_dev(div, "id", "photo");
-    			add_location(div, file, 98, 4, 3354);
+    			add_location(div, file, 98, 4, 3459);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -2519,25 +2519,25 @@ var app = (function () {
     			input1 = element("input");
     			t7 = space();
     			input2 = element("input");
-    			add_location(h1, file, 104, 4, 3527);
-    			add_location(div0, file, 105, 4, 3568);
+    			add_location(h1, file, 104, 4, 3638);
+    			add_location(div0, file, 105, 4, 3680);
     			attr_dev(div1, "id", "ports");
-    			add_location(div1, file, 106, 4, 3596);
+    			add_location(div1, file, 106, 4, 3709);
     			set_style(input0, "padding", "10px");
     			set_style(input0, "font-size", "20px");
     			attr_dev(input0, "type", "button");
     			input0.value = "Add 'COM'";
-    			add_location(input0, file, 107, 4, 3639);
+    			add_location(input0, file, 107, 4, 3753);
     			set_style(input1, "padding", "10px");
     			set_style(input1, "font-size", "20px");
     			attr_dev(input1, "type", "text");
     			attr_dev(input1, "id", "portsSelect");
-    			add_location(input1, file, 112, 4, 3804);
+    			add_location(input1, file, 112, 4, 3923);
     			set_style(input2, "padding", "10px");
     			set_style(input2, "font-size", "20px");
     			attr_dev(input2, "type", "button");
     			input2.value = "Submit";
-    			add_location(input2, file, 117, 4, 3941);
+    			add_location(input2, file, 117, 4, 4065);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, h1, anchor);
@@ -2599,7 +2599,7 @@ var app = (function () {
     	return block;
     }
 
-    // (128:0) <Message     bind:shown={messageShown}     onClose={() => ipcRenderer.send("ready_for_data")}     >
+    // (128:0) <Message      bind:shown={messageShown}      onClose={() => ipcRenderer.send("ready_for_data")}      >
     function create_default_slot(ctx) {
     	let html_tag;
     	let html_anchor;
@@ -2626,7 +2626,7 @@ var app = (function () {
     		block,
     		id: create_default_slot.name,
     		type: "slot",
-    		source: "(128:0) <Message     bind:shown={messageShown}     onClose={() => ipcRenderer.send(\\\"ready_for_data\\\")}     >",
+    		source: "(128:0) <Message      bind:shown={messageShown}      onClose={() => ipcRenderer.send(\\\"ready_for_data\\\")}      >",
     		ctx
     	});
 
@@ -2716,8 +2716,8 @@ var app = (function () {
     			t1 = space();
     			attr_dev(div, "class", "cell");
     			attr_dev(div, "style", div_style_value = "background-color: " + getColor(/*cell*/ ctx[24]));
-    			toggle_class(div, "balancing", /*bS*/ ctx[14][/*index*/ ctx[26]] == "1");
-    			add_location(div, file, 135, 12, 4376);
+    			toggle_class(div, "balancing", /*bS*/ ctx[14][/*index*/ ctx[26]] === "1");
+    			add_location(div, file, 135, 12, 4518);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -2732,7 +2732,7 @@ var app = (function () {
     			}
 
     			if (dirty & /*bS*/ 16384) {
-    				toggle_class(div, "balancing", /*bS*/ ctx[14][/*index*/ ctx[26]] == "1");
+    				toggle_class(div, "balancing", /*bS*/ ctx[14][/*index*/ ctx[26]] === "1");
     			}
     		},
     		d: function destroy(detaching) {
@@ -2930,13 +2930,13 @@ var app = (function () {
     			set_style(div0, "width", "50%");
     			set_style(div0, "font-weight", "bolder");
     			set_style(div0, "text-align", "center");
-    			add_location(div0, file, 215, 12, 6574);
+    			add_location(div0, file, 215, 12, 6797);
     			set_style(div1, "width", "50%");
     			set_style(div1, "font-weight", "bolder");
     			set_style(div1, "text-align", "center");
-    			add_location(div1, file, 221, 12, 6815);
+    			add_location(div1, file, 221, 12, 7044);
     			set_style(div2, "display", "flex");
-    			add_location(div2, file, 214, 8, 6533);
+    			add_location(div2, file, 214, 8, 6755);
     		},
     		m: function mount(target, anchor) {
     			mount_component(tempgauge, target, anchor);
@@ -3185,35 +3185,35 @@ var app = (function () {
     			div8 = element("div");
     			if (if_block4) if_block4.c();
     			attr_dev(div0, "id", "cells");
-    			add_location(div0, file, 132, 0, 4291);
+    			add_location(div0, file, 132, 0, 4430);
     			set_style(div1, "color", "black");
     			set_style(div1, "text-align", "center");
     			set_style(div1, "font-weight", "bolder");
-    			add_location(div1, file, 144, 0, 4599);
+    			add_location(div1, file, 144, 0, 4751);
     			set_style(div2, "text-align", "center");
     			set_style(div2, "font-size", "3vw");
     			set_style(div2, "margin-top", "20px");
     			set_style(div2, "font-weight", "bolder");
-    			add_location(div2, file, 171, 4, 5420);
+    			add_location(div2, file, 171, 4, 5599);
     			if (img.src !== (img_src_value = "./static/export.png")) attr_dev(img, "src", img_src_value);
     			attr_dev(img, "width", "85%");
     			set_style(img, "margin-left", "-50px");
     			attr_dev(img, "alt", "car logo dumbass");
-    			add_location(img, file, 176, 4, 5586);
+    			add_location(img, file, 176, 4, 5770);
     			attr_dev(div3, "class", "statusBox");
     			toggle_class(div3, "old", /*time*/ ctx[4] - /*lastUpdateDate*/ ctx[5] > new Date(3000));
-    			add_location(div3, file, 184, 8, 5834);
+    			add_location(div3, file, 184, 8, 6026);
     			attr_dev(div4, "class", "statusBox");
-    			add_location(div4, file, 189, 8, 5977);
+    			add_location(div4, file, 189, 8, 6174);
     			set_style(div5, "background-color", "lightgrey");
     			set_style(div5, "padding", "10px");
     			set_style(div5, "border-radius", "20px");
-    			add_location(div5, file, 182, 4, 5739);
+    			add_location(div5, file, 182, 4, 5929);
     			set_style(div6, "position", "relative");
     			set_style(div6, "text-align", "center");
-    			add_location(div6, file, 169, 0, 5343);
-    			add_location(div7, file, 211, 0, 6468);
-    			add_location(div8, file, 232, 0, 7143);
+    			add_location(div6, file, 169, 0, 5520);
+    			add_location(div7, file, 211, 0, 6687);
+    			add_location(div8, file, 232, 0, 7383);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -3490,13 +3490,13 @@ var app = (function () {
     	let showImage = true;
 
     	ipcRenderer.on("data", (event, _data) => {
-    		if (_data.s == "normal") {
+    		if (_data.s === "normal") {
     			if (showImage) {
     				$$invalidate(7, showImage = false);
     				console.log("2/4) Got data");
     			}
 
-    			if (voltage && _data.pC) {
+    			if (voltage && _data["pC"]) {
     				graphData[0].push(voltage);
     				graphData[1].push(Math.abs(_data.pC * voltage / 1000));
     				$$invalidate(6, graphData);
@@ -3515,15 +3515,15 @@ var app = (function () {
     				"Waiting For Charger"
     			];
 
-    			if (chgstatus != options[_data.ch]) {
+    			if (chgstatus !== options[_data.ch]) {
     				$$invalidate(2, chgstatus = options[_data.ch]);
     				$$invalidate(3, chargeConsoleText += new Date().toLocaleTimeString() + " " + chgstatus + "\n");
     			}
 
     			$$invalidate(5, lastUpdateDate = new Date());
-    		} else if (_data.s == "bms_error") {
+    		} else if (_data.s === "bms_error") {
     			console.log("BMS Error: " + _data.error);
-    		} else if (_data.s == "log") {
+    		} else if (_data.s === "log") {
     			console.log(_data.m);
     		}
     	});
