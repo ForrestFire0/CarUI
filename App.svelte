@@ -54,7 +54,7 @@ import Console from "./SvelteComponents/Console.svelte";
                 graphData = graphData;
             }
             messageShown = false;
-            _data.fan = Math.round(_data.fan * 100 /256);
+            _data.f = Math.round(_data.f * 100 /256);
             data = _data;
             status = "Got last data " + new Date().toLocaleTimeString();
 
@@ -227,6 +227,14 @@ import Console from "./SvelteComponents/Console.svelte";
             </div>
         </div>
         <Console text={chargeConsoleText}/>
+        <div style="display: flex;">
+        <div style="width:33.3%; font-weight: bolder; text-align: center;">
+                <Gauge
+                    name="12V Voltage"
+                    value={data.tw}
+                    bounds={[10, 14]} />
+            </div>
+        </div>
     {/if}
 </div>
 

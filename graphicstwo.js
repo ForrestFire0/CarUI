@@ -1,3 +1,13 @@
+const interpolateHSL = function (color1, color2, factor) {
+    if (arguments.length < 3) { factor = 0.5; }
+    var hsl1 = rgb2hsl(color1);
+    var hsl2 = rgb2hsl(color2);
+    for (var i = 0; i < 3; i++) {
+        hsl1[i] += factor * (hsl2[i] - hsl1[i]);
+    }
+    return hsl2rgb(hsl1);
+};
+
 export function getColor(voltage, max = 4.15, min = 3.2) {
     const start = "#ff5000", end = "#00ff00";
     // from 3.2 to 4.15
@@ -20,18 +30,18 @@ var r2h = function (rgb) {
     return "#" + ((1 << 24) + (rgb[0] << 16) + (rgb[1] << 8) + rgb[2]).toString(16).slice(1);
 };
 
-var rgb2hsl = function (color) {
-    var r = color[0] / 255;
-    var g = color[1] / 255;
-    var b = color[2] / 255;
+const rgb2hsl = function (color) {
+    const r = color[0] / 255;
+    const g = color[1] / 255;
+    const b = color[2] / 255;
 
-    var max = Math.max(r, g, b), min = Math.min(r, g, b);
-    var h, s, l = (max + min) / 2;
+    const max = Math.max(r, g, b), min = Math.min(r, g, b);
+    let h, s, l = (max + min) / 2;
 
-    if (max == min) {
+    if (max === min) {
         h = s = 0; // achromatic
     } else {
-        var d = max - min;
+        const d = max - min;
         s = (l > 0.5 ? d / (2 - max - min) : d / (max + min));
         switch (max) {
             case r: h = (g - b) / d + (g < b ? 6 : 0); break;
@@ -44,10 +54,10 @@ var rgb2hsl = function (color) {
     return [h, s, l];
 };
 
-var hsl2rgb = function (color) {
-    var l = color[2];
+const hsl2rgb = function (color) {
+    let l = color[2];
 
-    if (color[1] == 0) {
+    if (color[1] === 0) {
         l = Math.round(l * 255);
         return [l, l, l];
     } else {
@@ -60,22 +70,12 @@ var hsl2rgb = function (color) {
             return p;
         }
 
-        var s = color[1];
-        var q = (l < 0.5 ? l * (1 + s) : l + s - l * s);
-        var p = 2 * l - q;
-        var r = hue2rgb(p, q, color[0] + 1 / 3);
-        var g = hue2rgb(p, q, color[0]);
-        var b = hue2rgb(p, q, color[0] - 1 / 3);
+        const s = color[1];
+        const q = (l < 0.5 ? l * (1 + s) : l + s - l * s);
+        const p = 2 * l - q;
+        const r = hue2rgb(p, q, color[0] + 1 / 3);
+        const g = hue2rgb(p, q, color[0]);
+        const b = hue2rgb(p, q, color[0] - 1 / 3);
         return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
     }
-};
-
-var interpolateHSL = function (color1, color2, factor) {
-    if (arguments.length < 3) { factor = 0.5; }
-    var hsl1 = rgb2hsl(color1);
-    var hsl2 = rgb2hsl(color2);
-    for (var i = 0; i < 3; i++) {
-        hsl1[i] += factor * (hsl2[i] - hsl1[i]);
-    }
-    return hsl2rgb(hsl1);
 };

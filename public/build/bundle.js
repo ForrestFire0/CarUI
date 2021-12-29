@@ -1074,6 +1074,16 @@ var app = (function () {
     !function(e){var t,o,F,S,n=(o=(t=e).document,F=Array.prototype.slice,S=t.requestAnimationFrame||t.mozRequestAnimationFrame||t.webkitRequestAnimationFrame||t.msRequestAnimationFrame||function(e){return setTimeout(e,1e3/60)},function(){var r="http://www.w3.org/2000/svg",M={centerX:50,centerY:50},k={dialRadius:40,dialStartAngle:135,dialEndAngle:45,value:0,max:100,min:0,valueDialClass:"value",valueClass:"value-text",dialClass:"dial",gaugeClass:"gauge",showValue:!0,gaugeColor:null,label:function(e){return Math.round(e)}};function V(e,t,n){var a=o.createElementNS(r,e);for(var i in t)a.setAttribute(i,t[i]);return n&&n.forEach(function(e){a.appendChild(e);}),a}function R(e,t){return e*t/100}function E(e,t,n){var a=Number(e);return n<a?n:a<t?t:a}function q(e,t,n,a){var i=a*Math.PI/180;return {x:Math.round(1e3*(e+n*Math.cos(i)))/1e3,y:Math.round(1e3*(t+n*Math.sin(i)))/1e3}}return function(e,r){r=function(){var n=arguments[0];return F.call(arguments,1).forEach(function(e){for(var t in e)e.hasOwnProperty(t)&&(n[t]=e[t]);}),n}({},k,r);var o,l,t,n=e,s=r.max,u=r.min,a=E(r.value,u,s),c=r.dialRadius,d=r.showValue,f=r.dialStartAngle,v=r.dialEndAngle,i=r.valueDialClass,m=r.valueClass,g=(r.valueLabelClass,r.dialClass),h=r.gaugeClass,p=r.color,w=r.label,x=r.viewBox;if(f<v){console.log("WARN! startAngle < endAngle, Swapping");var A=f;f=v,v=A;}function y(e,t,n,a){var i=function(e,t,n){var a=M.centerX,i=M.centerY;return {end:q(a,i,e,n),start:q(a,i,e,t)}}(e,t,n),r=i.start,o=i.end,l=void 0===a?1:a;return ["M",r.x,r.y,"A",e,e,0,l,1,o.x,o.y].join(" ")}function b(e,t){var n=function(e,t,n){return 100*(e-t)/(n-t)}(e,u,s),a=R(n,360-Math.abs(f-v)),i=a<=180?0:1;d&&(o.textContent=w.call(r,e)),l.setAttribute("d",y(c,f,a+f,i));}function C(e,t){var n=p.call(r,e),a=1e3*t,i="stroke "+a+"ms ease";l.style.stroke=n,l.style["-webkit-transition"]=i,l.style["-moz-transition"]=i,l.style.transition=i;}return t={setMaxValue:function(e){s=e;},setValue:function(e){a=E(e,u,s),p&&C(a,0),b(a);},setValueAnimated:function(e,t){var n=a;a=E(e,u,s),n!==a&&(p&&C(a,t),function(e){var t=e.duration,a=1,i=60*t,r=e.start||0,o=e.end-r,l=e.step,s=e.easing||function(e){return (e/=.5)<1?.5*Math.pow(e,3):.5*(Math.pow(e-2,3)+2)};S(function e(){var t=a/i,n=o*s(t)+r;l(n,a),a+=1,t<1&&S(e);});}({start:n||0,end:a,duration:t||1,step:function(e,t){b(e);}}));},getValue:function(){return a}},function(e){o=V("text",{x:50,y:50,fill:"#999",class:m,"font-size":"100%","font-family":"comfortaa","font-weight":"normal","text-anchor":"middle","alignment-baseline":"middle","dominant-baseline":"central"}),l=V("path",{class:i,fill:"none",stroke:"#666","stroke-width":2.5,d:y(c,f,f)});var t=R(100,360-Math.abs(f-v)),n=V("svg",{viewBox:x||"0 0 100 100",class:h},[V("path",{class:g,fill:"none",stroke:"#eee","stroke-width":2,d:y(c,f,v,t<=180?0:1)}),V("g",{class:"text-container"},[o]),l]);e.appendChild(n);}(n),t.setValue(a),t}}());module.exports?module.exports=n:e.Gauge=n;}("undefined"==typeof window?commonjsGlobal:window);
     });
 
+    const interpolateHSL = function (color1, color2, factor) {
+        if (arguments.length < 3) { factor = 0.5; }
+        var hsl1 = rgb2hsl(color1);
+        var hsl2 = rgb2hsl(color2);
+        for (var i = 0; i < 3; i++) {
+            hsl1[i] += factor * (hsl2[i] - hsl1[i]);
+        }
+        return hsl2rgb(hsl1);
+    };
+
     function getColor(voltage, max = 4.15, min = 3.2) {
         const start = "#ff5000", end = "#00ff00";
         // from 3.2 to 4.15
@@ -1096,18 +1106,18 @@ var app = (function () {
         return "#" + ((1 << 24) + (rgb[0] << 16) + (rgb[1] << 8) + rgb[2]).toString(16).slice(1);
     };
 
-    var rgb2hsl = function (color) {
-        var r = color[0] / 255;
-        var g = color[1] / 255;
-        var b = color[2] / 255;
+    const rgb2hsl = function (color) {
+        const r = color[0] / 255;
+        const g = color[1] / 255;
+        const b = color[2] / 255;
 
-        var max = Math.max(r, g, b), min = Math.min(r, g, b);
-        var h, s, l = (max + min) / 2;
+        const max = Math.max(r, g, b), min = Math.min(r, g, b);
+        let h, s, l = (max + min) / 2;
 
-        if (max == min) {
+        if (max === min) {
             h = s = 0; // achromatic
         } else {
-            var d = max - min;
+            const d = max - min;
             s = (l > 0.5 ? d / (2 - max - min) : d / (max + min));
             switch (max) {
                 case r: h = (g - b) / d + (g < b ? 6 : 0); break;
@@ -1120,10 +1130,10 @@ var app = (function () {
         return [h, s, l];
     };
 
-    var hsl2rgb = function (color) {
-        var l = color[2];
+    const hsl2rgb = function (color) {
+        let l = color[2];
 
-        if (color[1] == 0) {
+        if (color[1] === 0) {
             l = Math.round(l * 255);
             return [l, l, l];
         } else {
@@ -1136,24 +1146,14 @@ var app = (function () {
                 return p;
             }
 
-            var s = color[1];
-            var q = (l < 0.5 ? l * (1 + s) : l + s - l * s);
-            var p = 2 * l - q;
-            var r = hue2rgb(p, q, color[0] + 1 / 3);
-            var g = hue2rgb(p, q, color[0]);
-            var b = hue2rgb(p, q, color[0] - 1 / 3);
+            const s = color[1];
+            const q = (l < 0.5 ? l * (1 + s) : l + s - l * s);
+            const p = 2 * l - q;
+            const r = hue2rgb(p, q, color[0] + 1 / 3);
+            const g = hue2rgb(p, q, color[0]);
+            const b = hue2rgb(p, q, color[0] - 1 / 3);
             return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
         }
-    };
-
-    var interpolateHSL = function (color1, color2, factor) {
-        if (arguments.length < 3) { factor = 0.5; }
-        var hsl1 = rgb2hsl(color1);
-        var hsl2 = rgb2hsl(color2);
-        for (var i = 0; i < 3; i++) {
-            hsl1[i] += factor * (hsl2[i] - hsl1[i]);
-        }
-        return hsl2rgb(hsl1);
     };
 
     /* SvelteComponents\Gauge.svelte generated by Svelte v3.38.2 */
@@ -1169,26 +1169,31 @@ var app = (function () {
     			div = element("div");
     			t0 = space();
     			t1 = text(/*name*/ ctx[0]);
-    			attr_dev(div, "class", "gauge-container svelte-e9fljk");
-    			add_location(div, file$6, 29, 0, 927);
+    			attr_dev(div, "class", "gauge-container svelte-all3mk");
+    			set_style(div, "height", /*height*/ ctx[2]);
+    			add_location(div, file$6, 31, 0, 1009);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
-    			/*div_binding*/ ctx[7](div);
+    			/*div_binding*/ ctx[8](div);
     			insert_dev(target, t0, anchor);
     			insert_dev(target, t1, anchor);
     		},
     		p: function update(ctx, [dirty]) {
+    			if (dirty & /*height*/ 4) {
+    				set_style(div, "height", /*height*/ ctx[2]);
+    			}
+
     			if (dirty & /*name*/ 1) set_data_dev(t1, /*name*/ ctx[0]);
     		},
     		i: noop,
     		o: noop,
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(div);
-    			/*div_binding*/ ctx[7](null);
+    			/*div_binding*/ ctx[8](null);
     			if (detaching) detach_dev(t0);
     			if (detaching) detach_dev(t1);
     		}
@@ -1217,7 +1222,7 @@ var app = (function () {
     	let gaugeObject;
 
     	onMount(() => {
-    		$$invalidate(6, gaugeObject = gauge_min(gaugeElement, {
+    		$$invalidate(7, gaugeObject = gauge_min(gaugeElement, {
     			max: bounds[1],
     			min: bounds[0],
     			label(value) {
@@ -1229,8 +1234,10 @@ var app = (function () {
     		}));
 
     		if (value) gaugeObject.setValue(value);
+    		$$invalidate(2, height = gaugeElement.offsetWidth * 0.85 + "px");
     	});
 
+    	let height = "12vw";
     	const writable_props = ["name", "bounds", "colorBounds", "value", "digits"];
 
     	Object.keys($$props).forEach(key => {
@@ -1246,10 +1253,10 @@ var app = (function () {
 
     	$$self.$$set = $$props => {
     		if ("name" in $$props) $$invalidate(0, name = $$props.name);
-    		if ("bounds" in $$props) $$invalidate(2, bounds = $$props.bounds);
-    		if ("colorBounds" in $$props) $$invalidate(3, colorBounds = $$props.colorBounds);
-    		if ("value" in $$props) $$invalidate(4, value = $$props.value);
-    		if ("digits" in $$props) $$invalidate(5, digits = $$props.digits);
+    		if ("bounds" in $$props) $$invalidate(3, bounds = $$props.bounds);
+    		if ("colorBounds" in $$props) $$invalidate(4, colorBounds = $$props.colorBounds);
+    		if ("value" in $$props) $$invalidate(5, value = $$props.value);
+    		if ("digits" in $$props) $$invalidate(6, digits = $$props.digits);
     	};
 
     	$$self.$capture_state = () => ({
@@ -1262,17 +1269,19 @@ var app = (function () {
     		value,
     		digits,
     		gaugeElement,
-    		gaugeObject
+    		gaugeObject,
+    		height
     	});
 
     	$$self.$inject_state = $$props => {
     		if ("name" in $$props) $$invalidate(0, name = $$props.name);
-    		if ("bounds" in $$props) $$invalidate(2, bounds = $$props.bounds);
-    		if ("colorBounds" in $$props) $$invalidate(3, colorBounds = $$props.colorBounds);
-    		if ("value" in $$props) $$invalidate(4, value = $$props.value);
-    		if ("digits" in $$props) $$invalidate(5, digits = $$props.digits);
+    		if ("bounds" in $$props) $$invalidate(3, bounds = $$props.bounds);
+    		if ("colorBounds" in $$props) $$invalidate(4, colorBounds = $$props.colorBounds);
+    		if ("value" in $$props) $$invalidate(5, value = $$props.value);
+    		if ("digits" in $$props) $$invalidate(6, digits = $$props.digits);
     		if ("gaugeElement" in $$props) $$invalidate(1, gaugeElement = $$props.gaugeElement);
-    		if ("gaugeObject" in $$props) $$invalidate(6, gaugeObject = $$props.gaugeObject);
+    		if ("gaugeObject" in $$props) $$invalidate(7, gaugeObject = $$props.gaugeObject);
+    		if ("height" in $$props) $$invalidate(2, height = $$props.height);
     	};
 
     	if ($$props && "$$inject" in $$props) {
@@ -1280,7 +1289,7 @@ var app = (function () {
     	}
 
     	$$self.$$.update = () => {
-    		if ($$self.$$.dirty & /*gaugeObject, value*/ 80) {
+    		if ($$self.$$.dirty & /*gaugeObject, value*/ 160) {
     			if (gaugeObject && value) gaugeObject.setValueAnimated(value);
     		}
     	};
@@ -1288,6 +1297,7 @@ var app = (function () {
     	return [
     		name,
     		gaugeElement,
+    		height,
     		bounds,
     		colorBounds,
     		value,
@@ -1303,10 +1313,10 @@ var app = (function () {
 
     		init(this, options, instance$6, create_fragment$6, safe_not_equal, {
     			name: 0,
-    			bounds: 2,
-    			colorBounds: 3,
-    			value: 4,
-    			digits: 5
+    			bounds: 3,
+    			colorBounds: 4,
+    			value: 5,
+    			digits: 6
     		});
 
     		dispatch_dev("SvelteRegisterComponent", {
@@ -2445,9 +2455,9 @@ var app = (function () {
     			attr_dev(img, "height", "100%");
     			if (img.src !== (img_src_value = "static/logo.png")) attr_dev(img, "src", img_src_value);
     			attr_dev(img, "alt", "img");
-    			add_location(img, file, 99, 8, 3522);
+    			add_location(img, file, 99, 8, 3518);
     			attr_dev(div, "id", "photo");
-    			add_location(div, file, 98, 4, 3459);
+    			add_location(div, file, 98, 4, 3455);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -2519,25 +2529,25 @@ var app = (function () {
     			input1 = element("input");
     			t7 = space();
     			input2 = element("input");
-    			add_location(h1, file, 104, 4, 3638);
-    			add_location(div0, file, 105, 4, 3680);
+    			add_location(h1, file, 104, 4, 3634);
+    			add_location(div0, file, 105, 4, 3676);
     			attr_dev(div1, "id", "ports");
-    			add_location(div1, file, 106, 4, 3709);
+    			add_location(div1, file, 106, 4, 3705);
     			set_style(input0, "padding", "10px");
     			set_style(input0, "font-size", "20px");
     			attr_dev(input0, "type", "button");
     			input0.value = "Add 'COM'";
-    			add_location(input0, file, 107, 4, 3753);
+    			add_location(input0, file, 107, 4, 3749);
     			set_style(input1, "padding", "10px");
     			set_style(input1, "font-size", "20px");
     			attr_dev(input1, "type", "text");
     			attr_dev(input1, "id", "portsSelect");
-    			add_location(input1, file, 112, 4, 3923);
+    			add_location(input1, file, 112, 4, 3919);
     			set_style(input2, "padding", "10px");
     			set_style(input2, "font-size", "20px");
     			attr_dev(input2, "type", "button");
     			input2.value = "Submit";
-    			add_location(input2, file, 117, 4, 4065);
+    			add_location(input2, file, 117, 4, 4061);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, h1, anchor);
@@ -2717,7 +2727,7 @@ var app = (function () {
     			attr_dev(div, "class", "cell");
     			attr_dev(div, "style", div_style_value = "background-color: " + getColor(/*cell*/ ctx[24]));
     			toggle_class(div, "balancing", /*bS*/ ctx[14][/*index*/ ctx[26]] === "1");
-    			add_location(div, file, 135, 12, 4518);
+    			add_location(div, file, 135, 12, 4514);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -2885,6 +2895,10 @@ var app = (function () {
     	let gauge1;
     	let t2;
     	let console_1;
+    	let t3;
+    	let div4;
+    	let div3;
+    	let gauge2;
     	let current;
 
     	tempgauge = new TempGauge({
@@ -2915,6 +2929,15 @@ var app = (function () {
     			$$inline: true
     		});
 
+    	gauge2 = new Gauge_1({
+    			props: {
+    				name: "12V Voltage",
+    				value: /*data*/ ctx[0].tw,
+    				bounds: [10, 14]
+    			},
+    			$$inline: true
+    		});
+
     	const block = {
     		c: function create() {
     			create_component(tempgauge.$$.fragment);
@@ -2927,16 +2950,26 @@ var app = (function () {
     			create_component(gauge1.$$.fragment);
     			t2 = space();
     			create_component(console_1.$$.fragment);
+    			t3 = space();
+    			div4 = element("div");
+    			div3 = element("div");
+    			create_component(gauge2.$$.fragment);
     			set_style(div0, "width", "50%");
     			set_style(div0, "font-weight", "bolder");
     			set_style(div0, "text-align", "center");
-    			add_location(div0, file, 215, 12, 6797);
+    			add_location(div0, file, 215, 12, 6793);
     			set_style(div1, "width", "50%");
     			set_style(div1, "font-weight", "bolder");
     			set_style(div1, "text-align", "center");
-    			add_location(div1, file, 221, 12, 7044);
+    			add_location(div1, file, 221, 12, 7040);
     			set_style(div2, "display", "flex");
-    			add_location(div2, file, 214, 8, 6755);
+    			add_location(div2, file, 214, 8, 6751);
+    			set_style(div3, "width", "33.3%");
+    			set_style(div3, "font-weight", "bolder");
+    			set_style(div3, "text-align", "center");
+    			add_location(div3, file, 230, 8, 7404);
+    			set_style(div4, "display", "flex");
+    			add_location(div4, file, 229, 8, 7366);
     		},
     		m: function mount(target, anchor) {
     			mount_component(tempgauge, target, anchor);
@@ -2949,6 +2982,10 @@ var app = (function () {
     			mount_component(gauge1, div1, null);
     			insert_dev(target, t2, anchor);
     			mount_component(console_1, target, anchor);
+    			insert_dev(target, t3, anchor);
+    			insert_dev(target, div4, anchor);
+    			append_dev(div4, div3);
+    			mount_component(gauge2, div3, null);
     			current = true;
     		},
     		p: function update(ctx, dirty) {
@@ -2964,6 +3001,9 @@ var app = (function () {
     			const console_1_changes = {};
     			if (dirty & /*chargeConsoleText*/ 8) console_1_changes.text = /*chargeConsoleText*/ ctx[3];
     			console_1.$set(console_1_changes);
+    			const gauge2_changes = {};
+    			if (dirty & /*data*/ 1) gauge2_changes.value = /*data*/ ctx[0].tw;
+    			gauge2.$set(gauge2_changes);
     		},
     		i: function intro(local) {
     			if (current) return;
@@ -2971,6 +3011,7 @@ var app = (function () {
     			transition_in(gauge0.$$.fragment, local);
     			transition_in(gauge1.$$.fragment, local);
     			transition_in(console_1.$$.fragment, local);
+    			transition_in(gauge2.$$.fragment, local);
     			current = true;
     		},
     		o: function outro(local) {
@@ -2978,6 +3019,7 @@ var app = (function () {
     			transition_out(gauge0.$$.fragment, local);
     			transition_out(gauge1.$$.fragment, local);
     			transition_out(console_1.$$.fragment, local);
+    			transition_out(gauge2.$$.fragment, local);
     			current = false;
     		},
     		d: function destroy(detaching) {
@@ -2988,6 +3030,9 @@ var app = (function () {
     			destroy_component(gauge1);
     			if (detaching) detach_dev(t2);
     			destroy_component(console_1, detaching);
+    			if (detaching) detach_dev(t3);
+    			if (detaching) detach_dev(div4);
+    			destroy_component(gauge2);
     		}
     	};
 
@@ -3002,7 +3047,7 @@ var app = (function () {
     	return block;
     }
 
-    // (234:4) {#if data}
+    // (242:4) {#if data}
     function create_if_block(ctx) {
     	let slider;
     	let current;
@@ -3047,7 +3092,7 @@ var app = (function () {
     		block,
     		id: create_if_block.name,
     		type: "if",
-    		source: "(234:4) {#if data}",
+    		source: "(242:4) {#if data}",
     		ctx
     	});
 
@@ -3185,35 +3230,35 @@ var app = (function () {
     			div8 = element("div");
     			if (if_block4) if_block4.c();
     			attr_dev(div0, "id", "cells");
-    			add_location(div0, file, 132, 0, 4430);
+    			add_location(div0, file, 132, 0, 4426);
     			set_style(div1, "color", "black");
     			set_style(div1, "text-align", "center");
     			set_style(div1, "font-weight", "bolder");
-    			add_location(div1, file, 144, 0, 4751);
+    			add_location(div1, file, 144, 0, 4747);
     			set_style(div2, "text-align", "center");
     			set_style(div2, "font-size", "3vw");
     			set_style(div2, "margin-top", "20px");
     			set_style(div2, "font-weight", "bolder");
-    			add_location(div2, file, 171, 4, 5599);
+    			add_location(div2, file, 171, 4, 5595);
     			if (img.src !== (img_src_value = "./static/export.png")) attr_dev(img, "src", img_src_value);
     			attr_dev(img, "width", "85%");
     			set_style(img, "margin-left", "-50px");
     			attr_dev(img, "alt", "car logo dumbass");
-    			add_location(img, file, 176, 4, 5770);
+    			add_location(img, file, 176, 4, 5766);
     			attr_dev(div3, "class", "statusBox");
     			toggle_class(div3, "old", /*time*/ ctx[4] - /*lastUpdateDate*/ ctx[5] > new Date(3000));
-    			add_location(div3, file, 184, 8, 6026);
+    			add_location(div3, file, 184, 8, 6022);
     			attr_dev(div4, "class", "statusBox");
-    			add_location(div4, file, 189, 8, 6174);
+    			add_location(div4, file, 189, 8, 6170);
     			set_style(div5, "background-color", "lightgrey");
     			set_style(div5, "padding", "10px");
     			set_style(div5, "border-radius", "20px");
-    			add_location(div5, file, 182, 4, 5929);
+    			add_location(div5, file, 182, 4, 5925);
     			set_style(div6, "position", "relative");
     			set_style(div6, "text-align", "center");
-    			add_location(div6, file, 169, 0, 5520);
-    			add_location(div7, file, 211, 0, 6687);
-    			add_location(div8, file, 232, 0, 7383);
+    			add_location(div6, file, 169, 0, 5516);
+    			add_location(div7, file, 211, 0, 6683);
+    			add_location(div8, file, 240, 0, 7673);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -3503,7 +3548,7 @@ var app = (function () {
     			}
 
     			$$invalidate(9, messageShown = false);
-    			_data.fan = Math.round(_data.fan * 100 / 256);
+    			_data.f = Math.round(_data.f * 100 / 256);
     			$$invalidate(0, data = _data);
     			$$invalidate(1, status = "Got last data " + new Date().toLocaleTimeString());
 
