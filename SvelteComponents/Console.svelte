@@ -11,9 +11,10 @@
 <style>
     textarea {
         margin-top: 3%;
+        margin-bottom: -1%;
         width: 100%;
-        height: 20%;
+        height: 15%;
         padding: 1%;
-        font-size: 90%;
+        font-size: 14px;
     }
 </style>

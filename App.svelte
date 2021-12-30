@@ -1,6 +1,6 @@
 <script>
-    import { onMount, setContext } from "svelte";
-    import { fade } from "svelte/transition";
+    import {onMount, setContext} from "svelte";
+    import {fade} from "svelte/transition";
 
     import Overlay from "./SvelteComponents/Overlay.svelte";
     import Gauge from "./SvelteComponents/Gauge.svelte";
@@ -8,11 +8,13 @@
     import Graph from "./SvelteComponents/Graph.svelte";
     import Slider from "./SvelteComponents/Slider.svelte";
 
-    import { getColor } from "./graphicstwo";
+    import {getColor} from "./graphicstwo";
     import Message from "./SvelteComponents/Message.svelte";
-import Console from "./SvelteComponents/Console.svelte";
+    import Console from "./SvelteComponents/Console.svelte";
 
-    const { ipcRenderer } = require("electron");
+    let fake_data = typeof require === "undefined";
+
+    const {ipcRenderer} = require("electron");
 
     // Basically we need to wait for the script to load.
 
@@ -39,8 +41,8 @@ import Console from "./SvelteComponents/Console.svelte";
 
     let graphData = [[], []];
 
-    let fake_data = typeof require === "undefined";
     console.log(fake_data ? "Faking data.." : "Not faking data.");
+
     let showImage = true;
     ipcRenderer.on("data", (event, _data) => {
         if (_data.s === "normal") {
@@ -54,13 +56,13 @@ import Console from "./SvelteComponents/Console.svelte";
                 graphData = graphData;
             }
             messageShown = false;
-            _data.f = Math.round(_data.f * 100 /256);
+            _data.f = Math.round(_data.f * 100 / 256);
             data = _data;
             status = "Got last data " + new Date().toLocaleTimeString();
 
 
             const options = ["Waiting for plug", "Plugged in, not charging", "Charging paused, balancing cells", "Charging!", "Waiting For Charger"];
-            if(chgstatus !== options[_data.ch]) {
+            if (chgstatus !== options[_data.ch]) {
                 chgstatus = options[_data.ch];
                 chargeConsoleText += new Date().toLocaleTimeString() + " " + chgstatus + '\n'
             }
@@ -90,6 +92,7 @@ import Console from "./SvelteComponents/Console.svelte";
         ipcRenderer.send("selected_port", portName);
         showOverlay = false;
     }
+
     let portName = "";
     let availablePorts;
     let showOverlay = false;
@@ -97,46 +100,62 @@ import Console from "./SvelteComponents/Console.svelte";
 
 {#if showImage}
     <div id="photo" transition:fade={{ duration: 3000 }}>
-        <img height="100%" src="static/logo.png" alt="img" />
+        <img height="100%" src="static/logo.png" alt="img"/>
     </div>
 {/if}
 
-<Overlay bind:shown={showOverlay}>
+<Overlay bind:shown={showOverlay} closable={false}>
     <h1>Error: Unable to find port.</h1>
     <div>Ports found:</div>
-    <div id="ports">{availablePorts}</div>
+    <div>
+        {#if availablePorts.length !== 0}
+            {#each availablePorts as port}
+                <div on:click={() => portName = port}>{port}</div>
+            {/each}
+        {:else }
+            <i>No Ports Found...</i>
+        {/if}
+    </div>
     <input
-        style="padding: 10px; font-size: 20px;"
-        type="button"
-        value="Add 'COM'"
-        on:click={() => (portName = "COM" + portName)} />
+            style="padding: 10px; font-size: 20px;"
+            type="button"
+            value="Add 'COM'"
+            on:click={() => (portName = "COM" + portName)}/>
     <input
-        style="padding: 10px; font-size: 20px;"
-        type="text"
-        bind:value={portName}
-        id="portsSelect" />
+            style="padding: 10px; font-size: 20px;"
+            type="text"
+            bind:value={portName}
+            id="portsSelect"/>
     <input
-        style="padding: 10px; font-size: 20px;"
-        type="button"
-        value="Submit"
-        on:click={() => {
+            style="padding: 10px; font-size: 20px;"
+            type="button"
+            value="Submit"
+            on:click={() => {
             sendPort(portName);
             showOverlay = false;
-        }} />
+        }}/>
+    <input
+            style="padding: 10px; font-size: 20px;"
+            type="button"
+            value="Refresh"
+            on:click={() => {
+                showOverlay = false;
+                setTimeout(() => ipcRenderer.send("ready_for_data"), 500)
+        }}/>
 </Overlay>
 
 <Message
-    bind:shown={messageShown}
-    onClose={() => ipcRenderer.send("ready_for_data")}
-    >{@html messageContent}</Message>
+        bind:shown={messageShown}
+        onClose={() => ipcRenderer.send("ready_for_data")}
+>{@html messageContent}</Message>
 
 <div id="cells">
     {#if data?.c}
         {#each data.c as cell, index}
             <div
-                class="cell"
-                class:balancing={bS[index] === "1"}
-                style={"background-color: " + getColor(cell)}>
+                    class="cell"
+                    class:balancing={bS[index] === "1"}
+                    style={"background-color: " + getColor(cell)}>
                 {cell}
             </div>
         {/each}
@@ -145,52 +164,51 @@ import Console from "./SvelteComponents/Console.svelte";
 <div style="color:black; text-align: center; font-weight: bolder;">
     {#if data?.c}
         <Gauge
-            name="Pack Voltage"
-            value={voltage}
-            bounds={[50, 90]}
-            colorBounds={[65, 90]} />
+                name="Pack Voltage"
+                value={voltage}
+                bounds={[50, 90]}
+                colorBounds={[65, 90]}/>
         <Gauge
-            name="Min Cell Voltage"
-            value={Math.min(...data.c)}
-            bounds={[2.7, 4.2]}
-            colorBounds={[3.2, 4.15]} />
+                name="Min Cell Voltage"
+                value={Math.min(...data.c)}
+                bounds={[2.7, 4.2]}
+                colorBounds={[3.2, 4.15]}/>
         <Gauge
-            name="Avg. Cell Voltage"
-            value={voltage / data.c.length}
-            bounds={[2.7, 4.2]}
-            colorBounds={[3.2, 4.15]} />
+                name="Avg. Cell Voltage"
+                value={voltage / data.c.length}
+                bounds={[2.7, 4.2]}
+                colorBounds={[3.2, 4.15]}/>
         <Gauge
-            name="Max Cell Voltage"
-            value={Math.max(...data.c)}
-            bounds={[2.7, 4.2]}
-            colorBounds={[3.2, 4.15]} />
+                name="Max Cell Voltage"
+                value={Math.max(...data.c)}
+                bounds={[2.7, 4.2]}
+                colorBounds={[3.2, 4.15]}/>
     {/if}
 </div>
 
 <div style="position: relative; text-align: center;">
     <!-- Clock -->
     <div
-        style="text-align: center; font-size: 3vw; margin-top: 20px; font-weight: bolder;">
+            style="text-align: center; font-size: 3vw; margin-top: 20px; font-weight: bolder;">
         {time.toLocaleTimeString()}
     </div>
     <!-- Logo -->
     <img
-        src="./static/export.png"
-        width="85%"
-        style="margin-left: -50px;"
-        alt="car logo dumbass" />
+            src="./static/export.png"
+            width="85%"
+            style="margin-left: -50px;"
+            alt="car logo"/>
     <!-- Status -->
-    <div
-        style="background-color: lightgrey; padding: 10px; border-radius: 20px;">
+    <div style="background-color: lightgrey; padding: 10px; border-radius: 20px; width: 95%">
         <div
-            class="statusBox"
-            class:old={time - lastUpdateDate > new Date(3000)}>
+                class="statusBox"
+                class:old={time - lastUpdateDate > new Date(3000)}>
             {status}
         </div>
         <div class="statusBox">{chgstatus}</div>
     </div>
     <Graph
-        axisSettings={[
+            axisSettings={[
             {
                 axis: 0,
                 color: "#FF5733",
@@ -206,40 +224,73 @@ import Console from "./SvelteComponents/Console.svelte";
                 minIs0: true,
             },
         ]}
-        datas={graphData} />
+            datas={graphData}/>
 </div>
 
 <div>
     {#if data}
-        <TempGauge data={data.t} />
+        <TempGauge data={data.t}/>
         <div style="display: flex;">
             <div style="width:50%; font-weight: bolder; text-align: center;">
                 <Gauge
-                    name="Current (Amps)"
-                    value={data.pC}
-                    bounds={[-50, 500]} />
+                        name="Current (Amps)"
+                        value={data.pC}
+                        bounds={[-50, 500]}/>
             </div>
             <div style="width:50%; font-weight: bolder; text-align: center;">
                 <Gauge
-                    name="Power (kW)"
-                    value={Math.abs((data.pC * voltage) / 1000)}
-                    bounds={[0, 40]} />
+                        name="Power (kW)"
+                        value={Math.abs((data.pC * voltage) / 1000)}
+                        bounds={[0, 40]}/>
             </div>
         </div>
         <Console text={chargeConsoleText}/>
         <div style="display: flex;">
-        <div style="width:33.3%; font-weight: bolder; text-align: center;">
+            <div style="width:33.3%; font-weight: bolder; text-align: center;">
                 <Gauge
-                    name="12V Voltage"
-                    value={data.tw}
-                    bounds={[10, 14]} />
+                        name="12V Voltage"
+                        value={data.tw}
+                        bounds={[10, 15]}/>
             </div>
         </div>
+        {#if data.CR}
+            <div transition:fade={{duration: 3000}} style="background-color: rgba(255,59,49,0.42)">
+                <div style="font-size: 20px; text-decoration: underline; margin-bottom: -5px; font-weight: bolder; padding: 3px">
+                    Charger
+                </div>
+                <div style="display: flex;">
+                    <div style="width:33.3%; font-weight: bolder; text-align: center;">
+                        <Gauge
+                                name="AC Voltage"
+                                value={data.CIV}
+                                bounds={[120, 320]}
+                                colorBounds={[0, 500]}
+                        />
+                    </div>
+                    <div style="width:33.3%; font-weight: bolder; text-align: center;">
+                        <Gauge
+                                name="Temperature"
+                                value={(data.CT *  9/5) + 32}
+                                bounds={[50, 120]}
+                                colorBounds={[113, 70]}
+                        />
+                    </div>
+                    <div style="width:33.3%; font-weight: bolder; text-align: center;">
+                        <Gauge
+                                name="Current"
+                                value={data.CC}
+                                bounds={[0, 40]}
+                                colorBounds={[0, 20]}/>
+                    </div>
+                </div>
+            </div>
+        {/if}
+
     {/if}
 </div>
 
 <div>
     {#if data}
-        <Slider value={data.f} color="#4fc3f7" iconPath="static/fan.svg" />
+        <Slider value={data.f} color="#4fc3f7" iconPath="static/fan.svg"/>
     {/if}
 </div>

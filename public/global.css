@@ -95,13 +95,14 @@ button:focus {
     font-size: 1.3vw;
     background-color: #ff5000;
     font-weight: bolder;
+    padding-top: 1px;
 }
 
 .balancing::after {
     content: "B";
     display: block;
     color: blue;
-    margin-top: -1.75vw;
+    margin-top: -1.85vw;
     margin-left: 6.5vw;
 }
 
