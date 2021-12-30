@@ -16,8 +16,8 @@
     $: update(data);
 
     function update() {
-        const animationDuration = getContext("animationDuration");
         if (!data || !Q0Q4 || !Q1Q3) return;
+        const animationDuration = getContext("animationDuration");
         const sorted = data.sort(function (a, b) {
             return a - b;
         });

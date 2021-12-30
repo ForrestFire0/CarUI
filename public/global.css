@@ -106,10 +106,6 @@ button:focus {
     margin-left: 6.5vw;
 }
 
-.old {
-    background-color: red;
-}
-
 .statusBox {
     background-color: grey;
     text-align: left;
