@@ -1,10 +1,9 @@
 const {app, BrowserWindow} = require('electron')
 
 if (require('electron-squirrel-startup')) return app.quit();
-
-const hostname = require("os").hostname();
 let send_fake_data, fs, SerialPort, Readline, port;
-if (hostname === "Forrests-Laptop") {
+
+if (process.env.COMPUTERNAME === "FORRESTS-LAPTOP" && process.env.fakeData) {
     console.log("Sending Fake Data")
     send_fake_data = true;
     fs = require('fs');
@@ -63,7 +62,6 @@ ipcMain.on('ready_for_data', () => {
             createPort(portsList[0])
         } else {
             //Ask the user what to do now by sending a request, except bypass this if fake data.
-            if (portsList.length === 0) portsList = 'None'
             console.log('Ports found: ' + portsList + '. Asking user to select port.')
             win.webContents.send('select_port', portsList)
         }
@@ -85,20 +83,22 @@ function createWindow() {
         },
         width: 1280,
         height: 800,
-        fullscreen: !send_fake_data,
+        fullscreen: process.env.COMPUTERNAME !== "FORRESTS-LAPTOP",
     })
 
     win.loadFile('public/index.html')
 }
 
 function parseAndSend(string) {
+    console.log(string)
     let jsonData;
     try {
         jsonData = JSON.parse(string);
+        // console.log(Date.now() + ' Got Data')
+        win.webContents.send('data', jsonData)
     } catch (error) {
-        console.log(string)
+        console.log("Error: ", string)
     }
-    win.webContents.send('data', jsonData)
 }
 
 function sendError(err) {

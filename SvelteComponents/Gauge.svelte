@@ -30,7 +30,7 @@
 </script>
 
 <div bind:this={gaugeElement} class="gauge-container" style="height: {height}"/>
-{name}
+<div style="margin: 0; font-size: 16px">{name}</div>
 
 <style>
     .gauge-container {
