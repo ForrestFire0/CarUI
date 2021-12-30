@@ -24,13 +24,16 @@
             },
         });
         if (value) gaugeObject.setValue(value);
+
         height = gaugeElement.offsetWidth * 0.85 + "px"
+        fontSize = gaugeElement.offsetWidth / name.length * 1.4 + "px";
     });
     let height = "12vw"
+    let fontSize = "16px"
 </script>
 
 <div bind:this={gaugeElement} class="gauge-container" style="height: {height}"/>
-<div style="margin: 0; font-size: 16px">{name}</div>
+<div style="margin: 0; font-size: {fontSize}" >{name}</div>
 
 <style>
     .gauge-container {

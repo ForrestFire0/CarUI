@@ -90,14 +90,13 @@ function createWindow() {
 }
 
 function parseAndSend(string) {
-    console.log(string)
     let jsonData;
     try {
         jsonData = JSON.parse(string);
         // console.log(Date.now() + ' Got Data')
         win.webContents.send('data', jsonData)
     } catch (error) {
-        console.log("Error: ", string)
+        console.log(string)
     }
 }
 

@@ -8,15 +8,15 @@
       <change beforePath="$PROJECT_DIR$/.idea/CarUI.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/CarUI.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/App.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/App.svelte" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SvelteComponents/Console.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/SvelteComponents/Console.svelte" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SvelteComponents/Gauge.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/SvelteComponents/Gauge.svelte" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data.json" beforeDir="false" afterPath="$PROJECT_DIR$/data.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SvelteComponents/TempGauge.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/SvelteComponents/TempGauge.svelte" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/electron.js" beforeDir="false" afterPath="$PROJECT_DIR$/electron.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/make/squirrel.windows/x64/RELEASES" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/make/squirrel.windows/x64/car-ui-1.1.0 Setup.exe" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/public/build/bundle.css" beforeDir="false" afterPath="$PROJECT_DIR$/public/build/bundle.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/public/build/bundle.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/build/bundle.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/public/build/bundle.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/public/build/bundle.js.map" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/public/global.css" beforeDir="false" afterPath="$PROJECT_DIR$/public/global.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/buildAndPush.bat" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/buildAndPush.bat" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -54,7 +54,7 @@
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="settings.editor.selected.configurable" value="settings.nodejs" />
   </component>
-  <component name="RunManager" selected="npm.Electron with Serial">
+  <component name="RunManager" selected="Shell Script.Build and Push">
     <configuration name="Build and Push" type="ShConfigurationType">
       <option name="SCRIPT_TEXT" value="" />
       <option name="INDEPENDENT_SCRIPT_PATH" value="false" />
@@ -70,7 +70,17 @@
       <envs />
       <method v="2" />
     </configuration>
-    <configuration name="Debug Electron" type="js.build_tools.npm">
+    <configuration name="Electron with Serial" type="js.build_tools.npm">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="start" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <configuration name="Electron" type="js.build_tools.npm">
       <package-json value="$PROJECT_DIR$/package.json" />
       <command value="run" />
       <scripts>
@@ -80,16 +90,6 @@
       <envs>
         <env name="fakeData" value="true" />
       </envs>
-      <method v="2" />
-    </configuration>
-    <configuration name="Electron with Serial" type="js.build_tools.npm">
-      <package-json value="$PROJECT_DIR$/package.json" />
-      <command value="run" />
-      <scripts>
-        <script value="start" />
-      </scripts>
-      <node-interpreter value="project" />
-      <envs />
       <method v="2" />
     </configuration>
     <configuration name="Svelte Only" type="js.build_tools.npm">
@@ -105,7 +105,7 @@
       </method>
     </configuration>
     <list>
-      <item itemvalue="npm.Debug Electron" />
+      <item itemvalue="npm.Electron" />
       <item itemvalue="npm.Electron with Serial" />
       <item itemvalue="npm.Svelte Only" />
       <item itemvalue="Shell Script.Build and Push" />
@@ -123,7 +123,8 @@
       <workItem from="1640655397834" duration="578000" />
       <workItem from="1640659535563" duration="469000" />
       <workItem from="1640745128901" duration="7309000" />
-      <workItem from="1640812988444" duration="13195000" />
+      <workItem from="1640812988444" duration="14455000" />
+      <workItem from="1640837180098" duration="3499000" />
     </task>
     <task id="LOCAL-00001" summary="Working on New Laptop">
       <created>1640745620251</created>

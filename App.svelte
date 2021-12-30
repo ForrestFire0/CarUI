@@ -16,8 +16,6 @@
 
     const {ipcRenderer} = require("electron");
 
-    // Basically we need to wait for the script to load.
-
     let data;
     $: voltage = data?.c.reduce((a, b) => a + b);
     $: bS = data?.bS.toString(2).split("").reverse().join("");
@@ -97,12 +95,6 @@
     let availablePorts;
     let showOverlay = false;
 </script>
-
-{#if showImage}
-    <div id="photo" transition:fade={{ duration: 3000 }}>
-        <img height="100%" src="static/logo.png" alt="img"/>
-    </div>
-{/if}
 
 <Overlay bind:shown={showOverlay} closable={false}>
     <h1>Error: Unable to find port.</h1>
@@ -201,8 +193,8 @@
     <!-- Status -->
     <div style="background-color: lightgrey; padding: 10px; border-radius: 20px; width: 95%">
         <div
-                class="statusBox"
-                class:old={time - lastUpdateDate > new Date(3000)}>
+                style="background-color: {time - lastUpdateDate > new Date(3000) ? 'red' : 'grey'};"
+                class="statusBox">
             {status}
         </div>
         <div class="statusBox">{chgstatus}</div>
@@ -294,3 +286,9 @@
         <Slider value={data.f} color="#4fc3f7" iconPath="static/fan.svg"/>
     {/if}
 </div>
+
+{#if showImage}
+    <div id="photo" transition:fade={{ duration: 3000 }}>
+        <img height="100%" src="static/logo.png" alt="img"/>
+    </div>
+{/if}
