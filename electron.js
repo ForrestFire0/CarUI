@@ -21,26 +21,30 @@ const {ipcMain} = require('electron')
 let enabled = false;
 
 function createPort(portID) {
-    console.log('creating port with id ' + portID);
     if (send_fake_data) {
+        console.log('creating port with id ' + portID + ' note: is fake');
         enabled = true;
         return
     }
-
-    port = new SerialPort(portID, {baudRate: 115200}, (err) => {
-        if (err) {
-            console.log('Unable to open port: ', err.message);
-            win.webContents.send('response', '<h1>Fail!</h1><p>Port unable to be opened.</p><small>' + err.message + '</small>')
-        } else {
-            win.webContents.send('response', '<h1>Success!</h1><p>Port successfully opened.</p>')
-            console.log('Successfully opened port.')
-        }
-    });
-    if (!port) return;
-    const parser = port.pipe(new Readline({delimiter: '\n'}));
-    parser.on('data', data => {
-        parseAndSend(data);
-    });
+    if (!port) {
+        console.log('creating port with id ' + portID);
+        port = new SerialPort(portID, {baudRate: 115200}, (err) => {
+            if (err) {
+                console.log('Unable to open port: ', err.message);
+                win.webContents.send('response', '<h1>Fail!</h1><p>Port unable to be opened.</p><small>' + err.message + '</small>')
+            } else {
+                win.webContents.send('response', '<h1>Success!</h1><p>Port successfully opened.</p>')
+                console.log('Successfully opened port.')
+            }
+        });
+        if (!port) return;
+        const parser = port.pipe(new Readline({delimiter: '\n'}));
+        parser.on('data', data => {
+            parseAndSend(data);
+        });
+    } else {
+        console.log('Using already existing port.');
+    }
 }
 
 
@@ -71,6 +75,12 @@ ipcMain.on('ready_for_data', () => {
 ipcMain.on('selected_port', (event, port) => {
     console.log('The user has selected port ' + port)
     createPort(port);
+});
+
+ipcMain.on('led_select', (event, led) => {
+    if (port) {
+        port.write(Buffer.from([led]))
+    }
 });
 
 let win;

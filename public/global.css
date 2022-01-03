@@ -32,7 +32,7 @@ body {
     font-family: comfortaa;
     overflow: hidden;
     display: grid;
-    grid-template-columns: 8.5% 14% 30% 25% 5% 5%;
+    grid-template-columns: 8.5% 14% 30% 25% 5% 17.5%;
 }
 
 a {
@@ -104,6 +104,14 @@ button:focus {
     color: blue;
     margin-top: -1.85vw;
     margin-left: 6.5vw;
+}
+
+.statusBoxShell {
+    box-shadow: 5px 5px 8px 2px #6B6B6B;
+    background-color: lightgrey;
+    padding: 10px;
+    border-radius: 20px;
+    width: 95%
 }
 
 .statusBox {

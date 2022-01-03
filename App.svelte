@@ -11,13 +11,14 @@
     import {getColor} from "./graphicstwo";
     import Message from "./SvelteComponents/Message.svelte";
     import Console from "./SvelteComponents/Console.svelte";
+    import LEDSelector from "./SvelteComponents/LEDSelector.svelte";
 
     let fake_data = typeof require === "undefined";
 
     const {ipcRenderer} = require("electron");
 
     let data;
-    $: voltage = data?.c.reduce((a, b) => a + b);
+    let voltage = data?.c.reduce((a, b) => a + b);
     $: bS = data?.bS.toString(2).split("").reverse().join("");
     $: setContext("animationDuration", data ? data.i : 1);
 
@@ -37,7 +38,9 @@
         };
     });
 
-    let graphData = [[], []];
+    let graphData = [[]];
+    // let graphData = [[], []];
+    // When adding power back: axis settings here. {axis: 350, color: "black", maxPoints: 35, units: "kW", minIs0: true,},
 
     console.log(fake_data ? "Faking data.." : "Not faking data.");
 
@@ -48,9 +51,10 @@
                 showImage = false;
                 console.log("2/4) Got data");
             }
-            if (voltage && _data["pC"]) {
+            voltage = _data.c.reduce((a, b) => a + b);
+            if (voltage && _data.hasOwnProperty("pC")) {
                 graphData[0].push(voltage);
-                graphData[1].push(Math.abs((_data.pC * voltage) / 1000));
+                // graphData[1].push(Math.abs((_data.pC * voltage) / 1000));
                 graphData = graphData;
             }
             messageShown = false;
@@ -185,13 +189,9 @@
         {time.toLocaleTimeString()}
     </div>
     <!-- Logo -->
-    <img
-            src="./static/export.png"
-            width="85%"
-            style="margin-left: -50px;"
-            alt="car logo"/>
+    <img src="./static/export.png" width="85%" style="margin-left: -50px;" alt="car logo"/>
     <!-- Status -->
-    <div style="background-color: lightgrey; padding: 10px; border-radius: 20px; width: 95%">
+    <div class="statusBoxShell">
         <div
                 style="background-color: {time - lastUpdateDate > new Date(3000) ? 'red' : 'grey'};"
                 class="statusBox">
@@ -207,13 +207,6 @@
                 maxPoints: 35,
                 units: "V",
                 minIs0: false,
-            },
-            {
-                axis: 350,
-                color: "black",
-                maxPoints: 35,
-                units: "kW",
-                minIs0: true,
             },
         ]}
             datas={graphData}/>
@@ -277,7 +270,6 @@
                 </div>
             </div>
         {/if}
-
     {/if}
 </div>
 
@@ -285,6 +277,10 @@
     {#if data}
         <Slider value={data.f} color="#4fc3f7" iconPath="static/fan.svg"/>
     {/if}
+</div>
+
+<div>
+    <LEDSelector/>
 </div>
 
 {#if showImage}

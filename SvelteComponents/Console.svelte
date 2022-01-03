@@ -16,5 +16,6 @@
         height: 15%;
         padding: 1%;
         font-size: 14px;
+        box-shadow: 5px 5px 8px 2px #6B6B6B;
     }
 </style>
