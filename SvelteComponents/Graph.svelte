@@ -23,7 +23,7 @@
     });
 
     $: update(datas);
-    function update() {
+    function update(_unused) {
         for (let i = 0; i < objects.length; i++) {
             datas[i] = datas[i].slice(
                 Math.max(datas[i].length - axisSettings[i].maxPoints, 0)
@@ -77,7 +77,7 @@
         height: 25%;
         background-color: #daf7a6;
         padding: 10px;
-        box-shadow: 0 0 15px 0px #c6f56f;
+        box-shadow: 5px 5px 8px 2px #6B6B6B;
         margin: 5px;
     }
 
