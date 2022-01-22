@@ -1,13 +1,3 @@
-@font-face {
-    font-family: miata;
-    src: url("./static/miata.ttf");
-}
-
-/* @font-face {
-    font-family: comfortaa;
-    src: url("./static/comfortaa.woff2");
-} */
-
 #photo {
     position: fixed;
     height: 100%;
@@ -17,7 +7,7 @@
     bottom: 0;
     background-color: white;
     text-align: center;
-    z-index: 2;
+    z-index: 10;
 }
 
 html, body {
@@ -27,12 +17,13 @@ html, body {
 }
 
 body {
-    background-color: rgb(255, 200, 200);
+    background-color: #90c8be;
     margin: 0;
-    font-family: comfortaa;
+    font-family: comfortaa, serif;
     overflow: hidden;
     display: grid;
-    grid-template-columns: 8.5% 14% 30% 25% 5% 17.5%;
+    grid-template-columns: 9.1% 14% 29.4% 25% 5% 17.5%;
+    transition: background-color 3s ease;
 }
 
 a {
@@ -48,6 +39,30 @@ a:visited {
     color: rgb(0, 80, 160);
 }
 
+.island {
+    margin: .3vw 5% .8vw 5%;
+    width: 90%;
+    padding: .2vw;
+    background: #cccccc;
+    border-radius: 10px;
+    box-shadow: 2px 2px 7px 3px #6B6B6B;
+    height: min-content;
+    transition: background-color 3s ease, box-shadow 3s;
+    border: solid 1px grey;
+}
+
+.darkIsland {
+    margin: .3vw 5% .8vw 5%;
+    width: 90%;
+    padding: .2vw;
+    background: #383838;
+    border-radius: 10px;
+    box-shadow: 5px 5px 8px 2px #2a2a2a;
+    height: min-content;
+    transition: background-color 3s ease, box-shadow 3s;
+    border: solid 1px #2c2c2c;
+}
+
 label {
     display: block;
 }
@@ -55,7 +70,6 @@ label {
 input, button, select, textarea {
     font-family: inherit;
     font-size: inherit;
-    -webkit-padding: 0.4em 0;
     padding: 0.4em;
     margin: 0 0 0.5em 0;
     box-sizing: border-box;
@@ -70,25 +84,12 @@ input:disabled {
 button {
     color: #333;
     background-color: #f4f4f4;
-    outline: none;
-}
-
-button:disabled {
-    color: #999;
-}
-
-button:not(:disabled):active {
-    background-color: #ddd;
-}
-
-button:focus {
-    border-color: #666;
 }
 
 .cell {
-    margin: 0.25vw;
+    margin: 0.25vw 0.25vw 0.25vw .5vw;
     text-align: center;
-    width: 6.5vw;
+    width: 6vw;
     height: 3.9vh;
     border-style: solid;
     border-radius: 5px;
@@ -98,25 +99,47 @@ button:focus {
     padding-top: 1px;
 }
 
-.balancing::after {
-    content: "B";
+.cell::after {
+    content : url(./static/resistor.svg);
     display: block;
-    color: blue;
-    margin-top: -1.85vw;
-    margin-left: 6.5vw;
+    transform: rotate(90deg) translate(-4.093vw, -5.733vh) scale(0.3);
+    transition: opacity 1s ease;
+    opacity: 100%;
 }
 
-.statusBoxShell {
-    box-shadow: 5px 5px 8px 2px #6B6B6B;
-    background-color: lightgrey;
-    padding: 10px;
-    border-radius: 20px;
-    width: 95%
+.balancing::after {
+    opacity: 0;
+}
+
+
+.darkIsland .balancing::after {
+    color: grey;
+}
+
+.cell::before {
+    position: relative;
+    transform: translate(-5px, 0);
+    content: "";
+    display: block;
+    height: 2vh;
+    width: .5vh;
+    border-style: solid;
+    border-radius: 5px;
+    padding-top: .32vw;
+    margin-top: .5vh;
+    margin-bottom: -2.5vh;
 }
 
 .statusBox {
-    background-color: grey;
+    background-color: lightgrey;
     text-align: left;
     margin: 5px;
     padding: 5px;
+    border-radius: 3px;
+    box-shadow: 0 0 6px 2px #343434;
+}
+
+.darkIsland .statusBox {
+    background-color: grey;
+    box-shadow: 0 0 8px 2px #2a2a2a;
 }

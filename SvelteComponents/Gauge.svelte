@@ -1,7 +1,9 @@
 <script>
-    import { onMount } from "svelte";
+    import {onMount} from "svelte";
     import Gauge from "../public/libs/gauge.min.js";
-    import { getColor } from "../graphicstwo.js";
+    import {getColor} from "../graphicstwo.js";
+    import {darkMode} from "./stores";
+
     export let name = "No name given";
     export let bounds = [0, 10];
     export let colorBounds = bounds;
@@ -9,6 +11,10 @@
     export let digits = 3 - (bounds[1] + "").split(".")[0].length;
     let gaugeElement;
     let gaugeObject;
+    const resize = () => {
+        height = gaugeElement.offsetWidth * 0.85 + "px"
+        fontSize = Math.min(gaugeElement.offsetWidth / name.length * 1.4, 18) + "px";
+    }
 
     $: if (gaugeObject && value) gaugeObject.setValueAnimated(value);
 
@@ -16,24 +22,20 @@
         gaugeObject = Gauge(gaugeElement, {
             max: bounds[1],
             min: bounds[0],
-            label: function (value) {
-                return value.toFixed(digits);
-            },
-            color: function (value) {
-                return getColor(value, colorBounds[1], colorBounds[0]);
-            },
+            label: value => value.toFixed(digits),
+            color: value => getColor(value, $darkMode, colorBounds[1], colorBounds[0]),
         });
         if (value) gaugeObject.setValue(value);
-
-        height = gaugeElement.offsetWidth * 0.85 + "px"
-        fontSize = gaugeElement.offsetWidth / name.length * 1.4 + "px";
+        resize()
     });
     let height = "12vw"
     let fontSize = "16px"
 </script>
 
+<svelte:window on:resize={resize}/>
+
 <div bind:this={gaugeElement} class="gauge-container" style="height: {height}"/>
-<div style="margin: 0; font-size: {fontSize}" >{name}</div>
+<div style="margin: 0; font-size: {fontSize}; color: {$darkMode ? 'gray(197)' : ''}">{name}</div>
 
 <style>
     .gauge-container {

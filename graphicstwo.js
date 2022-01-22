@@ -1,5 +1,7 @@
 const interpolateHSL = function (color1, color2, factor) {
-    if (arguments.length < 3) { factor = 0.5; }
+    if (arguments.length < 3) {
+        factor = 0.5;
+    }
     var hsl1 = rgb2hsl(color1);
     var hsl2 = rgb2hsl(color2);
     for (var i = 0; i < 3; i++) {
@@ -8,8 +10,15 @@ const interpolateHSL = function (color1, color2, factor) {
     return hsl2rgb(hsl1);
 };
 
-export function getColor(voltage, max = 4.15, min = 3.2) {
-    const start = "#ff5000", end = "#00ff00";
+export function getColor(voltage, dm, max = 4.2, min = 3.2) {
+    let start, end;
+    if (dm) {
+        start = "#af3700";
+        end = "#00a900";
+    } else {
+        start = "#ff5000";
+        end = "#00ff00";
+    }
     // from 3.2 to 4.15
     let factor = (voltage - min) / (max - min);
     return r2h(interpolateHSL(h2r(start), h2r(end), factor));
@@ -44,9 +53,15 @@ const rgb2hsl = function (color) {
         const d = max - min;
         s = (l > 0.5 ? d / (2 - max - min) : d / (max + min));
         switch (max) {
-            case r: h = (g - b) / d + (g < b ? 6 : 0); break;
-            case g: h = (b - r) / d + 2; break;
-            case b: h = (r - g) / d + 4; break;
+            case r:
+                h = (g - b) / d + (g < b ? 6 : 0);
+                break;
+            case g:
+                h = (b - r) / d + 2;
+                break;
+            case b:
+                h = (r - g) / d + 4;
+                break;
         }
         h /= 6;
     }
