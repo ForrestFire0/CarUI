@@ -1,11 +1,13 @@
 <script>
+    import {darkMode} from "./stores";
+
     export let value;
     export let color;
     export let iconPath;
 </script>
 
-<div class="outline">
-    <div class="data" style="height: {value}%; background-color: {color};" />
+<div class="outline" style="border-color: {$darkMode ? '#c5c5c5' : ''}; color: {$darkMode ? '#c5c5c5' : ''};">
+    <div class="data" style="height: {value}%; background-color: {color}; " />
     {value.toFixed(0)}%
 </div>
 
@@ -22,22 +24,23 @@
     .outline {
         height: 16vw;
         width: 90%;
-        border: 1px solid black;
-        border-radius: 1vw;
+        border: 2px solid black;
+        border-radius: 0.5vw;
         position: relative;
         margin: 5%;
         color: black;
         font-size: 1.5vw;
         text-align: center;
         font-weight: bolder;
+        z-index: 2;
     }
     .data {
         width: 100%;
-        border-radius: 1vw;
+        border-radius: 0.5vw;
         position: absolute;
         bottom: 0;
         transition: 2s ease;
-        z-index: -1;
+        z-index: 1;
     }
     @keyframes spin {
         from {

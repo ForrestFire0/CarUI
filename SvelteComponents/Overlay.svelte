@@ -36,17 +36,17 @@
         right: 0;
         bottom: 0;
         background-color: rgba(0, 0, 0, 0.5);
-        z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
+        z-index: 3; /* Specify a stack order in case you're using a different order for other elements */
     }
     .closable {
         cursor: pointer;
     }
 
     .container {
-        margin-top: 20%;
         padding: 5%;
-        margin: auto;
+        margin: auto auto auto auto;
         background-color: white;
         cursor: default;
+        box-shadow: 0 0 10px 10px #3a3a3a;
     }
 </style>
