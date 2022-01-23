@@ -13,6 +13,6 @@
     });
 </script>
 
-<div style="text-align: center; font-size: 3vw; margin-top: 20px; font-weight: bolder; color: {$darkMode ? '#c5c5c5' : ''};">
+<div style="text-align: center; font-size: 3vw; margin-top: 1.2vw; font-weight: bolder; color: {$darkMode ? '#c5c5c5' : ''};">
     {time.toLocaleTimeString()}
 </div>

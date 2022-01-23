@@ -45,10 +45,10 @@ a:visited {
     padding: .2vw;
     background: #cccccc;
     border-radius: 10px;
-    box-shadow: 2px 2px 7px 3px #6B6B6B;
+    box-shadow: .15vw .15vw 7px .23vw #6B6B6B;
     height: min-content;
     transition: background-color 3s ease, box-shadow 3s;
-    border: solid 1px grey;
+    border: solid .08vw grey;
 }
 
 .darkIsland {
@@ -57,10 +57,10 @@ a:visited {
     padding: .2vw;
     background: #383838;
     border-radius: 10px;
-    box-shadow: 5px 5px 8px 2px #2a2a2a;
+    box-shadow: 0.39vw 0.39vw 0.625vw .15vw #2a2a2a;
     height: min-content;
     transition: background-color 3s ease, box-shadow 3s;
-    border: solid 1px #2c2c2c;
+    border: solid .08vw #2c2c2c;
 }
 
 label {
@@ -74,7 +74,7 @@ input, button, select, textarea {
     margin: 0 0 0.5em 0;
     box-sizing: border-box;
     border: 1px solid #ccc;
-    border-radius: 2px;
+    border-radius: .15vw;
 }
 
 input:disabled {
@@ -92,7 +92,7 @@ button {
     width: 6vw;
     height: 3.9vh;
     border-style: solid;
-    border-radius: 5px;
+    border-radius: 0.39vw;
     font-size: 1.3vw;
     background-color: #ff5000;
     font-weight: bolder;
@@ -102,29 +102,24 @@ button {
 .cell::after {
     content : url(./static/resistor.svg);
     display: block;
-    transform: rotate(90deg) translate(-4.093vw, -5.733vh) scale(0.3);
+    transform: rotate(90deg) translate(-4.2vw, -5.733vh) scale(0.3);
     transition: opacity 1s ease;
-    opacity: 100%;
-}
-
-.balancing::after {
     opacity: 0;
 }
 
-
-.darkIsland .balancing::after {
-    color: grey;
+.balancing::after {
+    opacity: 100%;
 }
 
 .cell::before {
     position: relative;
-    transform: translate(-5px, 0);
+    transform: translate(-0.39vw, 0);
     content: "";
     display: block;
     height: 2vh;
     width: .5vh;
     border-style: solid;
-    border-radius: 5px;
+    border-radius: 0.39vw;
     padding-top: .32vw;
     margin-top: .5vh;
     margin-bottom: -2.5vh;
@@ -133,13 +128,14 @@ button {
 .statusBox {
     background-color: lightgrey;
     text-align: left;
-    margin: 5px;
-    padding: 5px;
-    border-radius: 3px;
-    box-shadow: 0 0 6px 2px #343434;
+    margin: .4vw;
+    padding: .4vw;
+    border-radius: .15vw;
+    box-shadow: 0 0 .45vw .1vw #343434;
+    font-size: 1.1vw;
 }
 
 .darkIsland .statusBox {
     background-color: grey;
-    box-shadow: 0 0 8px 2px #2a2a2a;
+    box-shadow: 0 0 .625vw .156vw #2a2a2a;
 }

@@ -35,7 +35,7 @@
 <svelte:window on:resize={resize}/>
 
 <div bind:this={gaugeElement} class="gauge-container" style="height: {height}"/>
-<div style="margin: 0; font-size: {fontSize}; color: {$darkMode ? 'gray(197)' : ''}">{name}</div>
+<div style="margin: 0; font-size: {fontSize}; color: {$darkMode ? '#c5c5c5' : ''}">{name}</div>
 
 <style>
     .gauge-container {
@@ -58,6 +58,6 @@
     .gauge-container > :global(.gauge .value-text) {
         fill: black;
         font-weight: bold;
-        font-size: 3vh;
+        font-size: 1.8vw;
     }
 </style>

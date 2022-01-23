@@ -15,6 +15,6 @@
     textarea {
         height: 15%;
         padding: 2%;
-        font-size: 14px;
+        font-size: 1.1vw;
     }
 </style>
