@@ -1771,12 +1771,12 @@ var app = (function () {
     			t0 = space();
     			div1 = element("div");
     			t1 = text(/*name*/ ctx[0]);
-    			attr_dev(div0, "class", "gauge-container svelte-all3mk");
+    			attr_dev(div0, "class", "gauge-container svelte-1mfgm47");
     			set_style(div0, "height", /*height*/ ctx[2]);
     			add_location(div0, file$a, 36, 0, 1164);
     			set_style(div1, "margin", "0");
     			set_style(div1, "font-size", /*fontSize*/ ctx[3]);
-    			set_style(div1, "color", /*$darkMode*/ ctx[4] ? "gray(197)" : "");
+    			set_style(div1, "color", /*$darkMode*/ ctx[4] ? "#c5c5c5" : "");
     			add_location(div1, file$a, 37, 0, 1246);
     		},
     		l: function claim(nodes) {
@@ -1806,7 +1806,7 @@ var app = (function () {
     			}
 
     			if (dirty & /*$darkMode*/ 16) {
-    				set_style(div1, "color", /*$darkMode*/ ctx[4] ? "gray(197)" : "");
+    				set_style(div1, "color", /*$darkMode*/ ctx[4] ? "#c5c5c5" : "");
     			}
     		},
     		i: noop,
@@ -2526,7 +2526,7 @@ var app = (function () {
     			attr_dev(img, "alt", "yo mama lol");
     			set_style(img, "width", "100%");
     			set_style(img, "animation-play-state", /*value*/ ctx[0] == 0 ? "paused" : "running");
-    			attr_dev(img, "class", "svelte-i9qf7r");
+    			attr_dev(img, "class", "svelte-oh9cq3");
     			add_location(img, file$7, 14, 4, 384);
     		},
     		m: function mount(target, anchor) {
@@ -2578,11 +2578,11 @@ var app = (function () {
     			t3 = space();
     			if (if_block) if_block.c();
     			if_block_anchor = empty();
-    			attr_dev(div0, "class", "data svelte-i9qf7r");
+    			attr_dev(div0, "class", "data svelte-oh9cq3");
     			set_style(div0, "height", /*value*/ ctx[0] + "%");
     			set_style(div0, "background-color", /*color*/ ctx[1]);
     			add_location(div0, file$7, 9, 4, 253);
-    			attr_dev(div1, "class", "outline svelte-i9qf7r");
+    			attr_dev(div1, "class", "outline svelte-oh9cq3");
     			set_style(div1, "border-color", /*$darkMode*/ ctx[3] ? "#c5c5c5" : "");
     			set_style(div1, "color", /*$darkMode*/ ctx[3] ? "#c5c5c5" : "");
     			add_location(div1, file$7, 8, 0, 137);
@@ -2984,7 +2984,7 @@ var app = (function () {
     		c: function create() {
     			textarea_1 = element("textarea");
     			textarea_1.readOnly = true;
-    			attr_dev(textarea_1, "class", textarea_1_class_value = "" + (null_to_empty(/*$darkMode*/ ctx[2] ? "darkIsland" : "island") + " svelte-1qzvdqc"));
+    			attr_dev(textarea_1, "class", textarea_1_class_value = "" + (null_to_empty(/*$darkMode*/ ctx[2] ? "darkIsland" : "island") + " svelte-1l72aks"));
     			set_style(textarea_1, "color", /*$darkMode*/ ctx[2] ? "#c5c5c5" : "black");
     			textarea_1.value = /*text*/ ctx[0];
     			add_location(textarea_1, file$5, 10, 0, 198);
@@ -2997,7 +2997,7 @@ var app = (function () {
     			/*textarea_1_binding*/ ctx[3](textarea_1);
     		},
     		p: function update(ctx, [dirty]) {
-    			if (dirty & /*$darkMode*/ 4 && textarea_1_class_value !== (textarea_1_class_value = "" + (null_to_empty(/*$darkMode*/ ctx[2] ? "darkIsland" : "island") + " svelte-1qzvdqc"))) {
+    			if (dirty & /*$darkMode*/ 4 && textarea_1_class_value !== (textarea_1_class_value = "" + (null_to_empty(/*$darkMode*/ ctx[2] ? "darkIsland" : "island") + " svelte-1l72aks"))) {
     				attr_dev(textarea_1, "class", textarea_1_class_value);
     			}
 
@@ -3132,16 +3132,18 @@ var app = (function () {
     			set_style(h4, "width", "100%");
     			set_style(h4, "text-align", "center");
     			set_style(h4, "font-weight", "bolder");
-    			set_style(h4, "margin", "2px 0 2px 0");
-    			add_location(h4, file$4, 30, 8, 914);
-    			set_style(i, "font-size", "12px");
-    			add_location(i, file$4, 32, 8, 1057);
+    			set_style(h4, "margin", ".156vw 0 .156vw 0");
+    			set_style(h4, "font-size", "1.8vw");
+    			add_location(h4, file$4, 30, 8, 979);
+    			set_style(i, "font-size", ".93vw");
+    			add_location(i, file$4, 32, 8, 1146);
     			set_style(div0, "color", /*$darkMode*/ ctx[1] ? "#c5c5c5" : "");
-    			add_location(div0, file$4, 28, 4, 826);
-    			attr_dev(div1, "class", "container svelte-bxheo8");
+    			set_style(div0, "font-size", "1.3vw");
+    			add_location(div0, file$4, 28, 4, 873);
+    			attr_dev(div1, "class", "container svelte-1ldo26q");
     			set_style(div1, "background", /*$darkMode*/ ctx[1] ? "#383838" : "#cccccc");
-    			set_style(div1, "box-shadow", "5px 5px 8px 2px " + (/*$darkMode*/ ctx[1] ? "#2a2a2a" : "#6B6B6B"));
-    			add_location(div1, file$4, 25, 0, 605);
+    			set_style(div1, "box-shadow", ".39vw .39vw .625vw .156vw " + (/*$darkMode*/ ctx[1] ? "#2a2a2a" : "#6B6B6B"));
+    			add_location(div1, file$4, 25, 0, 642);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -3172,7 +3174,7 @@ var app = (function () {
     			}
 
     			if (dirty & /*$darkMode*/ 2) {
-    				set_style(div1, "box-shadow", "5px 5px 8px 2px " + (/*$darkMode*/ ctx[1] ? "#2a2a2a" : "#6B6B6B"));
+    				set_style(div1, "box-shadow", ".39vw .39vw .625vw .156vw " + (/*$darkMode*/ ctx[1] ? "#2a2a2a" : "#6B6B6B"));
     			}
     		},
     		i: noop,
@@ -3858,7 +3860,7 @@ var app = (function () {
     			t = text(t_value);
     			set_style(div, "text-align", "center");
     			set_style(div, "font-size", "3vw");
-    			set_style(div, "margin-top", "20px");
+    			set_style(div, "margin-top", "1.2vw");
     			set_style(div, "font-weight", "bolder");
     			set_style(div, "color", /*$darkMode*/ ctx[1] ? "#c5c5c5" : "");
     			add_location(div, file$2, 15, 0, 330);
@@ -5200,7 +5202,7 @@ var app = (function () {
     	gauge0 = new Gauge_1({
     			props: {
     				name: "Amps",
-    				value: /*data*/ ctx[0].pC,
+    				value: /*data*/ ctx[0]["pC"],
     				bounds: [-50, 500]
     			},
     			$$inline: true
@@ -5209,7 +5211,7 @@ var app = (function () {
     	gauge1 = new Gauge_1({
     			props: {
     				name: "Power (kW)",
-    				value: Math.abs(/*data*/ ctx[0].pC * /*voltage*/ ctx[3] / 1000),
+    				value: Math.abs(/*data*/ ctx[0]["pC"] * /*voltage*/ ctx[3] / 1000),
     				bounds: [0, 40]
     			},
     			$$inline: true
@@ -5223,13 +5225,13 @@ var app = (function () {
     	gauge2 = new Gauge_1({
     			props: {
     				name: "12V Voltage",
-    				value: /*data*/ ctx[0].tw,
+    				value: /*data*/ ctx[0]["tw"],
     				bounds: [10, 15]
     			},
     			$$inline: true
     		});
 
-    	let if_block = /*data*/ ctx[0].CR && create_if_block_3(ctx);
+    	let if_block = /*data*/ ctx[0]["CR"] && create_if_block_3(ctx);
 
     	const block = {
     		c: function create() {
@@ -5258,7 +5260,7 @@ var app = (function () {
     			set_style(div1, "width", "50%");
     			set_style(div1, "font-weight", "bolder");
     			set_style(div1, "text-align", "center");
-    			add_location(div1, file, 233, 16, 8116);
+    			add_location(div1, file, 233, 16, 8119);
     			set_style(div2, "display", "flex");
     			add_location(div2, file, 226, 12, 7798);
     			attr_dev(div3, "class", div3_class_value = /*$darkMode*/ ctx[20] ? "darkIsland" : "island");
@@ -5266,9 +5268,9 @@ var app = (function () {
     			set_style(div4, "width", "33.3%");
     			set_style(div4, "font-weight", "bolder");
     			set_style(div4, "text-align", "center");
-    			add_location(div4, file, 243, 12, 8535);
+    			add_location(div4, file, 243, 12, 8541);
     			set_style(div5, "display", "flex");
-    			add_location(div5, file, 242, 8, 8493);
+    			add_location(div5, file, 242, 8, 8499);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div3, anchor);
@@ -5296,10 +5298,10 @@ var app = (function () {
     			if (dirty[0] & /*data*/ 1) tempgauge_changes.data = /*data*/ ctx[0].t;
     			tempgauge.$set(tempgauge_changes);
     			const gauge0_changes = {};
-    			if (dirty[0] & /*data*/ 1) gauge0_changes.value = /*data*/ ctx[0].pC;
+    			if (dirty[0] & /*data*/ 1) gauge0_changes.value = /*data*/ ctx[0]["pC"];
     			gauge0.$set(gauge0_changes);
     			const gauge1_changes = {};
-    			if (dirty[0] & /*data, voltage*/ 9) gauge1_changes.value = Math.abs(/*data*/ ctx[0].pC * /*voltage*/ ctx[3] / 1000);
+    			if (dirty[0] & /*data, voltage*/ 9) gauge1_changes.value = Math.abs(/*data*/ ctx[0]["pC"] * /*voltage*/ ctx[3] / 1000);
     			gauge1.$set(gauge1_changes);
 
     			if (!current || dirty[0] & /*$darkMode*/ 1048576 && div3_class_value !== (div3_class_value = /*$darkMode*/ ctx[20] ? "darkIsland" : "island")) {
@@ -5310,10 +5312,10 @@ var app = (function () {
     			if (dirty[0] & /*chargeConsoleText*/ 64) console_1_changes.text = /*chargeConsoleText*/ ctx[6];
     			console_1.$set(console_1_changes);
     			const gauge2_changes = {};
-    			if (dirty[0] & /*data*/ 1) gauge2_changes.value = /*data*/ ctx[0].tw;
+    			if (dirty[0] & /*data*/ 1) gauge2_changes.value = /*data*/ ctx[0]["tw"];
     			gauge2.$set(gauge2_changes);
 
-    			if (/*data*/ ctx[0].CR) {
+    			if (/*data*/ ctx[0]["CR"]) {
     				if (if_block) {
     					if_block.p(ctx, dirty);
 
@@ -5382,7 +5384,7 @@ var app = (function () {
     	return block;
     }
 
-    // (251:8) {#if data.CR}
+    // (251:8) {#if data["CR"]}
     function create_if_block_3(ctx) {
     	let div5;
     	let div0;
@@ -5397,6 +5399,10 @@ var app = (function () {
     	let t3;
     	let div3;
     	let gauge2;
+    	let t4;
+    	let t5_value = (/*data*/ ctx[0]["lcp"] / 1000).toFixed(1) + "";
+    	let t5;
+    	let t6;
     	let div5_class_value;
     	let div5_transition;
     	let current;
@@ -5404,7 +5410,7 @@ var app = (function () {
     	gauge0 = new Gauge_1({
     			props: {
     				name: "AC Voltage",
-    				value: /*data*/ ctx[0].CIV,
+    				value: /*data*/ ctx[0]["CIV"],
     				bounds: [120, 320],
     				colorBounds: [0, 500]
     			},
@@ -5414,9 +5420,9 @@ var app = (function () {
     	gauge1 = new Gauge_1({
     			props: {
     				name: "Temperature",
-    				value: /*data*/ ctx[0].CT * 9 / 5 + 32,
-    				bounds: [50, 120],
-    				colorBounds: [113, 70]
+    				value: /*data*/ ctx[0]["CT"],
+    				bounds: [10, 50],
+    				colorBounds: [45, 21]
     			},
     			$$inline: true
     		});
@@ -5424,7 +5430,7 @@ var app = (function () {
     	gauge2 = new Gauge_1({
     			props: {
     				name: "Current",
-    				value: /*data*/ ctx[0].CC,
+    				value: /*data*/ ctx[0]["CC"],
     				bounds: [0, 40],
     				colorBounds: [0, 20]
     			},
@@ -5446,29 +5452,32 @@ var app = (function () {
     			t3 = space();
     			div3 = element("div");
     			create_component(gauge2.$$.fragment);
+    			t4 = text("\r\n                (");
+    			t5 = text(t5_value);
+    			t6 = text("s)");
     			set_style(div0, "font-size", "20px");
     			set_style(div0, "text-decoration", "underline");
     			set_style(div0, "margin-bottom", "-5px");
     			set_style(div0, "font-weight", "bolder");
     			set_style(div0, "padding", "3px");
     			set_style(div0, "color", /*$darkMode*/ ctx[20] ? "rgb(197, 197, 197)" : "");
-    			add_location(div0, file, 252, 16, 8933);
+    			add_location(div0, file, 252, 16, 8945);
     			set_style(div1, "width", "33.3%");
     			set_style(div1, "font-weight", "bolder");
     			set_style(div1, "text-align", "center");
-    			add_location(div1, file, 256, 20, 9215);
+    			add_location(div1, file, 256, 20, 9227);
     			set_style(div2, "width", "33.3%");
     			set_style(div2, "font-weight", "bolder");
     			set_style(div2, "text-align", "center");
-    			add_location(div2, file, 264, 20, 9602);
+    			add_location(div2, file, 264, 20, 9617);
     			set_style(div3, "width", "33.3%");
     			set_style(div3, "font-weight", "bolder");
     			set_style(div3, "text-align", "center");
-    			add_location(div3, file, 272, 20, 10003);
+    			add_location(div3, file, 272, 20, 10005);
     			set_style(div4, "display", "flex");
-    			add_location(div4, file, 255, 16, 9165);
+    			add_location(div4, file, 255, 16, 9177);
     			attr_dev(div5, "class", div5_class_value = /*$darkMode*/ ctx[20] ? "darkIsland" : "island");
-    			add_location(div5, file, 251, 12, 8829);
+    			add_location(div5, file, 251, 12, 8841);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div5, anchor);
@@ -5484,6 +5493,9 @@ var app = (function () {
     			append_dev(div4, t3);
     			append_dev(div4, div3);
     			mount_component(gauge2, div3, null);
+    			append_dev(div5, t4);
+    			append_dev(div5, t5);
+    			append_dev(div5, t6);
     			current = true;
     		},
     		p: function update(ctx, dirty) {
@@ -5492,14 +5504,15 @@ var app = (function () {
     			}
 
     			const gauge0_changes = {};
-    			if (dirty[0] & /*data*/ 1) gauge0_changes.value = /*data*/ ctx[0].CIV;
+    			if (dirty[0] & /*data*/ 1) gauge0_changes.value = /*data*/ ctx[0]["CIV"];
     			gauge0.$set(gauge0_changes);
     			const gauge1_changes = {};
-    			if (dirty[0] & /*data*/ 1) gauge1_changes.value = /*data*/ ctx[0].CT * 9 / 5 + 32;
+    			if (dirty[0] & /*data*/ 1) gauge1_changes.value = /*data*/ ctx[0]["CT"];
     			gauge1.$set(gauge1_changes);
     			const gauge2_changes = {};
-    			if (dirty[0] & /*data*/ 1) gauge2_changes.value = /*data*/ ctx[0].CC;
+    			if (dirty[0] & /*data*/ 1) gauge2_changes.value = /*data*/ ctx[0]["CC"];
     			gauge2.$set(gauge2_changes);
+    			if ((!current || dirty[0] & /*data*/ 1) && t5_value !== (t5_value = (/*data*/ ctx[0]["lcp"] / 1000).toFixed(1) + "")) set_data_dev(t5, t5_value);
 
     			if (!current || dirty[0] & /*$darkMode*/ 1048576 && div5_class_value !== (div5_class_value = /*$darkMode*/ ctx[20] ? "darkIsland" : "island")) {
     				attr_dev(div5, "class", div5_class_value);
@@ -5539,14 +5552,14 @@ var app = (function () {
     		block,
     		id: create_if_block_3.name,
     		type: "if",
-    		source: "(251:8) {#if data.CR}",
+    		source: "(251:8) {#if data[\\\"CR\\\"]}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (287:4) {#if data}
+    // (288:4) {#if data}
     function create_if_block_1(ctx) {
     	let slider;
     	let current;
@@ -5591,14 +5604,14 @@ var app = (function () {
     		block,
     		id: create_if_block_1.name,
     		type: "if",
-    		source: "(287:4) {#if data}",
+    		source: "(288:4) {#if data}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (321:0) <Overlay bind:shown={showSnake} closable="{false}">
+    // (327:0) <Overlay bind:shown={showSnake} closable="{false} ">
     function create_default_slot_2(ctx) {
     	let snake;
     	let current;
@@ -5632,14 +5645,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_2.name,
     		type: "slot",
-    		source: "(321:0) <Overlay bind:shown={showSnake} closable=\\\"{false}\\\">",
+    		source: "(327:0) <Overlay bind:shown={showSnake} closable=\\\"{false} \\\">",
     		ctx
     	});
 
     	return block;
     }
 
-    // (325:0) <Overlay bind:shown={showC4} closable="{false}">
+    // (331:0) <Overlay bind:shown={showC4} closable="{false}">
     function create_default_slot_1(ctx) {
     	let c4;
     	let current;
@@ -5673,14 +5686,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_1.name,
     		type: "slot",
-    		source: "(325:0) <Overlay bind:shown={showC4} closable=\\\"{false}\\\">",
+    		source: "(331:0) <Overlay bind:shown={showC4} closable=\\\"{false}\\\">",
     		ctx
     	});
 
     	return block;
     }
 
-    // (329:0) <Overlay bind:shown={showSunset}>
+    // (335:0) <Overlay bind:shown={showSunset}>
     function create_default_slot(ctx) {
     	let t0;
     	let t1_value = /*time*/ ctx[1].toLocaleString() + "";
@@ -5737,13 +5750,13 @@ var app = (function () {
     			br3 = element("br");
     			t16 = text(" Current Mode: ");
     			t17 = text(/*$forceMode*/ ctx[21]);
-    			add_location(br0, file, 329, 42, 11856);
-    			add_location(br1, file, 330, 54, 11916);
-    			add_location(br2, file, 331, 52, 11974);
-    			add_location(button0, file, 332, 4, 11984);
-    			add_location(button1, file, 333, 4, 12057);
-    			add_location(button2, file, 334, 4, 12128);
-    			add_location(br3, file, 335, 4, 12202);
+    			add_location(br0, file, 335, 42, 12230);
+    			add_location(br1, file, 336, 54, 12290);
+    			add_location(br2, file, 337, 52, 12348);
+    			add_location(button0, file, 338, 4, 12358);
+    			add_location(button1, file, 339, 4, 12431);
+    			add_location(button2, file, 340, 4, 12502);
+    			add_location(br3, file, 341, 4, 12576);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, t0, anchor);
@@ -5815,14 +5828,14 @@ var app = (function () {
     		block,
     		id: create_default_slot.name,
     		type: "slot",
-    		source: "(329:0) <Overlay bind:shown={showSunset}>",
+    		source: "(335:0) <Overlay bind:shown={showSunset}>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (339:0) {#if showImage}
+    // (345:0) {#if showImage}
     function create_if_block(ctx) {
     	let div;
     	let img;
@@ -5837,10 +5850,10 @@ var app = (function () {
     			attr_dev(img, "height", "100%");
     			if (img.src !== (img_src_value = "static/logo.png")) attr_dev(img, "src", img_src_value);
     			attr_dev(img, "alt", "img");
-    			add_location(img, file, 340, 8, 12373);
+    			add_location(img, file, 346, 8, 12747);
     			attr_dev(div, "id", "photo");
     			set_style(div, "z-index", "5");
-    			add_location(div, file, 339, 4, 12270);
+    			add_location(div, file, 345, 4, 12644);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -5891,7 +5904,7 @@ var app = (function () {
     		block,
     		id: create_if_block.name,
     		type: "if",
-    		source: "(339:0) {#if showImage}",
+    		source: "(345:0) {#if showImage}",
     		ctx
     	});
 
@@ -5917,8 +5930,8 @@ var app = (function () {
     	let div2;
     	let clock;
     	let t5;
-    	let img;
-    	let img_src_value;
+    	let img0;
+    	let img0_src_value;
     	let div2_class_value;
     	let t6;
     	let div5;
@@ -5941,23 +5954,31 @@ var app = (function () {
     	let t14;
     	let div9;
     	let button0;
-    	let t16;
+    	let img1;
+    	let img1_src_value;
+    	let t15;
     	let button1;
-    	let t18;
+    	let img2;
+    	let img2_src_value;
+    	let t16;
     	let button2;
-    	let t20;
+    	let img3;
+    	let img3_src_value;
+    	let t17;
     	let button3;
+    	let img4;
+    	let img4_src_value;
     	let div9_class_value;
-    	let t22;
+    	let t18;
     	let overlay2;
     	let updating_shown_3;
-    	let t23;
+    	let t19;
     	let overlay3;
     	let updating_shown_4;
-    	let t24;
+    	let t20;
     	let overlay4;
     	let updating_shown_5;
-    	let t25;
+    	let t21;
     	let if_block4_anchor;
     	let current;
     	let mounted;
@@ -6041,7 +6062,7 @@ var app = (function () {
     	}
 
     	let overlay2_props = {
-    		closable: false,
+    		closable: "" + (false + " "),
     		$$slots: { default: [create_default_slot_2] },
     		$$scope: { ctx }
     	};
@@ -6105,7 +6126,7 @@ var app = (function () {
     			div2 = element("div");
     			create_component(clock.$$.fragment);
     			t5 = space();
-    			img = element("img");
+    			img0 = element("img");
     			t6 = space();
     			div5 = element("div");
     			div3 = element("div");
@@ -6127,23 +6148,23 @@ var app = (function () {
     			t14 = space();
     			div9 = element("div");
     			button0 = element("button");
-    			button0.textContent = "🐍";
-    			t16 = space();
+    			img1 = element("img");
+    			t15 = space();
     			button1 = element("button");
-    			button1.textContent = "🔵";
-    			t18 = space();
+    			img2 = element("img");
+    			t16 = space();
     			button2 = element("button");
-    			button2.textContent = "🎵";
-    			t20 = space();
+    			img3 = element("img");
+    			t17 = space();
     			button3 = element("button");
-    			button3.textContent = "🌄";
-    			t22 = space();
+    			img4 = element("img");
+    			t18 = space();
     			create_component(overlay2.$$.fragment);
-    			t23 = space();
+    			t19 = space();
     			create_component(overlay3.$$.fragment);
-    			t24 = space();
+    			t20 = space();
     			create_component(overlay4.$$.fragment);
-    			t25 = space();
+    			t21 = space();
     			if (if_block4) if_block4.c();
     			if_block4_anchor = empty();
     			attr_dev(div0, "id", "cells");
@@ -6153,12 +6174,12 @@ var app = (function () {
     			set_style(div1, "text-align", "center");
     			set_style(div1, "font-weight", "bolder");
     			add_location(div1, file, 167, 0, 5853);
-    			if (img.src !== (img_src_value = "./static/export.png")) attr_dev(img, "src", img_src_value);
-    			attr_dev(img, "width", "100%");
-    			attr_dev(img, "alt", "car logo");
-    			set_style(img, "transition", "3s ease");
-    			set_style(img, "opacity", /*$darkMode*/ ctx[20] ? "75%" : "");
-    			add_location(img, file, 196, 8, 6843);
+    			if (img0.src !== (img0_src_value = "./static/export.png")) attr_dev(img0, "src", img0_src_value);
+    			attr_dev(img0, "width", "100%");
+    			attr_dev(img0, "alt", "car logo");
+    			set_style(img0, "transition", "3s ease");
+    			set_style(img0, "opacity", /*$darkMode*/ ctx[20] ? "75%" : "");
+    			add_location(img0, file, 196, 8, 6843);
     			attr_dev(div2, "class", div2_class_value = /*$darkMode*/ ctx[20] ? "darkIsland" : "island");
     			add_location(div2, file, 193, 4, 6741);
 
@@ -6177,22 +6198,34 @@ var app = (function () {
     			add_location(div6, file, 192, 0, 6682);
     			add_location(div7, file, 222, 0, 7662);
     			attr_dev(div8, "class", div8_class_value = /*$darkMode*/ ctx[20] ? "darkIsland" : "island");
-    			add_location(div8, file, 285, 0, 10416);
-    			attr_dev(button0, "class", "but svelte-49j7yi");
+    			add_location(div8, file, 286, 0, 10475);
+    			if (img1.src !== (img1_src_value = "./static/snake.svg")) attr_dev(img1, "src", img1_src_value);
+    			attr_dev(img1, "alt", "snake");
+    			add_location(img1, file, 315, 85, 11282);
+    			attr_dev(button0, "class", "but svelte-twt6m2");
     			toggle_class(button0, "dark", /*$darkMode*/ ctx[20]);
-    			add_location(button0, file, 313, 8, 11124);
-    			attr_dev(button1, "class", "but svelte-49j7yi");
+    			add_location(button0, file, 315, 8, 11205);
+    			if (img2.src !== (img2_src_value = "./static/c4.svg")) attr_dev(img2, "src", img2_src_value);
+    			attr_dev(img2, "alt", "c4");
+    			add_location(img2, file, 317, 82, 11434);
+    			attr_dev(button1, "class", "but svelte-twt6m2");
     			toggle_class(button1, "dark", /*$darkMode*/ ctx[20]);
-    			add_location(button1, file, 314, 8, 11222);
-    			attr_dev(button2, "class", "but svelte-49j7yi");
+    			add_location(button1, file, 317, 8, 11360);
+    			if (img3.src !== (img3_src_value = "./static/music.svg")) attr_dev(img3, "src", img3_src_value);
+    			attr_dev(img3, "alt", "music");
+    			add_location(img3, file, 319, 99, 11590);
+    			attr_dev(button2, "class", "but svelte-twt6m2");
     			toggle_class(button2, "dark", /*$darkMode*/ ctx[20]);
-    			add_location(button2, file, 315, 8, 11317);
-    			attr_dev(button3, "class", "but svelte-49j7yi");
+    			add_location(button2, file, 319, 8, 11499);
+    			if (img4.src !== (img4_src_value = "./static/sunset.svg")) attr_dev(img4, "src", img4_src_value);
+    			attr_dev(img4, "alt", "sunset");
+    			add_location(img4, file, 321, 86, 11746);
+    			attr_dev(button3, "class", "but svelte-twt6m2");
     			toggle_class(button3, "dark", /*$darkMode*/ ctx[20]);
-    			add_location(button3, file, 316, 8, 11429);
+    			add_location(button3, file, 321, 8, 11668);
     			attr_dev(div9, "class", div9_class_value = /*$darkMode*/ ctx[20] ? "darkIsland" : "island");
-    			add_location(div9, file, 312, 4, 11063);
-    			add_location(div10, file, 310, 0, 11032);
+    			add_location(div9, file, 314, 4, 11144);
+    			add_location(div10, file, 312, 0, 11113);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -6214,7 +6247,7 @@ var app = (function () {
     			append_dev(div6, div2);
     			mount_component(clock, div2, null);
     			append_dev(div2, t5);
-    			append_dev(div2, img);
+    			append_dev(div2, img0);
     			append_dev(div6, t6);
     			append_dev(div6, div5);
     			append_dev(div5, div3);
@@ -6236,19 +6269,23 @@ var app = (function () {
     			append_dev(div10, t14);
     			append_dev(div10, div9);
     			append_dev(div9, button0);
-    			append_dev(div9, t16);
+    			append_dev(button0, img1);
+    			append_dev(div9, t15);
     			append_dev(div9, button1);
-    			append_dev(div9, t18);
+    			append_dev(button1, img2);
+    			append_dev(div9, t16);
     			append_dev(div9, button2);
-    			append_dev(div9, t20);
+    			append_dev(button2, img3);
+    			append_dev(div9, t17);
     			append_dev(div9, button3);
-    			insert_dev(target, t22, anchor);
+    			append_dev(button3, img4);
+    			insert_dev(target, t18, anchor);
     			mount_component(overlay2, target, anchor);
-    			insert_dev(target, t23, anchor);
+    			insert_dev(target, t19, anchor);
     			mount_component(overlay3, target, anchor);
-    			insert_dev(target, t24, anchor);
+    			insert_dev(target, t20, anchor);
     			mount_component(overlay4, target, anchor);
-    			insert_dev(target, t25, anchor);
+    			insert_dev(target, t21, anchor);
     			if (if_block4) if_block4.m(target, anchor);
     			insert_dev(target, if_block4_anchor, anchor);
     			current = true;
@@ -6346,7 +6383,7 @@ var app = (function () {
     			}
 
     			if (!current || dirty[0] & /*$darkMode*/ 1048576) {
-    				set_style(img, "opacity", /*$darkMode*/ ctx[20] ? "75%" : "");
+    				set_style(img0, "opacity", /*$darkMode*/ ctx[20] ? "75%" : "");
     			}
 
     			if (!current || dirty[0] & /*$darkMode*/ 1048576 && div2_class_value !== (div2_class_value = /*$darkMode*/ ctx[20] ? "darkIsland" : "island")) {
@@ -6573,13 +6610,13 @@ var app = (function () {
     			if (detaching) detach_dev(t13);
     			if (detaching) detach_dev(div10);
     			destroy_component(ledselector);
-    			if (detaching) detach_dev(t22);
+    			if (detaching) detach_dev(t18);
     			destroy_component(overlay2, detaching);
-    			if (detaching) detach_dev(t23);
+    			if (detaching) detach_dev(t19);
     			destroy_component(overlay3, detaching);
-    			if (detaching) detach_dev(t24);
+    			if (detaching) detach_dev(t20);
     			destroy_component(overlay4, detaching);
-    			if (detaching) detach_dev(t25);
+    			if (detaching) detach_dev(t21);
     			if (if_block4) if_block4.d(detaching);
     			if (detaching) detach_dev(if_block4_anchor);
     			mounted = false;

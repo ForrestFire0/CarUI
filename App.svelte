@@ -228,13 +228,13 @@
                 <div style="width:50%; font-weight: bolder; text-align: center;">
                     <Gauge
                             name="Amps"
-                            value={data.pC}
+                            value={data["pC"]}
                             bounds={[-50, 500]}/>
                 </div>
                 <div style="width:50%; font-weight: bolder; text-align: center;">
                     <Gauge
                             name="Power (kW)"
-                            value={Math.abs((data.pC * voltage) / 1000)}
+                            value={Math.abs((data["pC"] * voltage) / 1000)}
                             bounds={[0, 40]}/>
                 </div>
             </div>
@@ -244,11 +244,11 @@
             <div style="width:33.3%; font-weight: bolder; text-align: center;">
                 <Gauge
                         name="12V Voltage"
-                        value={data.tw}
+                        value={data["tw"]}
                         bounds={[10, 15]}/>
             </div>
         </div>
-        {#if data.CR}
+        {#if data["CR"]}
             <div transition:fade={{duration: 3000}} class="{$darkMode ? 'darkIsland' : 'island'}">
                 <div style="font-size: 20px; text-decoration: underline; margin-bottom: -5px; font-weight: bolder; padding: 3px; color: {$darkMode ? 'rgb(197, 197, 197)' : ''}">
                     Charger
@@ -257,7 +257,7 @@
                     <div style="width:33.3%; font-weight: bolder; text-align: center;">
                         <Gauge
                                 name="AC Voltage"
-                                value={data.CIV}
+                                value={data["CIV"]}
                                 bounds={[120, 320]}
                                 colorBounds={[0, 500]}
                         />
@@ -265,19 +265,20 @@
                     <div style="width:33.3%; font-weight: bolder; text-align: center;">
                         <Gauge
                                 name="Temperature"
-                                value={(data.CT *  9/5) + 32}
-                                bounds={[50, 120]}
-                                colorBounds={[113, 70]}
+                                value={data["CT"]}
+                                bounds={[10, 50]}
+                                colorBounds={[45, 21]}
                         />
                     </div>
                     <div style="width:33.3%; font-weight: bolder; text-align: center;">
                         <Gauge
                                 name="Current"
-                                value={data.CC}
+                                value={data["CC"]}
                                 bounds={[0, 40]}
                                 colorBounds={[0, 20]}/>
                     </div>
                 </div>
+                ({(data["lcp"] / 1000).toFixed(1)}s)
             </div>
         {/if}
     {/if}
@@ -292,7 +293,8 @@
 <style>
     .but {
         border: 1px grey solid;
-        margin: 3px;
+        margin: 2.5%;
+        width: 18%;
         padding: .2vw;
         background: #cccccc;
         border-radius: 3px;
@@ -311,14 +313,18 @@
 <div>
     <LEDSelector/>
     <div class="{$darkMode ? 'darkIsland' : 'island'}">
-        <button on:click={() => showSnake = true} class="but" class:dark={$darkMode}>🐍</button>
-        <button on:click={() => showC4 = true} class="but" class:dark={$darkMode}>🔵</button>
-        <button on:click={() => ipcRenderer.send('show_music')} class="but" class:dark={$darkMode}>🎵</button>
-        <button on:click={() => showSunset = true} class="but" class:dark={$darkMode}>🌄</button>
+        <button on:click={() => showSnake = true} class="but" class:dark={$darkMode}><img
+                src="./static/snake.svg" alt="snake"></button>
+        <button on:click={() => showC4 = true} class="but" class:dark={$darkMode}><img src="./static/c4.svg" alt="c4">
+        </button>
+        <button on:click={() => ipcRenderer.send('show_music')} class="but" class:dark={$darkMode}><img
+                src="./static/music.svg" alt="music"></button>
+        <button on:click={() => showSunset = true} class="but" class:dark={$darkMode}><img src="./static/sunset.svg"
+                                                                                           alt="sunset"></button>
     </div>
 </div>
 
-<Overlay bind:shown={showSnake} closable="{false}">
+<Overlay bind:shown={showSnake} closable="{false} ">
     <Snake on:closeOverlay={() => showSnake = false}/>
 </Overlay>
 

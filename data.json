@@ -57,6 +57,7 @@
     "COV": 70.37,
     "CT": 21,
     "CD": true,
-    "CR": false,
+    "CR": true,
+    "lcp": 500,
     "tw": 13.56
 }

@@ -24,7 +24,7 @@
     .outline {
         height: 16vw;
         width: 90%;
-        border: 2px solid black;
+        border: .16vw solid black;
         border-radius: 0.5vw;
         position: relative;
         margin: 5%;
