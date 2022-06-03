@@ -14,7 +14,14 @@
     import Clock from './SvelteComponents/Clock.svelte';
 
     import {getColor} from "./graphicstwo";
-    import {darkMode, today_sunset, today_sunrise, forceMode} from "./SvelteComponents/stores";
+    import {
+        darkMode,
+        today_sunset,
+        today_sunrise,
+        forceMode,
+        timeOffset,
+        twelveCorrectiveFactor
+    } from "./SvelteComponents/stores";
     import C4 from "./SvelteComponents/C4.svelte";
 
     const {ipcRenderer} = require("electron");
@@ -29,7 +36,7 @@
     let chargeConsoleText = "";
     onMount(() => {
         const interval = setInterval(() => {
-            time = new Date();
+            time = new Date(new Date().getTime()+ $timeOffset * 60 * 60 * 1000);
         }, 1000);
         ipcRenderer.send("ready_for_data");
         console.log("1) Sent ready");
@@ -61,15 +68,15 @@
             messageShown = false;
             _data.f = Math.round(_data.f * 100 / 256);
             data = _data;
-            status = "Got last data " + new Date().toLocaleTimeString();
+            status = "Got last data " + (new Date(new Date().getTime()+ $timeOffset * 60 * 60 * 1000)).toLocaleTimeString();
 
 
             const options = ["Waiting for plug", "Plugged in, not charging", "Charging paused, balancing cells", "Charging!", "Waiting For Charger"];
             if (chargeStatus !== options[_data.ch]) {
                 chargeStatus = options[_data.ch];
-                chargeConsoleText += new Date().toLocaleTimeString() + " " + chargeStatus + '\n'
+                chargeConsoleText += (new Date(new Date().getTime()+ $timeOffset * 60 * 60 * 1000)).toLocaleTimeString() + " " + chargeStatus + '\n'
             }
-            lastUpdateDate = new Date();
+            lastUpdateDate = new Date(new Date().getTime()+ $timeOffset * 60 * 60 * 1000);
         } else if (_data.s === "bms_error") {
             console.log("BMS Error: " + _data.error);
         } else if (_data.s === "log") {
@@ -102,6 +109,7 @@
     let showSnake = false;
     let showC4 = false;
     let showSunset = false;
+    let showSettings = false;
 </script>
 
 <Overlay bind:shown={errOverlay}>
@@ -244,7 +252,7 @@
             <div style="width:33.3%; font-weight: bolder; text-align: center;">
                 <Gauge
                         name="12V Voltage"
-                        value={data["tw"]}
+                        value={data["tw"] * $twelveCorrectiveFactor}
                         bounds={[10, 15]}/>
             </div>
         </div>
@@ -317,10 +325,10 @@
                 src="./static/snake.svg" alt="snake"></button>
         <button on:click={() => showC4 = true} class="but" class:dark={$darkMode}><img src="./static/c4.svg" alt="c4">
         </button>
-        <button on:click={() => ipcRenderer.send('show_music')} class="but" class:dark={$darkMode}><img
-                src="./static/music.svg" alt="music"></button>
         <button on:click={() => showSunset = true} class="but" class:dark={$darkMode}><img src="./static/sunset.svg"
                                                                                            alt="sunset"></button>
+        <button on:click={() => showSettings = true} class="but" class:dark={$darkMode}><img
+                src="./static/details.svg" alt="details"></button>
     </div>
 </div>
 
@@ -340,6 +348,14 @@
     <button on:click={() => forceMode.set('Dark')}>Dark Mode</button>
     <button on:click={() => forceMode.set('Adaptive')}>Adaptive</button>
     <br> Current Mode: {$forceMode}
+    Time Offset: {$timeOffset} Hours
+    <input type="button" on:click={() => timeOffset.update(e => e + 1)} value="+">
+    <input type="button" on:click={() => timeOffset.update(e => e - 1)} value="-">
+</Overlay>
+
+<Overlay bind:shown={showSettings}>
+    Corrective Factor for 12V Sensor: <input type="number" bind:value={$twelveCorrectiveFactor}> <br>
+    Current Value: {(data["tw"] * $twelveCorrectiveFactor).toFixed(2)}
 </Overlay>
 
 {#if showImage}

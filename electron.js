@@ -1,10 +1,9 @@
 if (require('electron-squirrel-startup')) return app.quit();
 
-const {windowManager} = require("node-window-manager");
 const {app, BrowserWindow} = require('electron')
 const {ipcMain} = require('electron')
 
-let send_fake_data, fs, SerialPort, Readline, port, am_window, el_window;
+let send_fake_data, fs, SerialPort, Readline, port;
 
 if (process.env.COMPUTERNAME === "FORRESTS-LAPTOP" && process.env.fakeData) {
     console.log("Sending Fake Data")
@@ -106,17 +105,17 @@ function parseAndSend(string) {
         jsonData = JSON.parse(string);
         const excluded = ['ch']
         if (send_fake_data) {
-            for (const [key, value] of Object.entries(jsonData)) {
-                if (!excluded.includes(key)) {
-                    if (typeof value === 'number')
-                        jsonData[key] = (Math.random() - 0.5) * value * 0.05 + value;
-                    if (typeof value === 'object')
-                        for (const [k, v] of Object.entries(value)) {
-                            if (typeof v === 'number')
-                                value[k] = (Math.random() - 0.5) * v * 0.05 + v;
-                        }
-                }
-            }
+            // for (const [key, value] of Object.entries(jsonData)) {
+            //     if (!excluded.includes(key)) {
+            //         if (typeof value === 'number')
+            //             jsonData[key] = (Math.random() - 0.5) * value * 0.05 + value;
+            //         if (typeof value === 'object')
+            //             for (const [k, v] of Object.entries(value)) {
+            //                 if (typeof v === 'number')
+            //                     value[k] = (Math.random() - 0.5) * v * 0.05 + v;
+            //             }
+            //     }
+            // }
             jsonData['fake'] = true
         }
         // console.log(Date.now() + ' Got Data')
@@ -132,17 +131,7 @@ function sendError(err) {
     win.webContents.send('error', err)
 }
 
-app.whenReady().then(createWindow).then(
-    () => setTimeout(
-        () => {
-            console.log('Looking for Electron...')
-            while ((el_window = windowManager.getWindows().find(e => e.isVisible() && e.getTitle().toLowerCase().includes('car ui'))) === undefined) ;
-            console.log("Found Electron");
-
-            ipcMain.on('show_music', showAmazonMusic);
-        },
-        500)
-);
+app.whenReady().then(createWindow)
 
 
 app.on('window-all-closed', () => {
@@ -151,19 +140,3 @@ app.on('window-all-closed', () => {
         app.quit()
     }
 })
-
-/** Resizes and positions Amazon Music based on the other window. */
-function showAmazonMusic() {
-    if ((am_window = windowManager.getWindows().find(e => e.isVisible() && e.getTitle() === 'Amazon Music')) === undefined) return sendError('Could not find amazon music.')
-    const el_bounds = el_window.getBounds();
-    const startX = 0.6, endX = 1, startY = 0.6, endY = 1;
-    const x = el_bounds.x + startX * el_bounds.width;
-    const y = el_bounds.y + startY * el_bounds.height;
-    const width = el_bounds.width * (endX - startX)
-    const height = el_bounds.height * (endY - startY)
-    am_window.bringToTop()
-    am_window.setBounds({x, y, width, height})
-}
-
-function hideAmazonMusic() {
-}
