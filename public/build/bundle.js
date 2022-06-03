@@ -1729,28 +1729,64 @@ var app = (function () {
     }());
     });
 
-    const times = suncalc.getTimes(new Date(), 39.1532, -77.0669);
+    /**
+     * @param {string} localStorageKey The localStorageKey this should be saved under.
+     * @param initial The initial value.
+     * @returns A writable store, with a get method.
+     *  If the initial value is an array, the push method is added.
+     *  If the initial value is a date, the value when read from local storage is parsed into a date.
+     */
+    function storable(localStorageKey, initial) {
+        if (typeof storable.usedKeys == 'undefined') {
+            // It has not... perform the initialization
+            storable.usedKeys = [];
+        }
+        if (storable.usedKeys.includes(localStorageKey)) {
+            console.log('Err: cannot use the same key');
+        }
+        storable.usedKeys.push();
+        let initial_value = JSON.parse(localStorage[localStorageKey] ? localStorage[localStorageKey] : JSON.stringify(initial));
+        if (initial instanceof Date) {
+            console.log(initial_value);
+            const b = initial_value.split(/\D+/);
+            initial_value = new Date(Date.UTC(b[0], --b[1], b[2], b[3], b[4], b[5], b[6]));
+        }
+        const ret = writable(initial_value);
+        ret.subscribe((value) => localStorage.setItem(localStorageKey, JSON.stringify(value)));
+        if (Array.isArray(initial_value)) {
+            ret.push = (push_me) => ret.update(e => {
+                e.push(push_me);
+                return e;
+            });
+        }
+        ret.get = () => get_store_value(ret);
+        return ret;
+    }
+    const timeOffset = storable('timeOffset', 0);
+    const times = suncalc.getTimes(new Date(new Date().getTime() + timeOffset.get() * 60 * 60 * 1000), 39.1532, -77.0669);
     let today_sunset = times.sunset;
     let today_sunrise = times.sunrise;
 
     const darkMode = readable(new Date() <= today_sunrise || new Date() > today_sunset, set => {
-            const update = () => {
-                let dm, now = new Date();
-                if (get_store_value(forceMode) === 'Light') dm = false;
-                else if (get_store_value(forceMode) === 'Dark') dm = true;
-                else if (get_store_value(forceMode) === 'Adaptive') {
-                    const times = suncalc.getTimes(now, 39.1532, -77.0669);
-                    today_sunset = times.sunset;
-                    today_sunrise = times.sunrise;
-                    dm = (now <= today_sunrise || now > today_sunset);
-                }
-                set(dm);
-                window.document.body.style.backgroundColor = dm ? '#42514f' : '';
-            };
-            update();
-            const interval = setInterval(update, 1000);
-            return () => clearInterval(interval);
-        });
+        const update = () => {
+            let dm, now = new Date(new Date().getTime() + timeOffset.get() * 60 * 60 * 1000);
+            if (get_store_value(forceMode) === 'Light') dm = false;
+            else if (get_store_value(forceMode) === 'Dark') dm = true;
+            else if (get_store_value(forceMode) === 'Adaptive') {
+                const times = suncalc.getTimes(now, 39.1532, -77.0669);
+                today_sunset = times.sunset;
+                today_sunrise = times.sunrise;
+                dm = (now <= today_sunrise || now > today_sunset);
+            }
+            set(dm);
+            window.document.body.style.backgroundColor = dm ? '#42514f' : '';
+        };
+        update();
+        const interval = setInterval(update, 1000);
+        return () => clearInterval(interval);
+    });
+
+    const twelveCorrectiveFactor = storable('timeOffset', 1);
 
     const forceMode = writable('Adaptive');
 
@@ -3863,7 +3899,7 @@ var app = (function () {
     			set_style(div, "margin-top", "1.2vw");
     			set_style(div, "font-weight", "bolder");
     			set_style(div, "color", /*$darkMode*/ ctx[1] ? "#c5c5c5" : "");
-    			add_location(div, file$2, 15, 0, 330);
+    			add_location(div, file$2, 15, 0, 444);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -3898,17 +3934,20 @@ var app = (function () {
     }
 
     function instance$2($$self, $$props, $$invalidate) {
+    	let $timeOffset;
     	let $darkMode;
+    	validate_store(timeOffset, "timeOffset");
+    	component_subscribe($$self, timeOffset, $$value => $$invalidate(2, $timeOffset = $$value));
     	validate_store(darkMode, "darkMode");
     	component_subscribe($$self, darkMode, $$value => $$invalidate(1, $darkMode = $$value));
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots("Clock", slots, []);
-    	let time = new Date();
+    	let time = new Date(new Date().getTime() + $timeOffset * 60 * 60 * 1000);
 
     	onMount(() => {
     		const interval = setInterval(
     			() => {
-    				$$invalidate(0, time = new Date());
+    				$$invalidate(0, time = new Date(new Date().getTime() + $timeOffset * 60 * 60 * 1000));
     			},
     			330
     		);
@@ -3924,7 +3963,14 @@ var app = (function () {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console.warn(`<Clock> was created with unknown prop '${key}'`);
     	});
 
-    	$$self.$capture_state = () => ({ onMount, darkMode, time, $darkMode });
+    	$$self.$capture_state = () => ({
+    		onMount,
+    		darkMode,
+    		timeOffset,
+    		time,
+    		$timeOffset,
+    		$darkMode
+    	});
 
     	$$self.$inject_state = $$props => {
     		if ("time" in $$props) $$invalidate(0, time = $$props.time);
@@ -4566,19 +4612,19 @@ var app = (function () {
 
     function get_each_context(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[45] = list[i];
-    	child_ctx[47] = i;
+    	child_ctx[52] = list[i];
+    	child_ctx[54] = i;
     	return child_ctx;
     }
 
     function get_each_context_1(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[48] = list[i];
+    	child_ctx[55] = list[i];
     	return child_ctx;
     }
 
-    // (107:0) <Overlay bind:shown={errOverlay}>
-    function create_default_slot_5(ctx) {
+    // (115:0) <Overlay bind:shown={errOverlay}>
+    function create_default_slot_6(ctx) {
     	let t;
 
     	const block = {
@@ -4598,16 +4644,16 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_default_slot_5.name,
+    		id: create_default_slot_6.name,
     		type: "slot",
-    		source: "(107:0) <Overlay bind:shown={errOverlay}>",
+    		source: "(115:0) <Overlay bind:shown={errOverlay}>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (119:8) {:else }
+    // (127:8) {:else }
     function create_else_block(ctx) {
     	let i;
 
@@ -4615,7 +4661,7 @@ var app = (function () {
     		c: function create() {
     			i = element("i");
     			i.textContent = "No Ports Found...";
-    			add_location(i, file, 119, 12, 4390);
+    			add_location(i, file, 127, 12, 4722);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, i, anchor);
@@ -4630,14 +4676,14 @@ var app = (function () {
     		block,
     		id: create_else_block.name,
     		type: "else",
-    		source: "(119:8) {:else }",
+    		source: "(127:8) {:else }",
     		ctx
     	});
 
     	return block;
     }
 
-    // (115:8) {#if availablePorts.length !== 0}
+    // (123:8) {#if availablePorts.length !== 0}
     function create_if_block_6(ctx) {
     	let each_1_anchor;
     	let each_value_1 = /*availablePorts*/ ctx[14];
@@ -4698,30 +4744,30 @@ var app = (function () {
     		block,
     		id: create_if_block_6.name,
     		type: "if",
-    		source: "(115:8) {#if availablePorts.length !== 0}",
+    		source: "(123:8) {#if availablePorts.length !== 0}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (116:12) {#each availablePorts as port}
+    // (124:12) {#each availablePorts as port}
     function create_each_block_1(ctx) {
     	let div;
-    	let t_value = /*port*/ ctx[48] + "";
+    	let t_value = /*port*/ ctx[55] + "";
     	let t;
     	let mounted;
     	let dispose;
 
     	function click_handler() {
-    		return /*click_handler*/ ctx[25](/*port*/ ctx[48]);
+    		return /*click_handler*/ ctx[28](/*port*/ ctx[55]);
     	}
 
     	const block = {
     		c: function create() {
     			div = element("div");
     			t = text(t_value);
-    			add_location(div, file, 116, 16, 4287);
+    			add_location(div, file, 124, 16, 4619);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -4734,7 +4780,7 @@ var app = (function () {
     		},
     		p: function update(new_ctx, dirty) {
     			ctx = new_ctx;
-    			if (dirty[0] & /*availablePorts*/ 16384 && t_value !== (t_value = /*port*/ ctx[48] + "")) set_data_dev(t, t_value);
+    			if (dirty[0] & /*availablePorts*/ 16384 && t_value !== (t_value = /*port*/ ctx[55] + "")) set_data_dev(t, t_value);
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(div);
@@ -4747,15 +4793,15 @@ var app = (function () {
     		block,
     		id: create_each_block_1.name,
     		type: "each",
-    		source: "(116:12) {#each availablePorts as port}",
+    		source: "(124:12) {#each availablePorts as port}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (111:0) <Overlay bind:shown={showOverlay} closable={false}>
-    function create_default_slot_4(ctx) {
+    // (119:0) <Overlay bind:shown={showOverlay} closable={false}>
+    function create_default_slot_5(ctx) {
     	let h1;
     	let t1;
     	let div0;
@@ -4798,29 +4844,29 @@ var app = (function () {
     			input2 = element("input");
     			t7 = space();
     			input3 = element("input");
-    			add_location(h1, file, 111, 4, 4106);
-    			add_location(div0, file, 112, 4, 4148);
-    			add_location(div1, file, 113, 4, 4177);
+    			add_location(h1, file, 119, 4, 4438);
+    			add_location(div0, file, 120, 4, 4480);
+    			add_location(div1, file, 121, 4, 4509);
     			set_style(input0, "padding", "10px");
     			set_style(input0, "font-size", "20px");
     			attr_dev(input0, "type", "button");
     			input0.value = "Add 'COM'";
-    			add_location(input0, file, 122, 4, 4447);
+    			add_location(input0, file, 130, 4, 4779);
     			set_style(input1, "padding", "10px");
     			set_style(input1, "font-size", "20px");
     			attr_dev(input1, "type", "text");
     			attr_dev(input1, "id", "portsSelect");
-    			add_location(input1, file, 127, 4, 4632);
+    			add_location(input1, file, 135, 4, 4964);
     			set_style(input2, "padding", "10px");
     			set_style(input2, "font-size", "20px");
     			attr_dev(input2, "type", "button");
     			input2.value = "Submit";
-    			add_location(input2, file, 132, 4, 4789);
+    			add_location(input2, file, 140, 4, 5121);
     			set_style(input3, "padding", "10px");
     			set_style(input3, "font-size", "20px");
     			attr_dev(input3, "type", "button");
     			input3.value = "Refresh";
-    			add_location(input3, file, 140, 4, 5021);
+    			add_location(input3, file, 148, 4, 5353);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, h1, anchor);
@@ -4841,10 +4887,10 @@ var app = (function () {
 
     			if (!mounted) {
     				dispose = [
-    					listen_dev(input0, "click", /*click_handler_1*/ ctx[26], false, false, false),
-    					listen_dev(input1, "input", /*input1_input_handler*/ ctx[27]),
-    					listen_dev(input2, "click", /*click_handler_2*/ ctx[28], false, false, false),
-    					listen_dev(input3, "click", /*click_handler_3*/ ctx[29], false, false, false)
+    					listen_dev(input0, "click", /*click_handler_1*/ ctx[29], false, false, false),
+    					listen_dev(input1, "input", /*input1_input_handler*/ ctx[30]),
+    					listen_dev(input2, "click", /*click_handler_2*/ ctx[31], false, false, false),
+    					listen_dev(input3, "click", /*click_handler_3*/ ctx[32], false, false, false)
     				];
 
     				mounted = true;
@@ -4889,17 +4935,17 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_default_slot_4.name,
+    		id: create_default_slot_5.name,
     		type: "slot",
-    		source: "(111:0) <Overlay bind:shown={showOverlay} closable={false}>",
+    		source: "(119:0) <Overlay bind:shown={showOverlay} closable={false}>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (151:0) <Message          bind:shown={messageShown}          onClose={() => ipcRenderer.send("ready_for_data")}  >
-    function create_default_slot_3(ctx) {
+    // (159:0) <Message          bind:shown={messageShown}          onClose={() => ipcRenderer.send("ready_for_data")}  >
+    function create_default_slot_4(ctx) {
     	let html_tag;
     	let html_anchor;
 
@@ -4923,16 +4969,16 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_default_slot_3.name,
+    		id: create_default_slot_4.name,
     		type: "slot",
-    		source: "(151:0) <Message          bind:shown={messageShown}          onClose={() => ipcRenderer.send(\\\"ready_for_data\\\")}  >",
+    		source: "(159:0) <Message          bind:shown={messageShown}          onClose={() => ipcRenderer.send(\\\"ready_for_data\\\")}  >",
     		ctx
     	});
 
     	return block;
     }
 
-    // (157:4) {#if data?.c}
+    // (165:4) {#if data?.c}
     function create_if_block_5(ctx) {
     	let each_1_anchor;
     	let each_value = /*data*/ ctx[0].c;
@@ -4959,7 +5005,7 @@ var app = (function () {
     			insert_dev(target, each_1_anchor, anchor);
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty[0] & /*data, $darkMode, bS*/ 1572865) {
+    			if (dirty[0] & /*data, $darkMode, bS*/ 5242881) {
     				each_value = /*data*/ ctx[0].c;
     				validate_each_argument(each_value);
     				let i;
@@ -4993,17 +5039,17 @@ var app = (function () {
     		block,
     		id: create_if_block_5.name,
     		type: "if",
-    		source: "(157:4) {#if data?.c}",
+    		source: "(165:4) {#if data?.c}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (158:8) {#each data.c as cell, index}
+    // (166:8) {#each data.c as cell, index}
     function create_each_block(ctx) {
     	let div;
-    	let t0_value = /*cell*/ ctx[45].toFixed(2) + "";
+    	let t0_value = /*cell*/ ctx[52].toFixed(2) + "";
     	let t0;
     	let t1;
     	let div_style_value;
@@ -5014,9 +5060,9 @@ var app = (function () {
     			t0 = text(t0_value);
     			t1 = space();
     			attr_dev(div, "class", "cell");
-    			attr_dev(div, "style", div_style_value = "background-color: " + getColor(/*cell*/ ctx[45], /*$darkMode*/ ctx[20]));
-    			toggle_class(div, "balancing", /*bS*/ ctx[19][/*index*/ ctx[47]] === "1");
-    			add_location(div, file, 158, 12, 5586);
+    			attr_dev(div, "style", div_style_value = "background-color: " + getColor(/*cell*/ ctx[52], /*$darkMode*/ ctx[22]));
+    			toggle_class(div, "balancing", /*bS*/ ctx[20][/*index*/ ctx[54]] === "1");
+    			add_location(div, file, 166, 12, 5918);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -5024,14 +5070,14 @@ var app = (function () {
     			append_dev(div, t1);
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty[0] & /*data*/ 1 && t0_value !== (t0_value = /*cell*/ ctx[45].toFixed(2) + "")) set_data_dev(t0, t0_value);
+    			if (dirty[0] & /*data*/ 1 && t0_value !== (t0_value = /*cell*/ ctx[52].toFixed(2) + "")) set_data_dev(t0, t0_value);
 
-    			if (dirty[0] & /*data, $darkMode*/ 1048577 && div_style_value !== (div_style_value = "background-color: " + getColor(/*cell*/ ctx[45], /*$darkMode*/ ctx[20]))) {
+    			if (dirty[0] & /*data, $darkMode*/ 4194305 && div_style_value !== (div_style_value = "background-color: " + getColor(/*cell*/ ctx[52], /*$darkMode*/ ctx[22]))) {
     				attr_dev(div, "style", div_style_value);
     			}
 
-    			if (dirty[0] & /*bS*/ 524288) {
-    				toggle_class(div, "balancing", /*bS*/ ctx[19][/*index*/ ctx[47]] === "1");
+    			if (dirty[0] & /*bS*/ 1048576) {
+    				toggle_class(div, "balancing", /*bS*/ ctx[20][/*index*/ ctx[54]] === "1");
     			}
     		},
     		d: function destroy(detaching) {
@@ -5043,14 +5089,14 @@ var app = (function () {
     		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(158:8) {#each data.c as cell, index}",
+    		source: "(166:8) {#each data.c as cell, index}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (169:4) {#if data?.c}
+    // (177:4) {#if data?.c}
     function create_if_block_4(ctx) {
     	let gauge0;
     	let t0;
@@ -5165,14 +5211,14 @@ var app = (function () {
     		block,
     		id: create_if_block_4.name,
     		type: "if",
-    		source: "(169:4) {#if data?.c}",
+    		source: "(177:4) {#if data?.c}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (224:4) {#if data}
+    // (232:4) {#if data}
     function create_if_block_2(ctx) {
     	let div3;
     	let tempgauge;
@@ -5225,7 +5271,7 @@ var app = (function () {
     	gauge2 = new Gauge_1({
     			props: {
     				name: "12V Voltage",
-    				value: /*data*/ ctx[0]["tw"],
+    				value: /*data*/ ctx[0]["tw"] * /*$twelveCorrectiveFactor*/ ctx[23],
     				bounds: [10, 15]
     			},
     			$$inline: true
@@ -5256,21 +5302,21 @@ var app = (function () {
     			set_style(div0, "width", "50%");
     			set_style(div0, "font-weight", "bolder");
     			set_style(div0, "text-align", "center");
-    			add_location(div0, file, 227, 16, 7844);
+    			add_location(div0, file, 235, 16, 8176);
     			set_style(div1, "width", "50%");
     			set_style(div1, "font-weight", "bolder");
     			set_style(div1, "text-align", "center");
-    			add_location(div1, file, 233, 16, 8119);
+    			add_location(div1, file, 241, 16, 8451);
     			set_style(div2, "display", "flex");
-    			add_location(div2, file, 226, 12, 7798);
-    			attr_dev(div3, "class", div3_class_value = /*$darkMode*/ ctx[20] ? "darkIsland" : "island");
-    			add_location(div3, file, 224, 8, 7693);
+    			add_location(div2, file, 234, 12, 8130);
+    			attr_dev(div3, "class", div3_class_value = /*$darkMode*/ ctx[22] ? "darkIsland" : "island");
+    			add_location(div3, file, 232, 8, 8025);
     			set_style(div4, "width", "33.3%");
     			set_style(div4, "font-weight", "bolder");
     			set_style(div4, "text-align", "center");
-    			add_location(div4, file, 243, 12, 8541);
+    			add_location(div4, file, 251, 12, 8873);
     			set_style(div5, "display", "flex");
-    			add_location(div5, file, 242, 8, 8499);
+    			add_location(div5, file, 250, 8, 8831);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div3, anchor);
@@ -5304,7 +5350,7 @@ var app = (function () {
     			if (dirty[0] & /*data, voltage*/ 9) gauge1_changes.value = Math.abs(/*data*/ ctx[0]["pC"] * /*voltage*/ ctx[3] / 1000);
     			gauge1.$set(gauge1_changes);
 
-    			if (!current || dirty[0] & /*$darkMode*/ 1048576 && div3_class_value !== (div3_class_value = /*$darkMode*/ ctx[20] ? "darkIsland" : "island")) {
+    			if (!current || dirty[0] & /*$darkMode*/ 4194304 && div3_class_value !== (div3_class_value = /*$darkMode*/ ctx[22] ? "darkIsland" : "island")) {
     				attr_dev(div3, "class", div3_class_value);
     			}
 
@@ -5312,7 +5358,7 @@ var app = (function () {
     			if (dirty[0] & /*chargeConsoleText*/ 64) console_1_changes.text = /*chargeConsoleText*/ ctx[6];
     			console_1.$set(console_1_changes);
     			const gauge2_changes = {};
-    			if (dirty[0] & /*data*/ 1) gauge2_changes.value = /*data*/ ctx[0]["tw"];
+    			if (dirty[0] & /*data, $twelveCorrectiveFactor*/ 8388609) gauge2_changes.value = /*data*/ ctx[0]["tw"] * /*$twelveCorrectiveFactor*/ ctx[23];
     			gauge2.$set(gauge2_changes);
 
     			if (/*data*/ ctx[0]["CR"]) {
@@ -5377,14 +5423,14 @@ var app = (function () {
     		block,
     		id: create_if_block_2.name,
     		type: "if",
-    		source: "(224:4) {#if data}",
+    		source: "(232:4) {#if data}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (251:8) {#if data["CR"]}
+    // (259:8) {#if data["CR"]}
     function create_if_block_3(ctx) {
     	let div5;
     	let div0;
@@ -5460,24 +5506,24 @@ var app = (function () {
     			set_style(div0, "margin-bottom", "-5px");
     			set_style(div0, "font-weight", "bolder");
     			set_style(div0, "padding", "3px");
-    			set_style(div0, "color", /*$darkMode*/ ctx[20] ? "rgb(197, 197, 197)" : "");
-    			add_location(div0, file, 252, 16, 8945);
+    			set_style(div0, "color", /*$darkMode*/ ctx[22] ? "rgb(197, 197, 197)" : "");
+    			add_location(div0, file, 260, 16, 9303);
     			set_style(div1, "width", "33.3%");
     			set_style(div1, "font-weight", "bolder");
     			set_style(div1, "text-align", "center");
-    			add_location(div1, file, 256, 20, 9227);
+    			add_location(div1, file, 264, 20, 9585);
     			set_style(div2, "width", "33.3%");
     			set_style(div2, "font-weight", "bolder");
     			set_style(div2, "text-align", "center");
-    			add_location(div2, file, 264, 20, 9617);
+    			add_location(div2, file, 272, 20, 9975);
     			set_style(div3, "width", "33.3%");
     			set_style(div3, "font-weight", "bolder");
     			set_style(div3, "text-align", "center");
-    			add_location(div3, file, 272, 20, 10005);
+    			add_location(div3, file, 280, 20, 10363);
     			set_style(div4, "display", "flex");
-    			add_location(div4, file, 255, 16, 9177);
-    			attr_dev(div5, "class", div5_class_value = /*$darkMode*/ ctx[20] ? "darkIsland" : "island");
-    			add_location(div5, file, 251, 12, 8841);
+    			add_location(div4, file, 263, 16, 9535);
+    			attr_dev(div5, "class", div5_class_value = /*$darkMode*/ ctx[22] ? "darkIsland" : "island");
+    			add_location(div5, file, 259, 12, 9199);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div5, anchor);
@@ -5499,8 +5545,8 @@ var app = (function () {
     			current = true;
     		},
     		p: function update(ctx, dirty) {
-    			if (!current || dirty[0] & /*$darkMode*/ 1048576) {
-    				set_style(div0, "color", /*$darkMode*/ ctx[20] ? "rgb(197, 197, 197)" : "");
+    			if (!current || dirty[0] & /*$darkMode*/ 4194304) {
+    				set_style(div0, "color", /*$darkMode*/ ctx[22] ? "rgb(197, 197, 197)" : "");
     			}
 
     			const gauge0_changes = {};
@@ -5514,7 +5560,7 @@ var app = (function () {
     			gauge2.$set(gauge2_changes);
     			if ((!current || dirty[0] & /*data*/ 1) && t5_value !== (t5_value = (/*data*/ ctx[0]["lcp"] / 1000).toFixed(1) + "")) set_data_dev(t5, t5_value);
 
-    			if (!current || dirty[0] & /*$darkMode*/ 1048576 && div5_class_value !== (div5_class_value = /*$darkMode*/ ctx[20] ? "darkIsland" : "island")) {
+    			if (!current || dirty[0] & /*$darkMode*/ 4194304 && div5_class_value !== (div5_class_value = /*$darkMode*/ ctx[22] ? "darkIsland" : "island")) {
     				attr_dev(div5, "class", div5_class_value);
     			}
     		},
@@ -5552,14 +5598,14 @@ var app = (function () {
     		block,
     		id: create_if_block_3.name,
     		type: "if",
-    		source: "(251:8) {#if data[\\\"CR\\\"]}",
+    		source: "(259:8) {#if data[\\\"CR\\\"]}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (288:4) {#if data}
+    // (296:4) {#if data}
     function create_if_block_1(ctx) {
     	let slider;
     	let current;
@@ -5604,19 +5650,19 @@ var app = (function () {
     		block,
     		id: create_if_block_1.name,
     		type: "if",
-    		source: "(288:4) {#if data}",
+    		source: "(296:4) {#if data}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (327:0) <Overlay bind:shown={showSnake} closable="{false} ">
-    function create_default_slot_2(ctx) {
+    // (335:0) <Overlay bind:shown={showSnake} closable="{false} ">
+    function create_default_slot_3(ctx) {
     	let snake;
     	let current;
     	snake = new Snake({ $$inline: true });
-    	snake.$on("closeOverlay", /*closeOverlay_handler*/ ctx[37]);
+    	snake.$on("closeOverlay", /*closeOverlay_handler*/ ctx[40]);
 
     	const block = {
     		c: function create() {
@@ -5643,21 +5689,21 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_default_slot_2.name,
+    		id: create_default_slot_3.name,
     		type: "slot",
-    		source: "(327:0) <Overlay bind:shown={showSnake} closable=\\\"{false} \\\">",
+    		source: "(335:0) <Overlay bind:shown={showSnake} closable=\\\"{false} \\\">",
     		ctx
     	});
 
     	return block;
     }
 
-    // (331:0) <Overlay bind:shown={showC4} closable="{false}">
-    function create_default_slot_1(ctx) {
+    // (339:0) <Overlay bind:shown={showC4} closable="{false}">
+    function create_default_slot_2(ctx) {
     	let c4;
     	let current;
     	c4 = new C4({ $$inline: true });
-    	c4.$on("closeOverlay", /*closeOverlay_handler_1*/ ctx[39]);
+    	c4.$on("closeOverlay", /*closeOverlay_handler_1*/ ctx[42]);
 
     	const block = {
     		c: function create() {
@@ -5684,17 +5730,17 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_default_slot_1.name,
+    		id: create_default_slot_2.name,
     		type: "slot",
-    		source: "(331:0) <Overlay bind:shown={showC4} closable=\\\"{false}\\\">",
+    		source: "(339:0) <Overlay bind:shown={showC4} closable=\\\"{false}\\\">",
     		ctx
     	});
 
     	return block;
     }
 
-    // (335:0) <Overlay bind:shown={showSunset}>
-    function create_default_slot(ctx) {
+    // (343:0) <Overlay bind:shown={showSunset}>
+    function create_default_slot_1(ctx) {
     	let t0;
     	let t1_value = /*time*/ ctx[1].toLocaleString() + "";
     	let t1;
@@ -5720,6 +5766,12 @@ var app = (function () {
     	let br3;
     	let t16;
     	let t17;
+    	let t18;
+    	let t19;
+    	let t20;
+    	let input0;
+    	let t21;
+    	let input1;
     	let mounted;
     	let dispose;
 
@@ -5749,14 +5801,26 @@ var app = (function () {
     			t15 = space();
     			br3 = element("br");
     			t16 = text(" Current Mode: ");
-    			t17 = text(/*$forceMode*/ ctx[21]);
-    			add_location(br0, file, 335, 42, 12230);
-    			add_location(br1, file, 336, 54, 12290);
-    			add_location(br2, file, 337, 52, 12348);
-    			add_location(button0, file, 338, 4, 12358);
-    			add_location(button1, file, 339, 4, 12431);
-    			add_location(button2, file, 340, 4, 12502);
-    			add_location(br3, file, 341, 4, 12576);
+    			t17 = text(/*$forceMode*/ ctx[24]);
+    			t18 = text("\r\n    Time Offset: ");
+    			t19 = text(/*$timeOffset*/ ctx[21]);
+    			t20 = text(" Hours\r\n    ");
+    			input0 = element("input");
+    			t21 = space();
+    			input1 = element("input");
+    			add_location(br0, file, 343, 42, 12581);
+    			add_location(br1, file, 344, 54, 12641);
+    			add_location(br2, file, 345, 52, 12699);
+    			add_location(button0, file, 346, 4, 12709);
+    			add_location(button1, file, 347, 4, 12782);
+    			add_location(button2, file, 348, 4, 12853);
+    			add_location(br3, file, 349, 4, 12927);
+    			attr_dev(input0, "type", "button");
+    			input0.value = "+";
+    			add_location(input0, file, 351, 4, 13002);
+    			attr_dev(input1, "type", "button");
+    			input1.value = "-";
+    			add_location(input1, file, 352, 4, 13086);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, t0, anchor);
@@ -5781,12 +5845,20 @@ var app = (function () {
     			insert_dev(target, br3, anchor);
     			insert_dev(target, t16, anchor);
     			insert_dev(target, t17, anchor);
+    			insert_dev(target, t18, anchor);
+    			insert_dev(target, t19, anchor);
+    			insert_dev(target, t20, anchor);
+    			insert_dev(target, input0, anchor);
+    			insert_dev(target, t21, anchor);
+    			insert_dev(target, input1, anchor);
 
     			if (!mounted) {
     				dispose = [
-    					listen_dev(button0, "click", /*click_handler_8*/ ctx[41], false, false, false),
-    					listen_dev(button1, "click", /*click_handler_9*/ ctx[42], false, false, false),
-    					listen_dev(button2, "click", /*click_handler_10*/ ctx[43], false, false, false)
+    					listen_dev(button0, "click", /*click_handler_8*/ ctx[44], false, false, false),
+    					listen_dev(button1, "click", /*click_handler_9*/ ctx[45], false, false, false),
+    					listen_dev(button2, "click", /*click_handler_10*/ ctx[46], false, false, false),
+    					listen_dev(input0, "click", /*click_handler_11*/ ctx[47], false, false, false),
+    					listen_dev(input1, "click", /*click_handler_12*/ ctx[48], false, false, false)
     				];
 
     				mounted = true;
@@ -5794,7 +5866,8 @@ var app = (function () {
     		},
     		p: function update(ctx, dirty) {
     			if (dirty[0] & /*time*/ 2 && t1_value !== (t1_value = /*time*/ ctx[1].toLocaleString() + "")) set_data_dev(t1, t1_value);
-    			if (dirty[0] & /*$forceMode*/ 2097152) set_data_dev(t17, /*$forceMode*/ ctx[21]);
+    			if (dirty[0] & /*$forceMode*/ 16777216) set_data_dev(t17, /*$forceMode*/ ctx[24]);
+    			if (dirty[0] & /*$timeOffset*/ 2097152) set_data_dev(t19, /*$timeOffset*/ ctx[21]);
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(t0);
@@ -5819,6 +5892,12 @@ var app = (function () {
     			if (detaching) detach_dev(br3);
     			if (detaching) detach_dev(t16);
     			if (detaching) detach_dev(t17);
+    			if (detaching) detach_dev(t18);
+    			if (detaching) detach_dev(t19);
+    			if (detaching) detach_dev(t20);
+    			if (detaching) detach_dev(input0);
+    			if (detaching) detach_dev(t21);
+    			if (detaching) detach_dev(input1);
     			mounted = false;
     			run_all(dispose);
     		}
@@ -5826,16 +5905,84 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_default_slot.name,
+    		id: create_default_slot_1.name,
     		type: "slot",
-    		source: "(335:0) <Overlay bind:shown={showSunset}>",
+    		source: "(343:0) <Overlay bind:shown={showSunset}>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (345:0) {#if showImage}
+    // (356:0) <Overlay bind:shown={showSettings}>
+    function create_default_slot(ctx) {
+    	let t0;
+    	let input;
+    	let t1;
+    	let br;
+    	let t2;
+    	let t3_value = (/*data*/ ctx[0]["tw"] * /*$twelveCorrectiveFactor*/ ctx[23]).toFixed(2) + "";
+    	let t3;
+    	let mounted;
+    	let dispose;
+
+    	const block = {
+    		c: function create() {
+    			t0 = text("Corrective Factor for 12V Sensor: ");
+    			input = element("input");
+    			t1 = space();
+    			br = element("br");
+    			t2 = text("\r\n    Current Value: ");
+    			t3 = text(t3_value);
+    			attr_dev(input, "type", "number");
+    			add_location(input, file, 356, 38, 13255);
+    			add_location(br, file, 356, 97, 13314);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, t0, anchor);
+    			insert_dev(target, input, anchor);
+    			set_input_value(input, /*$twelveCorrectiveFactor*/ ctx[23]);
+    			insert_dev(target, t1, anchor);
+    			insert_dev(target, br, anchor);
+    			insert_dev(target, t2, anchor);
+    			insert_dev(target, t3, anchor);
+
+    			if (!mounted) {
+    				dispose = listen_dev(input, "input", /*input_input_handler*/ ctx[50]);
+    				mounted = true;
+    			}
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty[0] & /*$twelveCorrectiveFactor*/ 8388608 && to_number(input.value) !== /*$twelveCorrectiveFactor*/ ctx[23]) {
+    				set_input_value(input, /*$twelveCorrectiveFactor*/ ctx[23]);
+    			}
+
+    			if (dirty[0] & /*data, $twelveCorrectiveFactor*/ 8388609 && t3_value !== (t3_value = (/*data*/ ctx[0]["tw"] * /*$twelveCorrectiveFactor*/ ctx[23]).toFixed(2) + "")) set_data_dev(t3, t3_value);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(t0);
+    			if (detaching) detach_dev(input);
+    			if (detaching) detach_dev(t1);
+    			if (detaching) detach_dev(br);
+    			if (detaching) detach_dev(t2);
+    			if (detaching) detach_dev(t3);
+    			mounted = false;
+    			dispose();
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_default_slot.name,
+    		type: "slot",
+    		source: "(356:0) <Overlay bind:shown={showSettings}>",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (361:0) {#if showImage}
     function create_if_block(ctx) {
     	let div;
     	let img;
@@ -5850,10 +5997,10 @@ var app = (function () {
     			attr_dev(img, "height", "100%");
     			if (img.src !== (img_src_value = "static/logo.png")) attr_dev(img, "src", img_src_value);
     			attr_dev(img, "alt", "img");
-    			add_location(img, file, 346, 8, 12747);
+    			add_location(img, file, 362, 8, 13530);
     			attr_dev(div, "id", "photo");
     			set_style(div, "z-index", "5");
-    			add_location(div, file, 345, 4, 12644);
+    			add_location(div, file, 361, 4, 13427);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -5904,7 +6051,7 @@ var app = (function () {
     		block,
     		id: create_if_block.name,
     		type: "if",
-    		source: "(345:0) {#if showImage}",
+    		source: "(361:0) {#if showImage}",
     		ctx
     	});
 
@@ -5979,17 +6126,20 @@ var app = (function () {
     	let overlay4;
     	let updating_shown_5;
     	let t21;
+    	let overlay5;
+    	let updating_shown_6;
+    	let t22;
     	let if_block4_anchor;
     	let current;
     	let mounted;
     	let dispose;
 
     	function overlay0_shown_binding(value) {
-    		/*overlay0_shown_binding*/ ctx[24](value);
+    		/*overlay0_shown_binding*/ ctx[27](value);
     	}
 
     	let overlay0_props = {
-    		$$slots: { default: [create_default_slot_5] },
+    		$$slots: { default: [create_default_slot_6] },
     		$$scope: { ctx }
     	};
 
@@ -6001,12 +6151,12 @@ var app = (function () {
     	binding_callbacks.push(() => bind(overlay0, "shown", overlay0_shown_binding));
 
     	function overlay1_shown_binding(value) {
-    		/*overlay1_shown_binding*/ ctx[30](value);
+    		/*overlay1_shown_binding*/ ctx[33](value);
     	}
 
     	let overlay1_props = {
     		closable: false,
-    		$$slots: { default: [create_default_slot_4] },
+    		$$slots: { default: [create_default_slot_5] },
     		$$scope: { ctx }
     	};
 
@@ -6018,12 +6168,12 @@ var app = (function () {
     	binding_callbacks.push(() => bind(overlay1, "shown", overlay1_shown_binding));
 
     	function message_shown_binding(value) {
-    		/*message_shown_binding*/ ctx[32](value);
+    		/*message_shown_binding*/ ctx[35](value);
     	}
 
     	let message_props = {
-    		onClose: /*func*/ ctx[31],
-    		$$slots: { default: [create_default_slot_3] },
+    		onClose: /*func*/ ctx[34],
+    		$$slots: { default: [create_default_slot_4] },
     		$$scope: { ctx }
     	};
 
@@ -6042,7 +6192,7 @@ var app = (function () {
     				axisSettings: [
     					{
     						axis: 0,
-    						color: /*$darkMode*/ ctx[20] ? "#33f8ff" : "#125256",
+    						color: /*$darkMode*/ ctx[22] ? "#33f8ff" : "#125256",
     						maxPoints: 35,
     						units: "V",
     						minIs0: false
@@ -6058,12 +6208,12 @@ var app = (function () {
     	ledselector = new LEDSelector({ $$inline: true });
 
     	function overlay2_shown_binding(value) {
-    		/*overlay2_shown_binding*/ ctx[38](value);
+    		/*overlay2_shown_binding*/ ctx[41](value);
     	}
 
     	let overlay2_props = {
     		closable: "" + (false + " "),
-    		$$slots: { default: [create_default_slot_2] },
+    		$$slots: { default: [create_default_slot_3] },
     		$$scope: { ctx }
     	};
 
@@ -6075,12 +6225,12 @@ var app = (function () {
     	binding_callbacks.push(() => bind(overlay2, "shown", overlay2_shown_binding));
 
     	function overlay3_shown_binding(value) {
-    		/*overlay3_shown_binding*/ ctx[40](value);
+    		/*overlay3_shown_binding*/ ctx[43](value);
     	}
 
     	let overlay3_props = {
     		closable: false,
-    		$$slots: { default: [create_default_slot_1] },
+    		$$slots: { default: [create_default_slot_2] },
     		$$scope: { ctx }
     	};
 
@@ -6092,11 +6242,11 @@ var app = (function () {
     	binding_callbacks.push(() => bind(overlay3, "shown", overlay3_shown_binding));
 
     	function overlay4_shown_binding(value) {
-    		/*overlay4_shown_binding*/ ctx[44](value);
+    		/*overlay4_shown_binding*/ ctx[49](value);
     	}
 
     	let overlay4_props = {
-    		$$slots: { default: [create_default_slot] },
+    		$$slots: { default: [create_default_slot_1] },
     		$$scope: { ctx }
     	};
 
@@ -6106,6 +6256,22 @@ var app = (function () {
 
     	overlay4 = new Overlay({ props: overlay4_props, $$inline: true });
     	binding_callbacks.push(() => bind(overlay4, "shown", overlay4_shown_binding));
+
+    	function overlay5_shown_binding(value) {
+    		/*overlay5_shown_binding*/ ctx[51](value);
+    	}
+
+    	let overlay5_props = {
+    		$$slots: { default: [create_default_slot] },
+    		$$scope: { ctx }
+    	};
+
+    	if (/*showSettings*/ ctx[19] !== void 0) {
+    		overlay5_props.shown = /*showSettings*/ ctx[19];
+    	}
+
+    	overlay5 = new Overlay({ props: overlay5_props, $$inline: true });
+    	binding_callbacks.push(() => bind(overlay5, "shown", overlay5_shown_binding));
     	let if_block4 = /*showImage*/ ctx[10] && create_if_block(ctx);
 
     	const block = {
@@ -6165,67 +6331,69 @@ var app = (function () {
     			t20 = space();
     			create_component(overlay4.$$.fragment);
     			t21 = space();
+    			create_component(overlay5.$$.fragment);
+    			t22 = space();
     			if (if_block4) if_block4.c();
     			if_block4_anchor = empty();
     			attr_dev(div0, "id", "cells");
-    			attr_dev(div0, "class", div0_class_value = /*$darkMode*/ ctx[20] ? "darkIsland" : "island");
-    			add_location(div0, file, 155, 0, 5452);
+    			attr_dev(div0, "class", div0_class_value = /*$darkMode*/ ctx[22] ? "darkIsland" : "island");
+    			add_location(div0, file, 163, 0, 5784);
     			set_style(div1, "color", "black");
     			set_style(div1, "text-align", "center");
     			set_style(div1, "font-weight", "bolder");
-    			add_location(div1, file, 167, 0, 5853);
+    			add_location(div1, file, 175, 0, 6185);
     			if (img0.src !== (img0_src_value = "./static/export.png")) attr_dev(img0, "src", img0_src_value);
     			attr_dev(img0, "width", "100%");
     			attr_dev(img0, "alt", "car logo");
     			set_style(img0, "transition", "3s ease");
-    			set_style(img0, "opacity", /*$darkMode*/ ctx[20] ? "75%" : "");
-    			add_location(img0, file, 196, 8, 6843);
-    			attr_dev(div2, "class", div2_class_value = /*$darkMode*/ ctx[20] ? "darkIsland" : "island");
-    			add_location(div2, file, 193, 4, 6741);
+    			set_style(img0, "opacity", /*$darkMode*/ ctx[22] ? "75%" : "");
+    			add_location(img0, file, 204, 8, 7175);
+    			attr_dev(div2, "class", div2_class_value = /*$darkMode*/ ctx[22] ? "darkIsland" : "island");
+    			add_location(div2, file, 201, 4, 7073);
 
     			set_style(div3, "background-color", /*time*/ ctx[1] - /*lastUpdateDate*/ ctx[2] > new Date(3000)
     			? "red"
     			: "");
 
     			attr_dev(div3, "class", "statusBox");
-    			add_location(div3, file, 201, 8, 7080);
+    			add_location(div3, file, 209, 8, 7412);
     			attr_dev(div4, "class", "statusBox");
-    			add_location(div4, file, 206, 8, 7266);
-    			attr_dev(div5, "class", div5_class_value = /*$darkMode*/ ctx[20] ? "darkIsland" : "island");
-    			add_location(div5, file, 200, 4, 7019);
+    			add_location(div4, file, 214, 8, 7598);
+    			attr_dev(div5, "class", div5_class_value = /*$darkMode*/ ctx[22] ? "darkIsland" : "island");
+    			add_location(div5, file, 208, 4, 7351);
     			set_style(div6, "position", "relative");
     			set_style(div6, "text-align", "center");
-    			add_location(div6, file, 192, 0, 6682);
-    			add_location(div7, file, 222, 0, 7662);
-    			attr_dev(div8, "class", div8_class_value = /*$darkMode*/ ctx[20] ? "darkIsland" : "island");
-    			add_location(div8, file, 286, 0, 10475);
+    			add_location(div6, file, 200, 0, 7014);
+    			add_location(div7, file, 230, 0, 7994);
+    			attr_dev(div8, "class", div8_class_value = /*$darkMode*/ ctx[22] ? "darkIsland" : "island");
+    			add_location(div8, file, 294, 0, 10833);
     			if (img1.src !== (img1_src_value = "./static/snake.svg")) attr_dev(img1, "src", img1_src_value);
     			attr_dev(img1, "alt", "snake");
-    			add_location(img1, file, 315, 85, 11282);
+    			add_location(img1, file, 323, 85, 11640);
     			attr_dev(button0, "class", "but svelte-twt6m2");
-    			toggle_class(button0, "dark", /*$darkMode*/ ctx[20]);
-    			add_location(button0, file, 315, 8, 11205);
+    			toggle_class(button0, "dark", /*$darkMode*/ ctx[22]);
+    			add_location(button0, file, 323, 8, 11563);
     			if (img2.src !== (img2_src_value = "./static/c4.svg")) attr_dev(img2, "src", img2_src_value);
     			attr_dev(img2, "alt", "c4");
-    			add_location(img2, file, 317, 82, 11434);
+    			add_location(img2, file, 325, 82, 11792);
     			attr_dev(button1, "class", "but svelte-twt6m2");
-    			toggle_class(button1, "dark", /*$darkMode*/ ctx[20]);
-    			add_location(button1, file, 317, 8, 11360);
-    			if (img3.src !== (img3_src_value = "./static/music.svg")) attr_dev(img3, "src", img3_src_value);
-    			attr_dev(img3, "alt", "music");
-    			add_location(img3, file, 319, 99, 11590);
+    			toggle_class(button1, "dark", /*$darkMode*/ ctx[22]);
+    			add_location(button1, file, 325, 8, 11718);
+    			if (img3.src !== (img3_src_value = "./static/sunset.svg")) attr_dev(img3, "src", img3_src_value);
+    			attr_dev(img3, "alt", "sunset");
+    			add_location(img3, file, 327, 86, 11935);
     			attr_dev(button2, "class", "but svelte-twt6m2");
-    			toggle_class(button2, "dark", /*$darkMode*/ ctx[20]);
-    			add_location(button2, file, 319, 8, 11499);
-    			if (img4.src !== (img4_src_value = "./static/sunset.svg")) attr_dev(img4, "src", img4_src_value);
-    			attr_dev(img4, "alt", "sunset");
-    			add_location(img4, file, 321, 86, 11746);
+    			toggle_class(button2, "dark", /*$darkMode*/ ctx[22]);
+    			add_location(button2, file, 327, 8, 11857);
+    			if (img4.src !== (img4_src_value = "./static/details.svg")) attr_dev(img4, "src", img4_src_value);
+    			attr_dev(img4, "alt", "details");
+    			add_location(img4, file, 329, 88, 12170);
     			attr_dev(button3, "class", "but svelte-twt6m2");
-    			toggle_class(button3, "dark", /*$darkMode*/ ctx[20]);
-    			add_location(button3, file, 321, 8, 11668);
-    			attr_dev(div9, "class", div9_class_value = /*$darkMode*/ ctx[20] ? "darkIsland" : "island");
-    			add_location(div9, file, 314, 4, 11144);
-    			add_location(div10, file, 312, 0, 11113);
+    			toggle_class(button3, "dark", /*$darkMode*/ ctx[22]);
+    			add_location(button3, file, 329, 8, 12090);
+    			attr_dev(div9, "class", div9_class_value = /*$darkMode*/ ctx[22] ? "darkIsland" : "island");
+    			add_location(div9, file, 322, 4, 11502);
+    			add_location(div10, file, 320, 0, 11471);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -6286,16 +6454,18 @@ var app = (function () {
     			insert_dev(target, t20, anchor);
     			mount_component(overlay4, target, anchor);
     			insert_dev(target, t21, anchor);
+    			mount_component(overlay5, target, anchor);
+    			insert_dev(target, t22, anchor);
     			if (if_block4) if_block4.m(target, anchor);
     			insert_dev(target, if_block4_anchor, anchor);
     			current = true;
 
     			if (!mounted) {
     				dispose = [
-    					listen_dev(button0, "click", /*click_handler_4*/ ctx[33], false, false, false),
-    					listen_dev(button1, "click", /*click_handler_5*/ ctx[34], false, false, false),
-    					listen_dev(button2, "click", /*click_handler_6*/ ctx[35], false, false, false),
-    					listen_dev(button3, "click", /*click_handler_7*/ ctx[36], false, false, false)
+    					listen_dev(button0, "click", /*click_handler_4*/ ctx[36], false, false, false),
+    					listen_dev(button1, "click", /*click_handler_5*/ ctx[37], false, false, false),
+    					listen_dev(button2, "click", /*click_handler_6*/ ctx[38], false, false, false),
+    					listen_dev(button3, "click", /*click_handler_7*/ ctx[39], false, false, false)
     				];
 
     				mounted = true;
@@ -6304,7 +6474,7 @@ var app = (function () {
     		p: function update(ctx, dirty) {
     			const overlay0_changes = {};
 
-    			if (dirty[0] & /*err*/ 256 | dirty[1] & /*$$scope*/ 1048576) {
+    			if (dirty[0] & /*err*/ 256 | dirty[1] & /*$$scope*/ 134217728) {
     				overlay0_changes.$$scope = { dirty, ctx };
     			}
 
@@ -6317,7 +6487,7 @@ var app = (function () {
     			overlay0.$set(overlay0_changes);
     			const overlay1_changes = {};
 
-    			if (dirty[0] & /*showOverlay, portName, availablePorts*/ 57344 | dirty[1] & /*$$scope*/ 1048576) {
+    			if (dirty[0] & /*showOverlay, portName, availablePorts*/ 57344 | dirty[1] & /*$$scope*/ 134217728) {
     				overlay1_changes.$$scope = { dirty, ctx };
     			}
 
@@ -6330,7 +6500,7 @@ var app = (function () {
     			overlay1.$set(overlay1_changes);
     			const message_changes = {};
 
-    			if (dirty[0] & /*messageContent*/ 2048 | dirty[1] & /*$$scope*/ 1048576) {
+    			if (dirty[0] & /*messageContent*/ 2048 | dirty[1] & /*$$scope*/ 134217728) {
     				message_changes.$$scope = { dirty, ctx };
     			}
 
@@ -6355,7 +6525,7 @@ var app = (function () {
     				if_block0 = null;
     			}
 
-    			if (!current || dirty[0] & /*$darkMode*/ 1048576 && div0_class_value !== (div0_class_value = /*$darkMode*/ ctx[20] ? "darkIsland" : "island")) {
+    			if (!current || dirty[0] & /*$darkMode*/ 4194304 && div0_class_value !== (div0_class_value = /*$darkMode*/ ctx[22] ? "darkIsland" : "island")) {
     				attr_dev(div0, "class", div0_class_value);
     			}
 
@@ -6382,11 +6552,11 @@ var app = (function () {
     				check_outros();
     			}
 
-    			if (!current || dirty[0] & /*$darkMode*/ 1048576) {
-    				set_style(img0, "opacity", /*$darkMode*/ ctx[20] ? "75%" : "");
+    			if (!current || dirty[0] & /*$darkMode*/ 4194304) {
+    				set_style(img0, "opacity", /*$darkMode*/ ctx[22] ? "75%" : "");
     			}
 
-    			if (!current || dirty[0] & /*$darkMode*/ 1048576 && div2_class_value !== (div2_class_value = /*$darkMode*/ ctx[20] ? "darkIsland" : "island")) {
+    			if (!current || dirty[0] & /*$darkMode*/ 4194304 && div2_class_value !== (div2_class_value = /*$darkMode*/ ctx[22] ? "darkIsland" : "island")) {
     				attr_dev(div2, "class", div2_class_value);
     			}
 
@@ -6400,16 +6570,16 @@ var app = (function () {
 
     			if (!current || dirty[0] & /*chargeStatus*/ 32) set_data_dev(t9, /*chargeStatus*/ ctx[5]);
 
-    			if (!current || dirty[0] & /*$darkMode*/ 1048576 && div5_class_value !== (div5_class_value = /*$darkMode*/ ctx[20] ? "darkIsland" : "island")) {
+    			if (!current || dirty[0] & /*$darkMode*/ 4194304 && div5_class_value !== (div5_class_value = /*$darkMode*/ ctx[22] ? "darkIsland" : "island")) {
     				attr_dev(div5, "class", div5_class_value);
     			}
 
     			const graph_changes = {};
 
-    			if (dirty[0] & /*$darkMode*/ 1048576) graph_changes.axisSettings = [
+    			if (dirty[0] & /*$darkMode*/ 4194304) graph_changes.axisSettings = [
     				{
     					axis: 0,
-    					color: /*$darkMode*/ ctx[20] ? "#33f8ff" : "#125256",
+    					color: /*$darkMode*/ ctx[22] ? "#33f8ff" : "#125256",
     					maxPoints: 35,
     					units: "V",
     					minIs0: false
@@ -6465,33 +6635,33 @@ var app = (function () {
     				check_outros();
     			}
 
-    			if (!current || dirty[0] & /*$darkMode*/ 1048576 && div8_class_value !== (div8_class_value = /*$darkMode*/ ctx[20] ? "darkIsland" : "island")) {
+    			if (!current || dirty[0] & /*$darkMode*/ 4194304 && div8_class_value !== (div8_class_value = /*$darkMode*/ ctx[22] ? "darkIsland" : "island")) {
     				attr_dev(div8, "class", div8_class_value);
     			}
 
-    			if (dirty[0] & /*$darkMode*/ 1048576) {
-    				toggle_class(button0, "dark", /*$darkMode*/ ctx[20]);
+    			if (dirty[0] & /*$darkMode*/ 4194304) {
+    				toggle_class(button0, "dark", /*$darkMode*/ ctx[22]);
     			}
 
-    			if (dirty[0] & /*$darkMode*/ 1048576) {
-    				toggle_class(button1, "dark", /*$darkMode*/ ctx[20]);
+    			if (dirty[0] & /*$darkMode*/ 4194304) {
+    				toggle_class(button1, "dark", /*$darkMode*/ ctx[22]);
     			}
 
-    			if (dirty[0] & /*$darkMode*/ 1048576) {
-    				toggle_class(button2, "dark", /*$darkMode*/ ctx[20]);
+    			if (dirty[0] & /*$darkMode*/ 4194304) {
+    				toggle_class(button2, "dark", /*$darkMode*/ ctx[22]);
     			}
 
-    			if (dirty[0] & /*$darkMode*/ 1048576) {
-    				toggle_class(button3, "dark", /*$darkMode*/ ctx[20]);
+    			if (dirty[0] & /*$darkMode*/ 4194304) {
+    				toggle_class(button3, "dark", /*$darkMode*/ ctx[22]);
     			}
 
-    			if (!current || dirty[0] & /*$darkMode*/ 1048576 && div9_class_value !== (div9_class_value = /*$darkMode*/ ctx[20] ? "darkIsland" : "island")) {
+    			if (!current || dirty[0] & /*$darkMode*/ 4194304 && div9_class_value !== (div9_class_value = /*$darkMode*/ ctx[22] ? "darkIsland" : "island")) {
     				attr_dev(div9, "class", div9_class_value);
     			}
 
     			const overlay2_changes = {};
 
-    			if (dirty[0] & /*showSnake*/ 65536 | dirty[1] & /*$$scope*/ 1048576) {
+    			if (dirty[0] & /*showSnake*/ 65536 | dirty[1] & /*$$scope*/ 134217728) {
     				overlay2_changes.$$scope = { dirty, ctx };
     			}
 
@@ -6504,7 +6674,7 @@ var app = (function () {
     			overlay2.$set(overlay2_changes);
     			const overlay3_changes = {};
 
-    			if (dirty[0] & /*showC4*/ 131072 | dirty[1] & /*$$scope*/ 1048576) {
+    			if (dirty[0] & /*showC4*/ 131072 | dirty[1] & /*$$scope*/ 134217728) {
     				overlay3_changes.$$scope = { dirty, ctx };
     			}
 
@@ -6517,7 +6687,7 @@ var app = (function () {
     			overlay3.$set(overlay3_changes);
     			const overlay4_changes = {};
 
-    			if (dirty[0] & /*$forceMode, time*/ 2097154 | dirty[1] & /*$$scope*/ 1048576) {
+    			if (dirty[0] & /*$timeOffset, $forceMode, time*/ 18874370 | dirty[1] & /*$$scope*/ 134217728) {
     				overlay4_changes.$$scope = { dirty, ctx };
     			}
 
@@ -6528,6 +6698,19 @@ var app = (function () {
     			}
 
     			overlay4.$set(overlay4_changes);
+    			const overlay5_changes = {};
+
+    			if (dirty[0] & /*data, $twelveCorrectiveFactor*/ 8388609 | dirty[1] & /*$$scope*/ 134217728) {
+    				overlay5_changes.$$scope = { dirty, ctx };
+    			}
+
+    			if (!updating_shown_6 && dirty[0] & /*showSettings*/ 524288) {
+    				updating_shown_6 = true;
+    				overlay5_changes.shown = /*showSettings*/ ctx[19];
+    				add_flush_callback(() => updating_shown_6 = false);
+    			}
+
+    			overlay5.$set(overlay5_changes);
 
     			if (/*showImage*/ ctx[10]) {
     				if (if_block4) {
@@ -6566,6 +6749,7 @@ var app = (function () {
     			transition_in(overlay2.$$.fragment, local);
     			transition_in(overlay3.$$.fragment, local);
     			transition_in(overlay4.$$.fragment, local);
+    			transition_in(overlay5.$$.fragment, local);
     			transition_in(if_block4);
     			current = true;
     		},
@@ -6582,6 +6766,7 @@ var app = (function () {
     			transition_out(overlay2.$$.fragment, local);
     			transition_out(overlay3.$$.fragment, local);
     			transition_out(overlay4.$$.fragment, local);
+    			transition_out(overlay5.$$.fragment, local);
     			transition_out(if_block4);
     			current = false;
     		},
@@ -6617,6 +6802,8 @@ var app = (function () {
     			if (detaching) detach_dev(t20);
     			destroy_component(overlay4, detaching);
     			if (detaching) detach_dev(t21);
+    			destroy_component(overlay5, detaching);
+    			if (detaching) detach_dev(t22);
     			if (if_block4) if_block4.d(detaching);
     			if (detaching) detach_dev(if_block4_anchor);
     			mounted = false;
@@ -6637,12 +6824,18 @@ var app = (function () {
 
     function instance($$self, $$props, $$invalidate) {
     	let bS;
+    	let $timeOffset;
     	let $darkMode;
+    	let $twelveCorrectiveFactor;
     	let $forceMode;
+    	validate_store(timeOffset, "timeOffset");
+    	component_subscribe($$self, timeOffset, $$value => $$invalidate(21, $timeOffset = $$value));
     	validate_store(darkMode, "darkMode");
-    	component_subscribe($$self, darkMode, $$value => $$invalidate(20, $darkMode = $$value));
+    	component_subscribe($$self, darkMode, $$value => $$invalidate(22, $darkMode = $$value));
+    	validate_store(twelveCorrectiveFactor, "twelveCorrectiveFactor");
+    	component_subscribe($$self, twelveCorrectiveFactor, $$value => $$invalidate(23, $twelveCorrectiveFactor = $$value));
     	validate_store(forceMode, "forceMode");
-    	component_subscribe($$self, forceMode, $$value => $$invalidate(21, $forceMode = $$value));
+    	component_subscribe($$self, forceMode, $$value => $$invalidate(24, $forceMode = $$value));
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots("App", slots, []);
     	const { ipcRenderer } = require("electron");
@@ -6655,7 +6848,7 @@ var app = (function () {
     	onMount(() => {
     		const interval = setInterval(
     			() => {
-    				$$invalidate(1, time = new Date());
+    				$$invalidate(1, time = new Date(new Date().getTime() + $timeOffset * 60 * 60 * 1000));
     			},
     			1000
     		);
@@ -6697,7 +6890,7 @@ var app = (function () {
     			$$invalidate(12, messageShown = false);
     			_data.f = Math.round(_data.f * 100 / 256);
     			$$invalidate(0, data = _data);
-    			$$invalidate(4, status = "Got last data " + new Date().toLocaleTimeString());
+    			$$invalidate(4, status = "Got last data " + new Date(new Date().getTime() + $timeOffset * 60 * 60 * 1000).toLocaleTimeString());
 
     			const options = [
     				"Waiting for plug",
@@ -6709,10 +6902,10 @@ var app = (function () {
 
     			if (chargeStatus !== options[_data.ch]) {
     				$$invalidate(5, chargeStatus = options[_data.ch]);
-    				$$invalidate(6, chargeConsoleText += new Date().toLocaleTimeString() + " " + chargeStatus + "\n");
+    				$$invalidate(6, chargeConsoleText += new Date(new Date().getTime() + $timeOffset * 60 * 60 * 1000).toLocaleTimeString() + " " + chargeStatus + "\n");
     			}
 
-    			$$invalidate(2, lastUpdateDate = new Date());
+    			$$invalidate(2, lastUpdateDate = new Date(new Date().getTime() + $timeOffset * 60 * 60 * 1000));
     		} else if (_data.s === "bms_error") {
     			console.log("BMS Error: " + _data.error);
     		} else if (_data.s === "log") {
@@ -6747,6 +6940,7 @@ var app = (function () {
     	let showSnake = false;
     	let showC4 = false;
     	let showSunset = false;
+    	let showSettings = false;
     	const writable_props = [];
 
     	Object.keys($$props).forEach(key => {
@@ -6790,8 +6984,8 @@ var app = (function () {
 
     	const click_handler_4 = () => $$invalidate(16, showSnake = true);
     	const click_handler_5 = () => $$invalidate(17, showC4 = true);
-    	const click_handler_6 = () => ipcRenderer.send("show_music");
-    	const click_handler_7 = () => $$invalidate(18, showSunset = true);
+    	const click_handler_6 = () => $$invalidate(18, showSunset = true);
+    	const click_handler_7 = () => $$invalidate(19, showSettings = true);
     	const closeOverlay_handler = () => $$invalidate(16, showSnake = false);
 
     	function overlay2_shown_binding(value) {
@@ -6809,10 +7003,22 @@ var app = (function () {
     	const click_handler_8 = () => forceMode.set("Light");
     	const click_handler_9 = () => forceMode.set("Dark");
     	const click_handler_10 = () => forceMode.set("Adaptive");
+    	const click_handler_11 = () => timeOffset.update(e => e + 1);
+    	const click_handler_12 = () => timeOffset.update(e => e - 1);
 
     	function overlay4_shown_binding(value) {
     		showSunset = value;
     		$$invalidate(18, showSunset);
+    	}
+
+    	function input_input_handler() {
+    		$twelveCorrectiveFactor = to_number(this.value);
+    		twelveCorrectiveFactor.set($twelveCorrectiveFactor);
+    	}
+
+    	function overlay5_shown_binding(value) {
+    		showSettings = value;
+    		$$invalidate(19, showSettings);
     	}
 
     	$$self.$capture_state = () => ({
@@ -6834,6 +7040,8 @@ var app = (function () {
     		today_sunset,
     		today_sunrise,
     		forceMode,
+    		timeOffset,
+    		twelveCorrectiveFactor,
     		C4,
     		ipcRenderer,
     		data,
@@ -6856,8 +7064,11 @@ var app = (function () {
     		showSnake,
     		showC4,
     		showSunset,
+    		showSettings,
     		bS,
+    		$timeOffset,
     		$darkMode,
+    		$twelveCorrectiveFactor,
     		$forceMode
     	});
 
@@ -6881,7 +7092,8 @@ var app = (function () {
     		if ("showSnake" in $$props) $$invalidate(16, showSnake = $$props.showSnake);
     		if ("showC4" in $$props) $$invalidate(17, showC4 = $$props.showC4);
     		if ("showSunset" in $$props) $$invalidate(18, showSunset = $$props.showSunset);
-    		if ("bS" in $$props) $$invalidate(19, bS = $$props.bS);
+    		if ("showSettings" in $$props) $$invalidate(19, showSettings = $$props.showSettings);
+    		if ("bS" in $$props) $$invalidate(20, bS = $$props.bS);
     	};
 
     	if ($$props && "$$inject" in $$props) {
@@ -6890,7 +7102,7 @@ var app = (function () {
 
     	$$self.$$.update = () => {
     		if ($$self.$$.dirty[0] & /*data*/ 1) {
-    			$$invalidate(19, bS = data?.bS.toString(2).split("").reverse().join(""));
+    			$$invalidate(20, bS = data?.bS.toString(2).split("").reverse().join(""));
     		}
 
     		if ($$self.$$.dirty[0] & /*data*/ 1) {
@@ -6918,8 +7130,11 @@ var app = (function () {
     		showSnake,
     		showC4,
     		showSunset,
+    		showSettings,
     		bS,
+    		$timeOffset,
     		$darkMode,
+    		$twelveCorrectiveFactor,
     		$forceMode,
     		ipcRenderer,
     		sendPort,
@@ -6943,7 +7158,11 @@ var app = (function () {
     		click_handler_8,
     		click_handler_9,
     		click_handler_10,
-    		overlay4_shown_binding
+    		click_handler_11,
+    		click_handler_12,
+    		overlay4_shown_binding,
+    		input_input_handler,
+    		overlay5_shown_binding
     	];
     }
 

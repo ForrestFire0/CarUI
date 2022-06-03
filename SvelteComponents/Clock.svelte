@@ -1,11 +1,11 @@
 <script>
     import {onMount} from "svelte";
-    import {darkMode} from "./stores";
+    import {darkMode, timeOffset} from "./stores";
 
-    let time = new Date();
+    let time = new Date(new Date().getTime() + $timeOffset * 60 * 60 * 1000);
     onMount(() => {
         const interval = setInterval(() => {
-            time = new Date();
+            time = new Date(new Date().getTime() + $timeOffset * 60 * 60 * 1000);
         }, 330);
         return () => {
             clearInterval(interval);
