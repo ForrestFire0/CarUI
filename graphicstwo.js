@@ -10,6 +10,23 @@ const interpolateHSL = function (color1, color2, factor) {
     return hsl2rgb(hsl1);
 };
 
+
+// Converts a #ffffff hex string into an [r,g,b] array
+const h2r = function (hex) {
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? [
+        parseInt(result[1], 16),
+        parseInt(result[2], 16),
+        parseInt(result[3], 16)
+    ] : null;
+};
+
+
+// Inverse of the above
+const r2h = function (rgb) {
+    return "#" + ((1 << 24) + (rgb[0] << 16) + (rgb[1] << 8) + rgb[2]).toString(16).slice(1);
+};
+
 export function getColor(voltage, dm, max = 4.2, min = 3.2) {
     let start, end;
     if (dm) {
@@ -23,21 +40,6 @@ export function getColor(voltage, dm, max = 4.2, min = 3.2) {
     let factor = (voltage - min) / (max - min);
     return r2h(interpolateHSL(h2r(start), h2r(end), factor));
 }
-
-// Converts a #ffffff hex string into an [r,g,b] array
-var h2r = function (hex) {
-    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return result ? [
-        parseInt(result[1], 16),
-        parseInt(result[2], 16),
-        parseInt(result[3], 16)
-    ] : null;
-};
-
-// Inverse of the above
-var r2h = function (rgb) {
-    return "#" + ((1 << 24) + (rgb[0] << 16) + (rgb[1] << 8) + rgb[2]).toString(16).slice(1);
-};
 
 const rgb2hsl = function (color) {
     const r = color[0] / 255;

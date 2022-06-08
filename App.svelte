@@ -68,8 +68,8 @@
             messageShown = false;
             _data.f = Math.round(_data.f * 100 / 256);
             data = _data;
-            status = "Got last data " + (new Date(new Date().getTime()+ $timeOffset * 60 * 60 * 1000)).toLocaleTimeString();
-
+            status = `Got last data ${(new Date(new Date().getTime() + $timeOffset * 60 * 60 * 1000)).toLocaleTimeString()} (BMS ${(data['lbp']/1000).toFixed(1)} s ago)`;
+            //todo add the last time we got data from the BMS.
 
             const options = ["Waiting for plug", "Plugged in, not charging", "Charging paused, balancing cells", "Charging!", "Waiting For Charger"];
             if (chargeStatus !== options[_data.ch]) {
