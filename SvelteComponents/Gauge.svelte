@@ -17,6 +17,9 @@
     }
 
     $: if (gaugeObject && value) gaugeObject.setValueAnimated(value);
+    darkMode.subscribe(() => {
+        if (gaugeObject) gaugeObject.setValueAnimated(value)
+    })
 
     onMount(() => {
         gaugeObject = Gauge(gaugeElement, {

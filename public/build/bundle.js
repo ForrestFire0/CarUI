@@ -1230,6 +1230,23 @@ var app = (function () {
         return hsl2rgb(hsl1);
     };
 
+
+    // Converts a #ffffff hex string into an [r,g,b] array
+    const h2r = function (hex) {
+        var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        return result ? [
+            parseInt(result[1], 16),
+            parseInt(result[2], 16),
+            parseInt(result[3], 16)
+        ] : null;
+    };
+
+
+    // Inverse of the above
+    const r2h = function (rgb) {
+        return "#" + ((1 << 24) + (rgb[0] << 16) + (rgb[1] << 8) + rgb[2]).toString(16).slice(1);
+    };
+
     function getColor(voltage, dm, max = 4.2, min = 3.2) {
         let start, end;
         if (dm) {
@@ -1243,21 +1260,6 @@ var app = (function () {
         let factor = (voltage - min) / (max - min);
         return r2h(interpolateHSL(h2r(start), h2r(end), factor));
     }
-
-    // Converts a #ffffff hex string into an [r,g,b] array
-    var h2r = function (hex) {
-        var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-        return result ? [
-            parseInt(result[1], 16),
-            parseInt(result[2], 16),
-            parseInt(result[3], 16)
-        ] : null;
-    };
-
-    // Inverse of the above
-    var r2h = function (rgb) {
-        return "#" + ((1 << 24) + (rgb[0] << 16) + (rgb[1] << 8) + rgb[2]).toString(16).slice(1);
-    };
 
     const rgb2hsl = function (color) {
         const r = color[0] / 255;
@@ -1809,11 +1811,11 @@ var app = (function () {
     			t1 = text(/*name*/ ctx[0]);
     			attr_dev(div0, "class", "gauge-container svelte-1mfgm47");
     			set_style(div0, "height", /*height*/ ctx[2]);
-    			add_location(div0, file$a, 36, 0, 1164);
+    			add_location(div0, file$a, 39, 0, 1266);
     			set_style(div1, "margin", "0");
     			set_style(div1, "font-size", /*fontSize*/ ctx[3]);
     			set_style(div1, "color", /*$darkMode*/ ctx[4] ? "#c5c5c5" : "");
-    			add_location(div1, file$a, 37, 0, 1246);
+    			add_location(div1, file$a, 40, 0, 1348);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -1886,6 +1888,10 @@ var app = (function () {
     		$$invalidate(2, height = gaugeElement.offsetWidth * 0.85 + "px");
     		$$invalidate(3, fontSize = Math.min(gaugeElement.offsetWidth / name.length * 1.4, 18) + "px");
     	};
+
+    	darkMode.subscribe(() => {
+    		if (gaugeObject) gaugeObject.setValueAnimated(value);
+    	});
 
     	onMount(() => {
     		$$invalidate(10, gaugeObject = gauge_min(gaugeElement, {
@@ -4661,7 +4667,7 @@ var app = (function () {
     		c: function create() {
     			i = element("i");
     			i.textContent = "No Ports Found...";
-    			add_location(i, file, 127, 12, 4722);
+    			add_location(i, file, 127, 12, 4830);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, i, anchor);
@@ -4767,7 +4773,7 @@ var app = (function () {
     		c: function create() {
     			div = element("div");
     			t = text(t_value);
-    			add_location(div, file, 124, 16, 4619);
+    			add_location(div, file, 124, 16, 4727);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -4844,29 +4850,29 @@ var app = (function () {
     			input2 = element("input");
     			t7 = space();
     			input3 = element("input");
-    			add_location(h1, file, 119, 4, 4438);
-    			add_location(div0, file, 120, 4, 4480);
-    			add_location(div1, file, 121, 4, 4509);
+    			add_location(h1, file, 119, 4, 4546);
+    			add_location(div0, file, 120, 4, 4588);
+    			add_location(div1, file, 121, 4, 4617);
     			set_style(input0, "padding", "10px");
     			set_style(input0, "font-size", "20px");
     			attr_dev(input0, "type", "button");
     			input0.value = "Add 'COM'";
-    			add_location(input0, file, 130, 4, 4779);
+    			add_location(input0, file, 130, 4, 4887);
     			set_style(input1, "padding", "10px");
     			set_style(input1, "font-size", "20px");
     			attr_dev(input1, "type", "text");
     			attr_dev(input1, "id", "portsSelect");
-    			add_location(input1, file, 135, 4, 4964);
+    			add_location(input1, file, 135, 4, 5072);
     			set_style(input2, "padding", "10px");
     			set_style(input2, "font-size", "20px");
     			attr_dev(input2, "type", "button");
     			input2.value = "Submit";
-    			add_location(input2, file, 140, 4, 5121);
+    			add_location(input2, file, 140, 4, 5229);
     			set_style(input3, "padding", "10px");
     			set_style(input3, "font-size", "20px");
     			attr_dev(input3, "type", "button");
     			input3.value = "Refresh";
-    			add_location(input3, file, 148, 4, 5353);
+    			add_location(input3, file, 148, 4, 5461);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, h1, anchor);
@@ -5062,7 +5068,7 @@ var app = (function () {
     			attr_dev(div, "class", "cell");
     			attr_dev(div, "style", div_style_value = "background-color: " + getColor(/*cell*/ ctx[52], /*$darkMode*/ ctx[22]));
     			toggle_class(div, "balancing", /*bS*/ ctx[20][/*index*/ ctx[54]] === "1");
-    			add_location(div, file, 166, 12, 5918);
+    			add_location(div, file, 166, 12, 6026);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -5302,21 +5308,21 @@ var app = (function () {
     			set_style(div0, "width", "50%");
     			set_style(div0, "font-weight", "bolder");
     			set_style(div0, "text-align", "center");
-    			add_location(div0, file, 235, 16, 8176);
+    			add_location(div0, file, 235, 16, 8284);
     			set_style(div1, "width", "50%");
     			set_style(div1, "font-weight", "bolder");
     			set_style(div1, "text-align", "center");
-    			add_location(div1, file, 241, 16, 8451);
+    			add_location(div1, file, 241, 16, 8559);
     			set_style(div2, "display", "flex");
-    			add_location(div2, file, 234, 12, 8130);
+    			add_location(div2, file, 234, 12, 8238);
     			attr_dev(div3, "class", div3_class_value = /*$darkMode*/ ctx[22] ? "darkIsland" : "island");
-    			add_location(div3, file, 232, 8, 8025);
+    			add_location(div3, file, 232, 8, 8133);
     			set_style(div4, "width", "33.3%");
     			set_style(div4, "font-weight", "bolder");
     			set_style(div4, "text-align", "center");
-    			add_location(div4, file, 251, 12, 8873);
+    			add_location(div4, file, 251, 12, 8981);
     			set_style(div5, "display", "flex");
-    			add_location(div5, file, 250, 8, 8831);
+    			add_location(div5, file, 250, 8, 8939);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div3, anchor);
@@ -5507,23 +5513,23 @@ var app = (function () {
     			set_style(div0, "font-weight", "bolder");
     			set_style(div0, "padding", "3px");
     			set_style(div0, "color", /*$darkMode*/ ctx[22] ? "rgb(197, 197, 197)" : "");
-    			add_location(div0, file, 260, 16, 9303);
+    			add_location(div0, file, 260, 16, 9411);
     			set_style(div1, "width", "33.3%");
     			set_style(div1, "font-weight", "bolder");
     			set_style(div1, "text-align", "center");
-    			add_location(div1, file, 264, 20, 9585);
+    			add_location(div1, file, 264, 20, 9693);
     			set_style(div2, "width", "33.3%");
     			set_style(div2, "font-weight", "bolder");
     			set_style(div2, "text-align", "center");
-    			add_location(div2, file, 272, 20, 9975);
+    			add_location(div2, file, 272, 20, 10083);
     			set_style(div3, "width", "33.3%");
     			set_style(div3, "font-weight", "bolder");
     			set_style(div3, "text-align", "center");
-    			add_location(div3, file, 280, 20, 10363);
+    			add_location(div3, file, 280, 20, 10471);
     			set_style(div4, "display", "flex");
-    			add_location(div4, file, 263, 16, 9535);
+    			add_location(div4, file, 263, 16, 9643);
     			attr_dev(div5, "class", div5_class_value = /*$darkMode*/ ctx[22] ? "darkIsland" : "island");
-    			add_location(div5, file, 259, 12, 9199);
+    			add_location(div5, file, 259, 12, 9307);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div5, anchor);
@@ -5808,19 +5814,19 @@ var app = (function () {
     			input0 = element("input");
     			t21 = space();
     			input1 = element("input");
-    			add_location(br0, file, 343, 42, 12581);
-    			add_location(br1, file, 344, 54, 12641);
-    			add_location(br2, file, 345, 52, 12699);
-    			add_location(button0, file, 346, 4, 12709);
-    			add_location(button1, file, 347, 4, 12782);
-    			add_location(button2, file, 348, 4, 12853);
-    			add_location(br3, file, 349, 4, 12927);
+    			add_location(br0, file, 343, 42, 12689);
+    			add_location(br1, file, 344, 54, 12749);
+    			add_location(br2, file, 345, 52, 12807);
+    			add_location(button0, file, 346, 4, 12817);
+    			add_location(button1, file, 347, 4, 12890);
+    			add_location(button2, file, 348, 4, 12961);
+    			add_location(br3, file, 349, 4, 13035);
     			attr_dev(input0, "type", "button");
     			input0.value = "+";
-    			add_location(input0, file, 351, 4, 13002);
+    			add_location(input0, file, 351, 4, 13110);
     			attr_dev(input1, "type", "button");
     			input1.value = "-";
-    			add_location(input1, file, 352, 4, 13086);
+    			add_location(input1, file, 352, 4, 13194);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, t0, anchor);
@@ -5935,8 +5941,8 @@ var app = (function () {
     			t2 = text("\r\n    Current Value: ");
     			t3 = text(t3_value);
     			attr_dev(input, "type", "number");
-    			add_location(input, file, 356, 38, 13255);
-    			add_location(br, file, 356, 97, 13314);
+    			add_location(input, file, 356, 38, 13363);
+    			add_location(br, file, 356, 97, 13422);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, t0, anchor);
@@ -5997,10 +6003,10 @@ var app = (function () {
     			attr_dev(img, "height", "100%");
     			if (img.src !== (img_src_value = "static/logo.png")) attr_dev(img, "src", img_src_value);
     			attr_dev(img, "alt", "img");
-    			add_location(img, file, 362, 8, 13530);
+    			add_location(img, file, 362, 8, 13638);
     			attr_dev(div, "id", "photo");
     			set_style(div, "z-index", "5");
-    			add_location(div, file, 361, 4, 13427);
+    			add_location(div, file, 361, 4, 13535);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -6337,63 +6343,63 @@ var app = (function () {
     			if_block4_anchor = empty();
     			attr_dev(div0, "id", "cells");
     			attr_dev(div0, "class", div0_class_value = /*$darkMode*/ ctx[22] ? "darkIsland" : "island");
-    			add_location(div0, file, 163, 0, 5784);
+    			add_location(div0, file, 163, 0, 5892);
     			set_style(div1, "color", "black");
     			set_style(div1, "text-align", "center");
     			set_style(div1, "font-weight", "bolder");
-    			add_location(div1, file, 175, 0, 6185);
+    			add_location(div1, file, 175, 0, 6293);
     			if (img0.src !== (img0_src_value = "./static/export.png")) attr_dev(img0, "src", img0_src_value);
     			attr_dev(img0, "width", "100%");
     			attr_dev(img0, "alt", "car logo");
     			set_style(img0, "transition", "3s ease");
     			set_style(img0, "opacity", /*$darkMode*/ ctx[22] ? "75%" : "");
-    			add_location(img0, file, 204, 8, 7175);
+    			add_location(img0, file, 204, 8, 7283);
     			attr_dev(div2, "class", div2_class_value = /*$darkMode*/ ctx[22] ? "darkIsland" : "island");
-    			add_location(div2, file, 201, 4, 7073);
+    			add_location(div2, file, 201, 4, 7181);
 
     			set_style(div3, "background-color", /*time*/ ctx[1] - /*lastUpdateDate*/ ctx[2] > new Date(3000)
     			? "red"
     			: "");
 
     			attr_dev(div3, "class", "statusBox");
-    			add_location(div3, file, 209, 8, 7412);
+    			add_location(div3, file, 209, 8, 7520);
     			attr_dev(div4, "class", "statusBox");
-    			add_location(div4, file, 214, 8, 7598);
+    			add_location(div4, file, 214, 8, 7706);
     			attr_dev(div5, "class", div5_class_value = /*$darkMode*/ ctx[22] ? "darkIsland" : "island");
-    			add_location(div5, file, 208, 4, 7351);
+    			add_location(div5, file, 208, 4, 7459);
     			set_style(div6, "position", "relative");
     			set_style(div6, "text-align", "center");
-    			add_location(div6, file, 200, 0, 7014);
-    			add_location(div7, file, 230, 0, 7994);
+    			add_location(div6, file, 200, 0, 7122);
+    			add_location(div7, file, 230, 0, 8102);
     			attr_dev(div8, "class", div8_class_value = /*$darkMode*/ ctx[22] ? "darkIsland" : "island");
-    			add_location(div8, file, 294, 0, 10833);
+    			add_location(div8, file, 294, 0, 10941);
     			if (img1.src !== (img1_src_value = "./static/snake.svg")) attr_dev(img1, "src", img1_src_value);
     			attr_dev(img1, "alt", "snake");
-    			add_location(img1, file, 323, 85, 11640);
+    			add_location(img1, file, 323, 85, 11748);
     			attr_dev(button0, "class", "but svelte-twt6m2");
     			toggle_class(button0, "dark", /*$darkMode*/ ctx[22]);
-    			add_location(button0, file, 323, 8, 11563);
+    			add_location(button0, file, 323, 8, 11671);
     			if (img2.src !== (img2_src_value = "./static/c4.svg")) attr_dev(img2, "src", img2_src_value);
     			attr_dev(img2, "alt", "c4");
-    			add_location(img2, file, 325, 82, 11792);
+    			add_location(img2, file, 325, 82, 11900);
     			attr_dev(button1, "class", "but svelte-twt6m2");
     			toggle_class(button1, "dark", /*$darkMode*/ ctx[22]);
-    			add_location(button1, file, 325, 8, 11718);
+    			add_location(button1, file, 325, 8, 11826);
     			if (img3.src !== (img3_src_value = "./static/sunset.svg")) attr_dev(img3, "src", img3_src_value);
     			attr_dev(img3, "alt", "sunset");
-    			add_location(img3, file, 327, 86, 11935);
+    			add_location(img3, file, 327, 86, 12043);
     			attr_dev(button2, "class", "but svelte-twt6m2");
     			toggle_class(button2, "dark", /*$darkMode*/ ctx[22]);
-    			add_location(button2, file, 327, 8, 11857);
+    			add_location(button2, file, 327, 8, 11965);
     			if (img4.src !== (img4_src_value = "./static/details.svg")) attr_dev(img4, "src", img4_src_value);
     			attr_dev(img4, "alt", "details");
-    			add_location(img4, file, 329, 88, 12170);
+    			add_location(img4, file, 329, 88, 12278);
     			attr_dev(button3, "class", "but svelte-twt6m2");
     			toggle_class(button3, "dark", /*$darkMode*/ ctx[22]);
-    			add_location(button3, file, 329, 8, 12090);
+    			add_location(button3, file, 329, 8, 12198);
     			attr_dev(div9, "class", div9_class_value = /*$darkMode*/ ctx[22] ? "darkIsland" : "island");
-    			add_location(div9, file, 322, 4, 11502);
-    			add_location(div10, file, 320, 0, 11471);
+    			add_location(div9, file, 322, 4, 11610);
+    			add_location(div10, file, 320, 0, 11579);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -6890,8 +6896,9 @@ var app = (function () {
     			$$invalidate(12, messageShown = false);
     			_data.f = Math.round(_data.f * 100 / 256);
     			$$invalidate(0, data = _data);
-    			$$invalidate(4, status = "Got last data " + new Date(new Date().getTime() + $timeOffset * 60 * 60 * 1000).toLocaleTimeString());
+    			$$invalidate(4, status = `Got last data ${new Date(new Date().getTime() + $timeOffset * 60 * 60 * 1000).toLocaleTimeString()} (BMS ${(data["lbp"] / 1000).toFixed(1)} s ago)`);
 
+    			//todo add the last time we got data from the BMS.
     			const options = [
     				"Waiting for plug",
     				"Plugged in, not charging",
