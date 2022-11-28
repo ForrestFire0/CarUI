@@ -24,6 +24,7 @@ body {
     display: grid;
     grid-template-columns: 9.1% 14% 29.4% 25% 5% 17.5%;
     transition: background-color 3s ease;
+    padding: 1%;
 }
 
 a {

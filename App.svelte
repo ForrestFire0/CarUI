@@ -1,5 +1,5 @@
 <script>
-    import {onMount, setContext} from "svelte";
+    import {onMount} from "svelte";
     import {fade} from "svelte/transition";
 
     import Overlay from './SvelteComponents/Overlay.svelte';
@@ -7,11 +7,14 @@
     import TempGauge from './SvelteComponents/TempGauge.svelte';
     import Graph from './SvelteComponents/Graph.svelte';
     import Slider from './SvelteComponents/Slider.svelte';
-    import Message from './SvelteComponents/Message.svelte';
     import Console from './SvelteComponents/Console.svelte';
     import LEDSelector from './SvelteComponents/LEDSelector.svelte';
     import Snake from './SvelteComponents/Snake.svelte';
     import Clock from './SvelteComponents/Clock.svelte';
+
+    //todo Implement standby mode
+    //todo implement inverter on/off
+    //todo remove all indications of port selection
 
     import {getColor} from "./graphicstwo";
     import {
@@ -23,28 +26,33 @@
         twelveCorrectiveFactor
     } from "./SvelteComponents/stores";
     import C4 from "./SvelteComponents/C4.svelte";
+    import InverterToggler from "./SvelteComponents/InverterToggler.svelte";
 
     const {ipcRenderer} = require("electron");
 
-    let data, time, lastUpdateDate;
-    let voltage = data?.c.reduce((a, b) => a + b);
-    $: bS = data?.bS.toString(2).split("").reverse().join("");
-    $: setContext('animationDuration', data ? data.i : 1);
+    let data = {}, time, lastUpdateDate = {'front': undefined, 'rear': undefined};
 
     let status = "Waiting for data...";
     let chargeStatus = "Waiting for charging data...";
     let chargeConsoleText = "";
     onMount(() => {
         const interval = setInterval(() => {
-            time = new Date(new Date().getTime()+ $timeOffset * 60 * 60 * 1000);
+            time = new Date(new Date().getTime() + $timeOffset * 60 * 60 * 1000);
         }, 1000);
         ipcRenderer.send("ready_for_data");
         console.log("1) Sent ready");
         return () => clearInterval(interval);
     });
 
-    let graphData = [[]];
-    // let graphData = [[], []];
+    // let graphData = [[]];
+    let graphData = [[], []];
+    setInterval(() => {
+        if (data.motorCurrent && data.power) {
+            graphData[0].push(data.motorCurrent);
+            graphData[1].push(data.power);
+        }
+        graphData = graphData;
+    }, 250)
     // When adding power back: axis settings here. {axis: 350, color: "black", maxPoints: 35x`, units: "kW", minIs0: true,},
 
     let err, errOverlay;
@@ -54,58 +62,46 @@
     })
     let showImage = true;
     ipcRenderer.on("data", (event, _data) => {
-        if (_data.s === "normal") {
-            if (showImage) {
-                showImage = false;
-                console.log("2 or 4) Got data");
+        if (_data.id === 'front' && _data.s === 'ok') {
+            // console.log(_data)
+            lastUpdateDate.front = new Date(new Date().getTime() + $timeOffset * 60 * 60 * 1000);
+            data.ignition = _data.ignition;
+            data.reverse = _data.reverse;
+            data.inverter = _data.inverter;
+            data.voltage = _data.voltage;
+            data.motorCurrent = _data.motorCurrent;
+            data.power = _data.power;
+            data.batteryCurrent = _data.batteryCurrent;
+
+        } else if (_data.s === "normal") {
+            if (showImage) showImage = false;
+
+            // If we have not gotten a recent update from the front, deduce voltage.
+            if (data.ignition) {
+                data.voltage = _data.c.reduce((a, b) => a + b);
             }
-            voltage = _data.c.reduce((a, b) => a + b);
-            if (voltage && _data.hasOwnProperty("pC")) {
-                graphData[0].push(voltage);
-                // graphData[1].push(Math.abs((_data.pC * voltage) / 1000));
-                graphData = graphData;
-            }
-            messageShown = false;
+
             _data.f = Math.round(_data.f * 100 / 256);
-            data = _data;
-            status = `Got last data ${(new Date(new Date().getTime() + $timeOffset * 60 * 60 * 1000)).toLocaleTimeString()} (BMS ${(data['lbp']/1000).toFixed(1)} s ago)`;
-            //todo add the last time we got data from the BMS.
+
+            Object.assign(data, _data); //Updates the data object with any new changes from the _data object
+
+            data.minCellVoltage = Math.min(..._data.c);
+            data.maxCellVoltage = Math.max(..._data.c);
+            data.avgCellVoltage = _data.c.reduce((a, b) => a + b) / _data.c.length;
+            data.bS = data.bS.toString(2).split("").reverse().join("");
 
             const options = ["Waiting for plug", "Plugged in, not charging", "Charging paused, balancing cells", "Charging!", "Waiting For Charger"];
             if (chargeStatus !== options[_data.ch]) {
                 chargeStatus = options[_data.ch];
-                chargeConsoleText += (new Date(new Date().getTime()+ $timeOffset * 60 * 60 * 1000)).toLocaleTimeString() + " " + chargeStatus + '\n'
+                chargeConsoleText += (new Date(new Date().getTime() + $timeOffset * 60 * 60 * 1000)).toLocaleTimeString() + " " + chargeStatus + '\n'
             }
-            lastUpdateDate = new Date(new Date().getTime()+ $timeOffset * 60 * 60 * 1000);
+            lastUpdateDate.rear = new Date(new Date().getTime() + $timeOffset * 60 * 60 * 1000);
+
         } else if (_data.s === "bms_error") {
             console.log("BMS Error: " + _data.error);
-        } else if (_data.s === "log") {
-            console.log(_data.m);
         }
     });
 
-    ipcRenderer.on("select_port", (event, _data) => {
-        showOverlay = true;
-        availablePorts = _data;
-        console.log("2) Selecting port");
-    });
-    let messageContent = "";
-    let messageShown = false;
-    ipcRenderer.on("response", (event, _data) => {
-        messageContent = _data;
-        messageShown = true;
-        console.log("5) Got response.");
-    });
-
-    function sendPort(portName) {
-        console.log("3) Sending port " + portName);
-        ipcRenderer.send("selected_port", portName);
-        showOverlay = false;
-    }
-
-    let portName = "";
-    let availablePorts;
-    let showOverlay = false;
     let showSnake = false;
     let showC4 = false;
     let showSunset = false;
@@ -116,57 +112,12 @@
     {err}
 </Overlay>
 
-<Overlay bind:shown={showOverlay} closable={false}>
-    <h1>Error: Unable to find port.</h1>
-    <div>Ports found:</div>
-    <div>
-        {#if availablePorts.length !== 0}
-            {#each availablePorts as port}
-                <div on:click={() => portName = port}>{port}</div>
-            {/each}
-        {:else }
-            <i>No Ports Found...</i>
-        {/if}
-    </div>
-    <input
-            style="padding: 10px; font-size: 20px;"
-            type="button"
-            value="Add 'COM'"
-            on:click={() => (portName = "COM" + portName)}/>
-    <input
-            style="padding: 10px; font-size: 20px;"
-            type="text"
-            bind:value={portName}
-            id="portsSelect"/>
-    <input
-            style="padding: 10px; font-size: 20px;"
-            type="button"
-            value="Submit"
-            on:click={() => {
-            sendPort(portName);
-            showOverlay = false;
-        }}/>
-    <input
-            style="padding: 10px; font-size: 20px;"
-            type="button"
-            value="Refresh"
-            on:click={() => {
-                showOverlay = false;
-                setTimeout(() => ipcRenderer.send("ready_for_data"), 500)
-        }}/>
-</Overlay>
-
-<Message
-        bind:shown={messageShown}
-        onClose={() => ipcRenderer.send("ready_for_data")}
->{@html messageContent}</Message>
-
 <div id="cells" class="{$darkMode ? 'darkIsland' : 'island'}">
     {#if data?.c}
         {#each data.c as cell, index}
             <div
                     class="cell"
-                    class:balancing={bS[index] === "1"}
+                    class:balancing={data.bS[index] === "1"}
                     style={"background-color: " + getColor(cell, $darkMode)}>
                 {cell.toFixed(2)}
             </div>
@@ -177,22 +128,23 @@
     {#if data?.c}
         <Gauge
                 name="Pack Voltage"
-                value={voltage}
+                value={data.voltage}
                 bounds={[50, 90]}
-                colorBounds={[65, 90]}/>
+                colorBounds={[65, 90]}
+                animationDuration={0.09}/>
         <Gauge
                 name="Min Cell Voltage"
-                value={Math.min(...data.c)}
+                value={data.minCellVoltage}
                 bounds={[2.7, 4.2]}
                 colorBounds={[3.2, 4.15]}/>
         <Gauge
                 name="Avg. Cell Voltage"
-                value={voltage / data.c.length}
+                value={data.avgCellVoltage}
                 bounds={[2.7, 4.2]}
                 colorBounds={[3.2, 4.15]}/>
         <Gauge
                 name="Max Cell Voltage"
-                value={Math.max(...data.c)}
+                value={data.maxCellVoltage}
                 bounds={[2.7, 4.2]}
                 colorBounds={[3.2, 4.15]}/>
     {/if}
@@ -207,10 +159,13 @@
     </div>
     <!-- Status -->
     <div class="{$darkMode ? 'darkIsland' : 'island'}">
-        <div
-                style="background-color: {time - lastUpdateDate > new Date(3000) ? 'red' : ''};"
-                class="statusBox">
-            {status}
+        <div style="background-color: {time - lastUpdateDate.rear > new Date(3000) ||
+        time - lastUpdateDate.front > new Date(3000) ? 'red' : ''};"
+             class="statusBox">
+            Rear Data: {lastUpdateDate.rear ? lastUpdateDate.rear.toLocaleTimeString() : "Waiting for data..."}
+            <span style="color: {data?.lbp > 2000 ? 'red' : ''}">(BMS {(data?.lbp / 1000).toFixed(1)}
+                s ago)</span><br>
+            Front Data: {lastUpdateDate.front ? lastUpdateDate.front.toLocaleTimeString() : "Waiting for data..."}
         </div>
         <div class="statusBox">{chargeStatus}</div>
     </div>
@@ -219,11 +174,9 @@
             axisSettings={[
                 {
                     axis: 0,
-                    color: $darkMode ? '#33f8ff' : '#125256',
-                    maxPoints: 35,
-                    units: "V",
-                    minIs0: false,
+                    color: $darkMode ? '#33f8ff' : '#125256', maxPoints: 35, units: "A", minIs0: false,
                 },
+                {axis: 350, color: "black", maxPoints: 35, units: "kW", minIs0: true,},
             ]}
             datas={graphData}/>
 </div>
@@ -235,15 +188,17 @@
             <div style="display: flex;">
                 <div style="width:50%; font-weight: bolder; text-align: center;">
                     <Gauge
-                            name="Amps"
-                            value={data["pC"]}
-                            bounds={[-50, 500]}/>
+                            name="Motor Amps"
+                            value={data.motorCurrent}
+                            bounds={[-50, 600]}
+                            animationDuration={0.09}/>
                 </div>
                 <div style="width:50%; font-weight: bolder; text-align: center;">
                     <Gauge
                             name="Power (kW)"
-                            value={Math.abs((data["pC"] * voltage) / 1000)}
-                            bounds={[0, 40]}/>
+                            value={(data.power)}
+                            bounds={[0, 80]}
+                            animationDuration={0.09}/>
                 </div>
             </div>
         </div>
@@ -252,7 +207,7 @@
             <div style="width:33.3%; font-weight: bolder; text-align: center;">
                 <Gauge
                         name="12V Voltage"
-                        value={data["tw"] * $twelveCorrectiveFactor}
+                        value={data.tw * $twelveCorrectiveFactor}
                         bounds={[10, 15]}/>
             </div>
         </div>
@@ -293,7 +248,7 @@
 </div>
 
 <div class="{$darkMode ? 'darkIsland' : 'island'}">
-    {#if data}
+    {#if data?.f}
         <Slider value={data.f} color="#4fc3f7" iconPath="static/fan.svg"/>
     {/if}
 </div>
@@ -319,7 +274,6 @@
 </style>
 
 <div>
-    <LEDSelector/>
     <div class="{$darkMode ? 'darkIsland' : 'island'}">
         <button on:click={() => showSnake = true} class="but" class:dark={$darkMode}><img
                 src="./static/snake.svg" alt="snake"></button>
@@ -330,6 +284,8 @@
         <button on:click={() => showSettings = true} class="but" class:dark={$darkMode}><img
                 src="./static/details.svg" alt="details"></button>
     </div>
+    <LEDSelector/>
+    <InverterToggler inverterState={data?.inverter}/>
 </div>
 
 <Overlay bind:shown={showSnake} closable="{false} ">
@@ -355,7 +311,9 @@
 
 <Overlay bind:shown={showSettings}>
     Corrective Factor for 12V Sensor: <input type="number" bind:value={$twelveCorrectiveFactor}> <br>
-    Current Value: {(data["tw"] * $twelveCorrectiveFactor).toFixed(2)}
+    Current Value: {(data["tw"] * $twelveCorrectiveFactor).toFixed(2)} <br>
+    <!--    <button on:click={() => ipcRenderer.send('standby_mode', {})}>Enter Standby Mode</button>-->
+    <!--    <br><small><i>Standby mode will charge the batteries when the voltage drops below 3.5 volts per cell and stop when it reaches 3.7 volts per cell.</i></small>-->
 </Overlay>
 
 {#if showImage}

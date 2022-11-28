@@ -1,5 +1,5 @@
 <script>
-    import { onMount, getContext } from "svelte";
+    import { onMount } from "svelte";
     export let data;
     let element;
     let object;
@@ -13,18 +13,19 @@
     let width = 0.7;
     let radius = 0.72;
 
+    let lastValues = [];
+
     $: update(data);
 
     function update() {
         if (!data || !Q0Q4 || !Q1Q3) return;
-        const animationDuration = getContext("animationDuration");
-        const sorted = data.sort(function (a, b) {
-            return a - b;
-        });
+        const animationDuration = 100;
+        const sorted = data.sort((a, b) => a - b);
         const Q0 = sorted[0];
         const Q1 = sorted[Math.round(data.length / 4)];
         const Q3 = sorted[Math.round((3 * data.length) / 4)];
         const Q4 = sorted.last();
+        if(JSON.stringify([Q0, Q1, Q3, Q4]) === JSON.stringify(lastValues)) return;
         Q0Q4.animate(
             {
                 d: [

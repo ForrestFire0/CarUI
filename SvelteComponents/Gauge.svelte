@@ -9,6 +9,7 @@
     export let colorBounds = bounds;
     export let value = bounds[0];
     export let digits = 3 - (bounds[1] + "").split(".")[0].length;
+    export let animationDuration = 1;
     let gaugeElement;
     let gaugeObject;
     const resize = () => {
@@ -16,9 +17,15 @@
         fontSize = Math.min(gaugeElement.offsetWidth / name.length * 1.4, 18) + "px";
     }
 
-    $: if (gaugeObject && value) gaugeObject.setValueAnimated(value);
+    $: if (gaugeObject && value) {
+        if(animationDuration > 0.5)
+            gaugeObject.setValueAnimated(value, animationDuration);
+        else
+            gaugeObject.setValue(value);
+    }
+
     darkMode.subscribe(() => {
-        if (gaugeObject) gaugeObject.setValueAnimated(value)
+        if (gaugeObject) gaugeObject.setValue(value)
     })
 
     onMount(() => {

@@ -196,37 +196,6 @@ var app = (function () {
         e.initCustomEvent(type, false, false, detail);
         return e;
     }
-    class HtmlTag {
-        constructor(anchor = null) {
-            this.a = anchor;
-            this.e = this.n = null;
-        }
-        m(html, target, anchor = null) {
-            if (!this.e) {
-                this.e = element(target.nodeName);
-                this.t = target;
-                this.h(html);
-            }
-            this.i(anchor);
-        }
-        h(html) {
-            this.e.innerHTML = html;
-            this.n = Array.from(this.e.childNodes);
-        }
-        i(anchor) {
-            for (let i = 0; i < this.n.length; i += 1) {
-                insert(this.t, this.n[i], anchor);
-            }
-        }
-        p(html) {
-            this.d();
-            this.h(html);
-            this.i(this.a);
-        }
-        d() {
-            this.n.forEach(detach);
-        }
-    }
 
     const active_docs = new Set();
     let active = 0;
@@ -314,12 +283,6 @@ var app = (function () {
                 });
             }
         };
-    }
-    function setContext(key, context) {
-        get_current_component().$$.context.set(key, context);
-    }
-    function getContext(key) {
-        return get_current_component().$$.context.get(key);
     }
     // TODO figure out if we still want to support
     // shorthand events, or if we want to implement
@@ -1811,18 +1774,18 @@ var app = (function () {
     			t1 = text(/*name*/ ctx[0]);
     			attr_dev(div0, "class", "gauge-container svelte-1mfgm47");
     			set_style(div0, "height", /*height*/ ctx[2]);
-    			add_location(div0, file$a, 39, 0, 1266);
+    			add_location(div0, file$a, 46, 0, 1433);
     			set_style(div1, "margin", "0");
     			set_style(div1, "font-size", /*fontSize*/ ctx[3]);
     			set_style(div1, "color", /*$darkMode*/ ctx[4] ? "#c5c5c5" : "");
-    			add_location(div1, file$a, 40, 0, 1348);
+    			add_location(div1, file$a, 47, 0, 1515);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div0, anchor);
-    			/*div0_binding*/ ctx[11](div0);
+    			/*div0_binding*/ ctx[12](div0);
     			insert_dev(target, t0, anchor);
     			insert_dev(target, div1, anchor);
     			append_dev(div1, t1);
@@ -1851,7 +1814,7 @@ var app = (function () {
     		o: noop,
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(div0);
-    			/*div0_binding*/ ctx[11](null);
+    			/*div0_binding*/ ctx[12](null);
     			if (detaching) detach_dev(t0);
     			if (detaching) detach_dev(div1);
     			mounted = false;
@@ -1881,6 +1844,7 @@ var app = (function () {
     	let { colorBounds = bounds } = $$props;
     	let { value = bounds[0] } = $$props;
     	let { digits = 3 - (bounds[1] + "").split(".")[0].length } = $$props;
+    	let { animationDuration = 1 } = $$props;
     	let gaugeElement;
     	let gaugeObject;
 
@@ -1890,11 +1854,11 @@ var app = (function () {
     	};
 
     	darkMode.subscribe(() => {
-    		if (gaugeObject) gaugeObject.setValueAnimated(value);
+    		if (gaugeObject) gaugeObject.setValue(value);
     	});
 
     	onMount(() => {
-    		$$invalidate(10, gaugeObject = gauge_min(gaugeElement, {
+    		$$invalidate(11, gaugeObject = gauge_min(gaugeElement, {
     			max: bounds[1],
     			min: bounds[0],
     			label: value => value.toFixed(digits),
@@ -1907,7 +1871,7 @@ var app = (function () {
 
     	let height = "12vw";
     	let fontSize = "16px";
-    	const writable_props = ["name", "bounds", "colorBounds", "value", "digits"];
+    	const writable_props = ["name", "bounds", "colorBounds", "value", "digits", "animationDuration"];
 
     	Object.keys($$props).forEach(key => {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console.warn(`<Gauge> was created with unknown prop '${key}'`);
@@ -1926,6 +1890,7 @@ var app = (function () {
     		if ("colorBounds" in $$props) $$invalidate(7, colorBounds = $$props.colorBounds);
     		if ("value" in $$props) $$invalidate(8, value = $$props.value);
     		if ("digits" in $$props) $$invalidate(9, digits = $$props.digits);
+    		if ("animationDuration" in $$props) $$invalidate(10, animationDuration = $$props.animationDuration);
     	};
 
     	$$self.$capture_state = () => ({
@@ -1938,6 +1903,7 @@ var app = (function () {
     		colorBounds,
     		value,
     		digits,
+    		animationDuration,
     		gaugeElement,
     		gaugeObject,
     		resize,
@@ -1952,8 +1918,9 @@ var app = (function () {
     		if ("colorBounds" in $$props) $$invalidate(7, colorBounds = $$props.colorBounds);
     		if ("value" in $$props) $$invalidate(8, value = $$props.value);
     		if ("digits" in $$props) $$invalidate(9, digits = $$props.digits);
+    		if ("animationDuration" in $$props) $$invalidate(10, animationDuration = $$props.animationDuration);
     		if ("gaugeElement" in $$props) $$invalidate(1, gaugeElement = $$props.gaugeElement);
-    		if ("gaugeObject" in $$props) $$invalidate(10, gaugeObject = $$props.gaugeObject);
+    		if ("gaugeObject" in $$props) $$invalidate(11, gaugeObject = $$props.gaugeObject);
     		if ("height" in $$props) $$invalidate(2, height = $$props.height);
     		if ("fontSize" in $$props) $$invalidate(3, fontSize = $$props.fontSize);
     	};
@@ -1963,8 +1930,10 @@ var app = (function () {
     	}
 
     	$$self.$$.update = () => {
-    		if ($$self.$$.dirty & /*gaugeObject, value*/ 1280) {
-    			if (gaugeObject && value) gaugeObject.setValueAnimated(value);
+    		if ($$self.$$.dirty & /*gaugeObject, value, animationDuration*/ 3328) {
+    			if (gaugeObject && value) {
+    				if (animationDuration > 0.5) gaugeObject.setValueAnimated(value, animationDuration); else gaugeObject.setValue(value);
+    			}
     		}
     	};
 
@@ -1979,6 +1948,7 @@ var app = (function () {
     		colorBounds,
     		value,
     		digits,
+    		animationDuration,
     		gaugeObject,
     		div0_binding
     	];
@@ -1993,7 +1963,8 @@ var app = (function () {
     			bounds: 6,
     			colorBounds: 7,
     			value: 8,
-    			digits: 9
+    			digits: 9,
+    			animationDuration: 10
     		});
 
     		dispatch_dev("SvelteRegisterComponent", {
@@ -2043,6 +2014,14 @@ var app = (function () {
     	set digits(value) {
     		throw new Error("<Gauge>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
+
+    	get animationDuration() {
+    		throw new Error("<Gauge>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set animationDuration(value) {
+    		throw new Error("<Gauge>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
     }
 
     /* SvelteComponents\TempGauge.svelte generated by Svelte v3.38.2 */
@@ -2057,7 +2036,7 @@ var app = (function () {
     			attr_dev(svg, "viewBox", "0 0 400 200");
     			set_style(svg, "width", "100%");
     			set_style(svg, "height", "23%");
-    			add_location(svg, file$9, 178, 0, 4956);
+    			add_location(svg, file$9, 179, 0, 4989);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -2101,19 +2080,17 @@ var app = (function () {
     	let ptFrmVal;
     	let width = 0.7;
     	let radius = 0.72;
+    	let lastValues = [];
 
     	function update() {
     		if (!data || !Q0Q4 || !Q1Q3) return;
-    		const animationDuration = getContext("animationDuration");
-
-    		const sorted = data.sort(function (a, b) {
-    			return a - b;
-    		});
-
+    		const animationDuration = 100;
+    		const sorted = data.sort((a, b) => a - b);
     		const Q0 = sorted[0];
     		const Q1 = sorted[Math.round(data.length / 4)];
     		const Q3 = sorted[Math.round(3 * data.length / 4)];
     		const Q4 = sorted.last();
+    		if (JSON.stringify([Q0, Q1, Q3, Q4]) === JSON.stringify(lastValues)) return;
 
     		Q0Q4.animate(
     			{
@@ -2269,7 +2246,6 @@ var app = (function () {
 
     	$$self.$capture_state = () => ({
     		onMount,
-    		getContext,
     		data,
     		element,
     		object,
@@ -2281,6 +2257,7 @@ var app = (function () {
     		ptFrmVal,
     		width,
     		radius,
+    		lastValues,
     		update
     	});
 
@@ -2294,6 +2271,7 @@ var app = (function () {
     		if ("ptFrmVal" in $$props) ptFrmVal = $$props.ptFrmVal;
     		if ("width" in $$props) width = $$props.width;
     		if ("radius" in $$props) radius = $$props.radius;
+    		if ("lastValues" in $$props) lastValues = $$props.lastValues;
     	};
 
     	if ($$props && "$$inject" in $$props) {
@@ -2351,10 +2329,10 @@ var app = (function () {
     			svg = svg_element("svg");
     			attr_dev(svg, "class", "voltages svelte-1i2blxw");
     			attr_dev(svg, "viewBox", "0 0 400 100");
-    			add_location(svg, file$8, 74, 4, 2199);
+    			add_location(svg, file$8, 80, 4, 2350);
     			attr_dev(div, "class", "container svelte-1i2blxw");
     			set_style(div, "background-color", /*$darkMode*/ ctx[1] ? "darkgrey" : "#cccccc");
-    			add_location(div, file$8, 73, 0, 2107);
+    			add_location(div, file$8, 79, 0, 2258);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -2430,7 +2408,15 @@ var app = (function () {
     	});
 
     	function update(_unused) {
+    		if (datas.length === 0) {
+    			return;
+    		}
+
     		for (let i = 0; i < objects.length; i++) {
+    			if (datas[i].length === 0) {
+    				continue;
+    			}
+
     			$$invalidate(2, datas[i] = datas[i].slice(Math.max(datas[i].length - axisSettings[i].maxPoints, 0)), datas);
 
     			let maxY = datas[i].reduce(function (a, b) {
@@ -2790,235 +2776,10 @@ var app = (function () {
     	}
     }
 
-    /* SvelteComponents\Message.svelte generated by Svelte v3.38.2 */
-    const file$6 = "SvelteComponents\\Message.svelte";
-
-    // (8:0) {#if shown}
-    function create_if_block$2(ctx) {
-    	let div;
-    	let t0;
-    	let br;
-    	let t1;
-    	let button;
-    	let div_outro;
-    	let current;
-    	let mounted;
-    	let dispose;
-    	const default_slot_template = /*#slots*/ ctx[3].default;
-    	const default_slot = create_slot(default_slot_template, ctx, /*$$scope*/ ctx[2], null);
-
-    	const block = {
-    		c: function create() {
-    			div = element("div");
-    			if (default_slot) default_slot.c();
-    			t0 = space();
-    			br = element("br");
-    			t1 = space();
-    			button = element("button");
-    			button.textContent = "Select another port...";
-    			add_location(br, file$6, 9, 8, 231);
-    			add_location(button, file$6, 10, 4, 241);
-    			attr_dev(div, "class", "container svelte-1ai26fn");
-    			add_location(div, file$6, 8, 4, 160);
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, div, anchor);
-
-    			if (default_slot) {
-    				default_slot.m(div, null);
-    			}
-
-    			append_dev(div, t0);
-    			append_dev(div, br);
-    			append_dev(div, t1);
-    			append_dev(div, button);
-    			current = true;
-
-    			if (!mounted) {
-    				dispose = listen_dev(button, "click", /*click_handler*/ ctx[4], false, false, false);
-    				mounted = true;
-    			}
-    		},
-    		p: function update(ctx, dirty) {
-    			if (default_slot) {
-    				if (default_slot.p && (!current || dirty & /*$$scope*/ 4)) {
-    					update_slot(default_slot, default_slot_template, ctx, /*$$scope*/ ctx[2], dirty, null, null);
-    				}
-    			}
-    		},
-    		i: function intro(local) {
-    			if (current) return;
-    			transition_in(default_slot, local);
-    			if (div_outro) div_outro.end(1);
-    			current = true;
-    		},
-    		o: function outro(local) {
-    			transition_out(default_slot, local);
-    			div_outro = create_out_transition(div, fade, { duration: 3000 });
-    			current = false;
-    		},
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div);
-    			if (default_slot) default_slot.d(detaching);
-    			if (detaching && div_outro) div_outro.end();
-    			mounted = false;
-    			dispose();
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_if_block$2.name,
-    		type: "if",
-    		source: "(8:0) {#if shown}",
-    		ctx
-    	});
-
-    	return block;
-    }
+    /* SvelteComponents\Console.svelte generated by Svelte v3.38.2 */
+    const file$6 = "SvelteComponents\\Console.svelte";
 
     function create_fragment$6(ctx) {
-    	let if_block_anchor;
-    	let current;
-    	let if_block = /*shown*/ ctx[0] && create_if_block$2(ctx);
-
-    	const block = {
-    		c: function create() {
-    			if (if_block) if_block.c();
-    			if_block_anchor = empty();
-    		},
-    		l: function claim(nodes) {
-    			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
-    		},
-    		m: function mount(target, anchor) {
-    			if (if_block) if_block.m(target, anchor);
-    			insert_dev(target, if_block_anchor, anchor);
-    			current = true;
-    		},
-    		p: function update(ctx, [dirty]) {
-    			if (/*shown*/ ctx[0]) {
-    				if (if_block) {
-    					if_block.p(ctx, dirty);
-
-    					if (dirty & /*shown*/ 1) {
-    						transition_in(if_block, 1);
-    					}
-    				} else {
-    					if_block = create_if_block$2(ctx);
-    					if_block.c();
-    					transition_in(if_block, 1);
-    					if_block.m(if_block_anchor.parentNode, if_block_anchor);
-    				}
-    			} else if (if_block) {
-    				group_outros();
-
-    				transition_out(if_block, 1, 1, () => {
-    					if_block = null;
-    				});
-
-    				check_outros();
-    			}
-    		},
-    		i: function intro(local) {
-    			if (current) return;
-    			transition_in(if_block);
-    			current = true;
-    		},
-    		o: function outro(local) {
-    			transition_out(if_block);
-    			current = false;
-    		},
-    		d: function destroy(detaching) {
-    			if (if_block) if_block.d(detaching);
-    			if (detaching) detach_dev(if_block_anchor);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_fragment$6.name,
-    		type: "component",
-    		source: "",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    function instance$6($$self, $$props, $$invalidate) {
-    	let { $$slots: slots = {}, $$scope } = $$props;
-    	validate_slots("Message", slots, ['default']);
-    	let { shown = false } = $$props;
-
-    	let { onClose = () => {
-    		
-    	} } = $$props;
-
-    	const writable_props = ["shown", "onClose"];
-
-    	Object.keys($$props).forEach(key => {
-    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console.warn(`<Message> was created with unknown prop '${key}'`);
-    	});
-
-    	const click_handler = () => {
-    		onClose();
-    		$$invalidate(0, shown = false);
-    	};
-
-    	$$self.$$set = $$props => {
-    		if ("shown" in $$props) $$invalidate(0, shown = $$props.shown);
-    		if ("onClose" in $$props) $$invalidate(1, onClose = $$props.onClose);
-    		if ("$$scope" in $$props) $$invalidate(2, $$scope = $$props.$$scope);
-    	};
-
-    	$$self.$capture_state = () => ({ fade, shown, onClose });
-
-    	$$self.$inject_state = $$props => {
-    		if ("shown" in $$props) $$invalidate(0, shown = $$props.shown);
-    		if ("onClose" in $$props) $$invalidate(1, onClose = $$props.onClose);
-    	};
-
-    	if ($$props && "$$inject" in $$props) {
-    		$$self.$inject_state($$props.$$inject);
-    	}
-
-    	return [shown, onClose, $$scope, slots, click_handler];
-    }
-
-    class Message extends SvelteComponentDev {
-    	constructor(options) {
-    		super(options);
-    		init(this, options, instance$6, create_fragment$6, safe_not_equal, { shown: 0, onClose: 1 });
-
-    		dispatch_dev("SvelteRegisterComponent", {
-    			component: this,
-    			tagName: "Message",
-    			options,
-    			id: create_fragment$6.name
-    		});
-    	}
-
-    	get shown() {
-    		throw new Error("<Message>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	set shown(value) {
-    		throw new Error("<Message>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	get onClose() {
-    		throw new Error("<Message>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	set onClose(value) {
-    		throw new Error("<Message>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-    }
-
-    /* SvelteComponents\Console.svelte generated by Svelte v3.38.2 */
-    const file$5 = "SvelteComponents\\Console.svelte";
-
-    function create_fragment$5(ctx) {
     	let textarea_1;
     	let textarea_1_class_value;
 
@@ -3029,7 +2790,7 @@ var app = (function () {
     			attr_dev(textarea_1, "class", textarea_1_class_value = "" + (null_to_empty(/*$darkMode*/ ctx[2] ? "darkIsland" : "island") + " svelte-1l72aks"));
     			set_style(textarea_1, "color", /*$darkMode*/ ctx[2] ? "#c5c5c5" : "black");
     			textarea_1.value = /*text*/ ctx[0];
-    			add_location(textarea_1, file$5, 10, 0, 198);
+    			add_location(textarea_1, file$6, 10, 0, 198);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -3061,7 +2822,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_fragment$5.name,
+    		id: create_fragment$6.name,
     		type: "component",
     		source: "",
     		ctx
@@ -3070,7 +2831,7 @@ var app = (function () {
     	return block;
     }
 
-    function instance$5($$self, $$props, $$invalidate) {
+    function instance$6($$self, $$props, $$invalidate) {
     	let $darkMode;
     	validate_store(darkMode, "darkMode");
     	component_subscribe($$self, darkMode, $$value => $$invalidate(2, $darkMode = $$value));
@@ -3120,13 +2881,13 @@ var app = (function () {
     class Console extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init(this, options, instance$5, create_fragment$5, safe_not_equal, { text: 0 });
+    		init(this, options, instance$6, create_fragment$6, safe_not_equal, { text: 0 });
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
     			tagName: "Console",
     			options,
-    			id: create_fragment$5.name
+    			id: create_fragment$6.name
     		});
 
     		const { ctx } = this.$$;
@@ -3147,9 +2908,9 @@ var app = (function () {
     }
 
     /* SvelteComponents\LEDSelector.svelte generated by Svelte v3.38.2 */
-    const file$4 = "SvelteComponents\\LEDSelector.svelte";
+    const file$5 = "SvelteComponents\\LEDSelector.svelte";
 
-    function create_fragment$4(ctx) {
+    function create_fragment$5(ctx) {
     	let div1;
     	let div0;
     	let t0;
@@ -3176,16 +2937,16 @@ var app = (function () {
     			set_style(h4, "font-weight", "bolder");
     			set_style(h4, "margin", ".156vw 0 .156vw 0");
     			set_style(h4, "font-size", "1.8vw");
-    			add_location(h4, file$4, 30, 8, 979);
+    			add_location(h4, file$5, 30, 8, 979);
     			set_style(i, "font-size", ".93vw");
-    			add_location(i, file$4, 32, 8, 1146);
+    			add_location(i, file$5, 32, 8, 1146);
     			set_style(div0, "color", /*$darkMode*/ ctx[1] ? "#c5c5c5" : "");
     			set_style(div0, "font-size", "1.3vw");
-    			add_location(div0, file$4, 28, 4, 873);
+    			add_location(div0, file$5, 28, 4, 873);
     			attr_dev(div1, "class", "container svelte-1ldo26q");
     			set_style(div1, "background", /*$darkMode*/ ctx[1] ? "#383838" : "#cccccc");
     			set_style(div1, "box-shadow", ".39vw .39vw .625vw .156vw " + (/*$darkMode*/ ctx[1] ? "#2a2a2a" : "#6B6B6B"));
-    			add_location(div1, file$4, 25, 0, 642);
+    			add_location(div1, file$5, 25, 0, 642);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -3230,7 +2991,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_fragment$4.name,
+    		id: create_fragment$5.name,
     		type: "component",
     		source: "",
     		ctx
@@ -3239,7 +3000,7 @@ var app = (function () {
     	return block;
     }
 
-    function instance$4($$self, $$props, $$invalidate) {
+    function instance$5($$self, $$props, $$invalidate) {
     	let $darkMode;
     	validate_store(darkMode, "darkMode");
     	component_subscribe($$self, darkMode, $$value => $$invalidate(1, $darkMode = $$value));
@@ -3285,19 +3046,19 @@ var app = (function () {
     class LEDSelector extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init(this, options, instance$4, create_fragment$4, safe_not_equal, {});
+    		init(this, options, instance$5, create_fragment$5, safe_not_equal, {});
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
     			tagName: "LEDSelector",
     			options,
-    			id: create_fragment$4.name
+    			id: create_fragment$5.name
     		});
     	}
     }
 
     /* SvelteComponents\Snake.svelte generated by Svelte v3.38.2 */
-    const file$3 = "SvelteComponents\\Snake.svelte";
+    const file$4 = "SvelteComponents\\Snake.svelte";
 
     function get_each_context$2(ctx, list, i) {
     	const child_ctx = ctx.slice();
@@ -3305,14 +3066,14 @@ var app = (function () {
     	return child_ctx;
     }
 
-    function get_each_context_1$2(ctx, list, i) {
+    function get_each_context_1$1(ctx, list, i) {
     	const child_ctx = ctx.slice();
     	child_ctx[30] = list[i];
     	return child_ctx;
     }
 
     // (128:12) {#each row as col}
-    function create_each_block_1$2(ctx) {
+    function create_each_block_1$1(ctx) {
     	let td;
 
     	const block = {
@@ -3324,7 +3085,7 @@ var app = (function () {
     			set_style(td, "width", /*pixelSize*/ ctx[5]);
     			set_style(td, "border-radius", /*showDashes*/ ctx[4] ? "inherit" : "10px");
     			attr_dev(td, "class", "svelte-a5ovh");
-    			add_location(td, file$3, 128, 16, 4605);
+    			add_location(td, file$4, 128, 16, 4605);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, td, anchor);
@@ -3357,7 +3118,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_each_block_1$2.name,
+    		id: create_each_block_1$1.name,
     		type: "each",
     		source: "(128:12) {#each row as col}",
     		ctx
@@ -3375,7 +3136,7 @@ var app = (function () {
     	let each_blocks = [];
 
     	for (let i = 0; i < each_value_1.length; i += 1) {
-    		each_blocks[i] = create_each_block_1$2(get_each_context_1$2(ctx, each_value_1, i));
+    		each_blocks[i] = create_each_block_1$1(get_each_context_1$1(ctx, each_value_1, i));
     	}
 
     	const block = {
@@ -3387,7 +3148,7 @@ var app = (function () {
     			}
 
     			t = space();
-    			add_location(tr, file$3, 126, 8, 4551);
+    			add_location(tr, file$4, 126, 8, 4551);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, tr, anchor);
@@ -3405,12 +3166,12 @@ var app = (function () {
     				let i;
 
     				for (i = 0; i < each_value_1.length; i += 1) {
-    					const child_ctx = get_each_context_1$2(ctx, each_value_1, i);
+    					const child_ctx = get_each_context_1$1(ctx, each_value_1, i);
 
     					if (each_blocks[i]) {
     						each_blocks[i].p(child_ctx, dirty);
     					} else {
-    						each_blocks[i] = create_each_block_1$2(child_ctx);
+    						each_blocks[i] = create_each_block_1$1(child_ctx);
     						each_blocks[i].c();
     						each_blocks[i].m(tr, t);
     					}
@@ -3440,7 +3201,7 @@ var app = (function () {
     	return block;
     }
 
-    function create_fragment$3(ctx) {
+    function create_fragment$4(ctx) {
     	let table;
     	let t0;
     	let br0;
@@ -3511,26 +3272,26 @@ var app = (function () {
     			t13 = text(/*status_box*/ ctx[3]);
     			set_style(table, "background-color", "lightgrey");
     			set_style(table, "box-shadow", "3px 5px 10px 10px grey");
-    			add_location(table, file$3, 124, 0, 4432);
-    			add_location(br0, file$3, 137, 0, 4944);
-    			add_location(br1, file$3, 138, 0, 4950);
-    			add_location(button0, file$3, 140, 4, 4997);
+    			add_location(table, file$4, 124, 0, 4432);
+    			add_location(br0, file$4, 137, 0, 4944);
+    			add_location(br1, file$4, 138, 0, 4950);
+    			add_location(button0, file$4, 140, 4, 4997);
     			set_style(div0, "display", "inline-block");
-    			add_location(div0, file$3, 139, 0, 4956);
-    			add_location(button1, file$3, 143, 4, 5112);
+    			add_location(div0, file$4, 139, 0, 4956);
+    			add_location(button1, file$4, 143, 4, 5112);
     			set_style(div1, "display", "inline-block");
-    			add_location(div1, file$3, 142, 0, 5071);
-    			add_location(button2, file$3, 146, 4, 5207);
+    			add_location(div1, file$4, 142, 0, 5071);
+    			add_location(button2, file$4, 146, 4, 5207);
     			set_style(div2, "display", "inline-block");
-    			add_location(div2, file$3, 145, 0, 5166);
+    			add_location(div2, file$4, 145, 0, 5166);
     			attr_dev(input, "type", "number");
     			attr_dev(input, "max", "25");
     			attr_dev(input, "min", "4");
-    			add_location(input, file$3, 148, 0, 5316);
+    			add_location(input, file$4, 148, 0, 5316);
     			set_style(div3, "display", "inline-block");
-    			add_location(div3, file$3, 149, 0, 5379);
+    			add_location(div3, file$4, 149, 0, 5379);
     			set_style(div4, "display", "inline-block");
-    			add_location(div4, file$3, 152, 0, 5451);
+    			add_location(div4, file$4, 152, 0, 5451);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -3643,7 +3404,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_fragment$3.name,
+    		id: create_fragment$4.name,
     		type: "component",
     		source: "",
     		ctx
@@ -3652,7 +3413,7 @@ var app = (function () {
     	return block;
     }
 
-    function instance$3($$self, $$props, $$invalidate) {
+    function instance$4($$self, $$props, $$invalidate) {
     	let pixelSize;
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots("Snake", slots, []);
@@ -3877,21 +3638,21 @@ var app = (function () {
     class Snake extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init(this, options, instance$3, create_fragment$3, safe_not_equal, {}, [-1, -1]);
+    		init(this, options, instance$4, create_fragment$4, safe_not_equal, {}, [-1, -1]);
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
     			tagName: "Snake",
     			options,
-    			id: create_fragment$3.name
+    			id: create_fragment$4.name
     		});
     	}
     }
 
     /* SvelteComponents\Clock.svelte generated by Svelte v3.38.2 */
-    const file$2 = "SvelteComponents\\Clock.svelte";
+    const file$3 = "SvelteComponents\\Clock.svelte";
 
-    function create_fragment$2(ctx) {
+    function create_fragment$3(ctx) {
     	let div;
     	let t_value = /*time*/ ctx[0].toLocaleTimeString() + "";
     	let t;
@@ -3905,7 +3666,7 @@ var app = (function () {
     			set_style(div, "margin-top", "1.2vw");
     			set_style(div, "font-weight", "bolder");
     			set_style(div, "color", /*$darkMode*/ ctx[1] ? "#c5c5c5" : "");
-    			add_location(div, file$2, 15, 0, 444);
+    			add_location(div, file$3, 15, 0, 444);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -3930,7 +3691,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_fragment$2.name,
+    		id: create_fragment$3.name,
     		type: "component",
     		source: "",
     		ctx
@@ -3939,7 +3700,7 @@ var app = (function () {
     	return block;
     }
 
-    function instance$2($$self, $$props, $$invalidate) {
+    function instance$3($$self, $$props, $$invalidate) {
     	let $timeOffset;
     	let $darkMode;
     	validate_store(timeOffset, "timeOffset");
@@ -3992,13 +3753,13 @@ var app = (function () {
     class Clock extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init(this, options, instance$2, create_fragment$2, safe_not_equal, {});
+    		init(this, options, instance$3, create_fragment$3, safe_not_equal, {});
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
     			tagName: "Clock",
     			options,
-    			id: create_fragment$2.name
+    			id: create_fragment$3.name
     		});
     	}
     }
@@ -4006,7 +3767,7 @@ var app = (function () {
     /* SvelteComponents\C4.svelte generated by Svelte v3.38.2 */
 
     const { console: console_1 } = globals;
-    const file$1 = "SvelteComponents\\C4.svelte";
+    const file$2 = "SvelteComponents\\C4.svelte";
 
     function get_each_context$1(ctx, list, i) {
     	const child_ctx = ctx.slice();
@@ -4015,7 +3776,7 @@ var app = (function () {
     	return child_ctx;
     }
 
-    function get_each_context_1$1(ctx, list, i) {
+    function get_each_context_1(ctx, list, i) {
     	const child_ctx = ctx.slice();
     	child_ctx[14] = list[i];
     	child_ctx[16] = i;
@@ -4023,7 +3784,7 @@ var app = (function () {
     }
 
     // (103:20) {#if col > 0}
-    function create_if_block$1(ctx) {
+    function create_if_block$2(ctx) {
     	let div;
     	let div_intro;
     	let div_outro;
@@ -4036,7 +3797,7 @@ var app = (function () {
     			set_style(div, "height", "100%");
     			set_style(div, "width", "100%");
     			set_style(div, "border-radius", /*pixelSize*/ ctx[2] / 2 + "vw");
-    			add_location(div, file$1, 103, 24, 4012);
+    			add_location(div, file$2, 103, 24, 4012);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -4090,7 +3851,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block$1.name,
+    		id: create_if_block$2.name,
     		type: "if",
     		source: "(103:20) {#if col > 0}",
     		ctx
@@ -4100,12 +3861,12 @@ var app = (function () {
     }
 
     // (100:12) {#each row as col, j}
-    function create_each_block_1$1(ctx) {
+    function create_each_block_1(ctx) {
     	let td;
     	let current;
     	let mounted;
     	let dispose;
-    	let if_block = /*col*/ ctx[14] > 0 && create_if_block$1(ctx);
+    	let if_block = /*col*/ ctx[14] > 0 && create_if_block$2(ctx);
 
     	function click_handler() {
     		return /*click_handler*/ ctx[6](/*j*/ ctx[16]);
@@ -4118,7 +3879,7 @@ var app = (function () {
     			set_style(td, "height", /*pixelSize*/ ctx[2] + "vw");
     			set_style(td, "width", /*pixelSize*/ ctx[2] + "vw");
     			attr_dev(td, "class", "svelte-h2qk5l");
-    			add_location(td, file$1, 100, 16, 3837);
+    			add_location(td, file$2, 100, 16, 3837);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, td, anchor);
@@ -4141,7 +3902,7 @@ var app = (function () {
     						transition_in(if_block, 1);
     					}
     				} else {
-    					if_block = create_if_block$1(ctx);
+    					if_block = create_if_block$2(ctx);
     					if_block.c();
     					transition_in(if_block, 1);
     					if_block.m(td, null);
@@ -4183,7 +3944,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_each_block_1$1.name,
+    		id: create_each_block_1.name,
     		type: "each",
     		source: "(100:12) {#each row as col, j}",
     		ctx
@@ -4202,7 +3963,7 @@ var app = (function () {
     	let each_blocks = [];
 
     	for (let i = 0; i < each_value_1.length; i += 1) {
-    		each_blocks[i] = create_each_block_1$1(get_each_context_1$1(ctx, each_value_1, i));
+    		each_blocks[i] = create_each_block_1(get_each_context_1(ctx, each_value_1, i));
     	}
 
     	const out = i => transition_out(each_blocks[i], 1, 1, () => {
@@ -4218,7 +3979,7 @@ var app = (function () {
     			}
 
     			t = space();
-    			add_location(tr, file$1, 98, 8, 3780);
+    			add_location(tr, file$2, 98, 8, 3780);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, tr, anchor);
@@ -4237,13 +3998,13 @@ var app = (function () {
     				let i;
 
     				for (i = 0; i < each_value_1.length; i += 1) {
-    					const child_ctx = get_each_context_1$1(ctx, each_value_1, i);
+    					const child_ctx = get_each_context_1(ctx, each_value_1, i);
 
     					if (each_blocks[i]) {
     						each_blocks[i].p(child_ctx, dirty);
     						transition_in(each_blocks[i], 1);
     					} else {
-    						each_blocks[i] = create_each_block_1$1(child_ctx);
+    						each_blocks[i] = create_each_block_1(child_ctx);
     						each_blocks[i].c();
     						transition_in(each_blocks[i], 1);
     						each_blocks[i].m(tr, t);
@@ -4294,7 +4055,7 @@ var app = (function () {
     	return block;
     }
 
-    function create_fragment$1(ctx) {
+    function create_fragment$2(ctx) {
     	let table;
     	let t0;
     	let br0;
@@ -4349,17 +4110,17 @@ var app = (function () {
     			t7 = text(/*status_box*/ ctx[1]);
     			set_style(table, "background-color", "lightgrey");
     			set_style(table, "box-shadow", "3px 5px 10px 10px grey");
-    			add_location(table, file$1, 96, 0, 3658);
-    			add_location(br0, file$1, 115, 0, 4585);
-    			add_location(br1, file$1, 116, 0, 4591);
-    			add_location(button0, file$1, 118, 4, 4638);
+    			add_location(table, file$2, 96, 0, 3658);
+    			add_location(br0, file$2, 115, 0, 4585);
+    			add_location(br1, file$2, 116, 0, 4591);
+    			add_location(button0, file$2, 118, 4, 4638);
     			set_style(div0, "display", "inline-block");
-    			add_location(div0, file$1, 117, 0, 4597);
-    			add_location(button1, file$1, 121, 4, 4753);
+    			add_location(div0, file$2, 117, 0, 4597);
+    			add_location(button1, file$2, 121, 4, 4753);
     			set_style(div1, "display", "inline-block");
-    			add_location(div1, file$1, 120, 0, 4712);
+    			add_location(div1, file$2, 120, 0, 4712);
     			set_style(div2, "display", "inline-block");
-    			add_location(div2, file$1, 123, 0, 4807);
+    			add_location(div2, file$2, 123, 0, 4807);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -4464,7 +4225,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_fragment$1.name,
+    		id: create_fragment$2.name,
     		type: "component",
     		source: "",
     		ctx
@@ -4473,7 +4234,7 @@ var app = (function () {
     	return block;
     }
 
-    function instance$1($$self, $$props, $$invalidate) {
+    function instance$2($$self, $$props, $$invalidate) {
     	let pixelSize;
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots("C4", slots, []);
@@ -4600,48 +4361,233 @@ var app = (function () {
     class C4 extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init(this, options, instance$1, create_fragment$1, safe_not_equal, {});
+    		init(this, options, instance$2, create_fragment$2, safe_not_equal, {});
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
     			tagName: "C4",
     			options,
+    			id: create_fragment$2.name
+    		});
+    	}
+    }
+
+    /* SvelteComponents\InverterToggler.svelte generated by Svelte v3.38.2 */
+    const file$1 = "SvelteComponents\\InverterToggler.svelte";
+
+    // (44:8) {#if inverterState}
+    function create_if_block$1(ctx) {
+    	let img;
+    	let img_src_value;
+
+    	const block = {
+    		c: function create() {
+    			img = element("img");
+    			if (img.src !== (img_src_value = "./static/cross.svg")) attr_dev(img, "src", img_src_value);
+    			attr_dev(img, "alt", "details");
+    			attr_dev(img, "class", "image2 svelte-g0xufx");
+    			add_location(img, file$1, 44, 12, 1101);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, img, anchor);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(img);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block$1.name,
+    		type: "if",
+    		source: "(44:8) {#if inverterState}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    function create_fragment$1(ctx) {
+    	let div1;
+    	let t0;
+    	let t1_value = (/*inverterState*/ ctx[0] ? "Off" : "On") + "";
+    	let t1;
+    	let t2;
+    	let div0;
+    	let img;
+    	let img_src_value;
+    	let t3;
+    	let mounted;
+    	let dispose;
+    	let if_block = /*inverterState*/ ctx[0] && create_if_block$1(ctx);
+
+    	const block = {
+    		c: function create() {
+    			div1 = element("div");
+    			t0 = text("Turn Inverter ");
+    			t1 = text(t1_value);
+    			t2 = space();
+    			div0 = element("div");
+    			img = element("img");
+    			t3 = space();
+    			if (if_block) if_block.c();
+    			if (img.src !== (img_src_value = "./static/outlet.svg")) attr_dev(img, "src", img_src_value);
+    			attr_dev(img, "alt", "details");
+    			attr_dev(img, "class", "image1 svelte-g0xufx");
+    			add_location(img, file$1, 42, 8, 997);
+    			attr_dev(div0, "class", "parent svelte-g0xufx");
+    			add_location(div0, file$1, 41, 4, 967);
+    			attr_dev(div1, "class", "container svelte-g0xufx");
+    			set_style(div1, "background", /*$darkMode*/ ctx[1] ? "#383838" : "#cccccc");
+    			set_style(div1, "box-shadow", ".39vw .39vw .625vw .156vw " + (/*$darkMode*/ ctx[1] ? "#2a2a2a" : "#6B6B6B"));
+    			add_location(div1, file$1, 37, 0, 653);
+    		},
+    		l: function claim(nodes) {
+    			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div1, anchor);
+    			append_dev(div1, t0);
+    			append_dev(div1, t1);
+    			append_dev(div1, t2);
+    			append_dev(div1, div0);
+    			append_dev(div0, img);
+    			append_dev(div0, t3);
+    			if (if_block) if_block.m(div0, null);
+
+    			if (!mounted) {
+    				dispose = listen_dev(div1, "click", /*click_handler*/ ctx[3], false, false, false);
+    				mounted = true;
+    			}
+    		},
+    		p: function update(ctx, [dirty]) {
+    			if (dirty & /*inverterState*/ 1 && t1_value !== (t1_value = (/*inverterState*/ ctx[0] ? "Off" : "On") + "")) set_data_dev(t1, t1_value);
+
+    			if (/*inverterState*/ ctx[0]) {
+    				if (if_block) ; else {
+    					if_block = create_if_block$1(ctx);
+    					if_block.c();
+    					if_block.m(div0, null);
+    				}
+    			} else if (if_block) {
+    				if_block.d(1);
+    				if_block = null;
+    			}
+
+    			if (dirty & /*$darkMode*/ 2) {
+    				set_style(div1, "background", /*$darkMode*/ ctx[1] ? "#383838" : "#cccccc");
+    			}
+
+    			if (dirty & /*$darkMode*/ 2) {
+    				set_style(div1, "box-shadow", ".39vw .39vw .625vw .156vw " + (/*$darkMode*/ ctx[1] ? "#2a2a2a" : "#6B6B6B"));
+    			}
+    		},
+    		i: noop,
+    		o: noop,
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div1);
+    			if (if_block) if_block.d();
+    			mounted = false;
+    			dispose();
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_fragment$1.name,
+    		type: "component",
+    		source: "",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    function instance$1($$self, $$props, $$invalidate) {
+    	let $darkMode;
+    	validate_store(darkMode, "darkMode");
+    	component_subscribe($$self, darkMode, $$value => $$invalidate(1, $darkMode = $$value));
+    	let { $$slots: slots = {}, $$scope } = $$props;
+    	validate_slots("InverterToggler", slots, []);
+    	const { ipcRenderer } = require("electron");
+    	let { inverterState = false } = $$props;
+    	const writable_props = ["inverterState"];
+
+    	Object.keys($$props).forEach(key => {
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console.warn(`<InverterToggler> was created with unknown prop '${key}'`);
+    	});
+
+    	const click_handler = () => ipcRenderer.send("inverter", !inverterState);
+
+    	$$self.$$set = $$props => {
+    		if ("inverterState" in $$props) $$invalidate(0, inverterState = $$props.inverterState);
+    	};
+
+    	$$self.$capture_state = () => ({
+    		darkMode,
+    		ipcRenderer,
+    		inverterState,
+    		$darkMode
+    	});
+
+    	$$self.$inject_state = $$props => {
+    		if ("inverterState" in $$props) $$invalidate(0, inverterState = $$props.inverterState);
+    	};
+
+    	if ($$props && "$$inject" in $$props) {
+    		$$self.$inject_state($$props.$$inject);
+    	}
+
+    	return [inverterState, $darkMode, ipcRenderer, click_handler];
+    }
+
+    class InverterToggler extends SvelteComponentDev {
+    	constructor(options) {
+    		super(options);
+    		init(this, options, instance$1, create_fragment$1, safe_not_equal, { inverterState: 0 });
+
+    		dispatch_dev("SvelteRegisterComponent", {
+    			component: this,
+    			tagName: "InverterToggler",
+    			options,
     			id: create_fragment$1.name
     		});
+    	}
+
+    	get inverterState() {
+    		throw new Error("<InverterToggler>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set inverterState(value) {
+    		throw new Error("<InverterToggler>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
     }
 
     /* App.svelte generated by Svelte v3.38.2 */
 
-    const { console: console_2 } = globals;
+    const { Object: Object_1, console: console_2 } = globals;
     const file = "App.svelte";
 
     function get_each_context(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[52] = list[i];
-    	child_ctx[54] = i;
+    	child_ctx[36] = list[i];
+    	child_ctx[38] = i;
     	return child_ctx;
     }
 
-    function get_each_context_1(ctx, list, i) {
-    	const child_ctx = ctx.slice();
-    	child_ctx[55] = list[i];
-    	return child_ctx;
-    }
-
-    // (115:0) <Overlay bind:shown={errOverlay}>
-    function create_default_slot_6(ctx) {
+    // (111:0) <Overlay bind:shown={errOverlay}>
+    function create_default_slot_4(ctx) {
     	let t;
 
     	const block = {
     		c: function create() {
-    			t = text(/*err*/ ctx[8]);
+    			t = text(/*err*/ ctx[6]);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, t, anchor);
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty[0] & /*err*/ 256) set_data_dev(t, /*err*/ ctx[8]);
+    			if (dirty[0] & /*err*/ 64) set_data_dev(t, /*err*/ ctx[6]);
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(t);
@@ -4650,341 +4596,16 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_default_slot_6.name,
-    		type: "slot",
-    		source: "(115:0) <Overlay bind:shown={errOverlay}>",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    // (127:8) {:else }
-    function create_else_block(ctx) {
-    	let i;
-
-    	const block = {
-    		c: function create() {
-    			i = element("i");
-    			i.textContent = "No Ports Found...";
-    			add_location(i, file, 127, 12, 4830);
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, i, anchor);
-    		},
-    		p: noop,
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(i);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_else_block.name,
-    		type: "else",
-    		source: "(127:8) {:else }",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    // (123:8) {#if availablePorts.length !== 0}
-    function create_if_block_6(ctx) {
-    	let each_1_anchor;
-    	let each_value_1 = /*availablePorts*/ ctx[14];
-    	validate_each_argument(each_value_1);
-    	let each_blocks = [];
-
-    	for (let i = 0; i < each_value_1.length; i += 1) {
-    		each_blocks[i] = create_each_block_1(get_each_context_1(ctx, each_value_1, i));
-    	}
-
-    	const block = {
-    		c: function create() {
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].c();
-    			}
-
-    			each_1_anchor = empty();
-    		},
-    		m: function mount(target, anchor) {
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].m(target, anchor);
-    			}
-
-    			insert_dev(target, each_1_anchor, anchor);
-    		},
-    		p: function update(ctx, dirty) {
-    			if (dirty[0] & /*portName, availablePorts*/ 24576) {
-    				each_value_1 = /*availablePorts*/ ctx[14];
-    				validate_each_argument(each_value_1);
-    				let i;
-
-    				for (i = 0; i < each_value_1.length; i += 1) {
-    					const child_ctx = get_each_context_1(ctx, each_value_1, i);
-
-    					if (each_blocks[i]) {
-    						each_blocks[i].p(child_ctx, dirty);
-    					} else {
-    						each_blocks[i] = create_each_block_1(child_ctx);
-    						each_blocks[i].c();
-    						each_blocks[i].m(each_1_anchor.parentNode, each_1_anchor);
-    					}
-    				}
-
-    				for (; i < each_blocks.length; i += 1) {
-    					each_blocks[i].d(1);
-    				}
-
-    				each_blocks.length = each_value_1.length;
-    			}
-    		},
-    		d: function destroy(detaching) {
-    			destroy_each(each_blocks, detaching);
-    			if (detaching) detach_dev(each_1_anchor);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_if_block_6.name,
-    		type: "if",
-    		source: "(123:8) {#if availablePorts.length !== 0}",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    // (124:12) {#each availablePorts as port}
-    function create_each_block_1(ctx) {
-    	let div;
-    	let t_value = /*port*/ ctx[55] + "";
-    	let t;
-    	let mounted;
-    	let dispose;
-
-    	function click_handler() {
-    		return /*click_handler*/ ctx[28](/*port*/ ctx[55]);
-    	}
-
-    	const block = {
-    		c: function create() {
-    			div = element("div");
-    			t = text(t_value);
-    			add_location(div, file, 124, 16, 4727);
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, div, anchor);
-    			append_dev(div, t);
-
-    			if (!mounted) {
-    				dispose = listen_dev(div, "click", click_handler, false, false, false);
-    				mounted = true;
-    			}
-    		},
-    		p: function update(new_ctx, dirty) {
-    			ctx = new_ctx;
-    			if (dirty[0] & /*availablePorts*/ 16384 && t_value !== (t_value = /*port*/ ctx[55] + "")) set_data_dev(t, t_value);
-    		},
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div);
-    			mounted = false;
-    			dispose();
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_each_block_1.name,
-    		type: "each",
-    		source: "(124:12) {#each availablePorts as port}",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    // (119:0) <Overlay bind:shown={showOverlay} closable={false}>
-    function create_default_slot_5(ctx) {
-    	let h1;
-    	let t1;
-    	let div0;
-    	let t3;
-    	let div1;
-    	let t4;
-    	let input0;
-    	let t5;
-    	let input1;
-    	let t6;
-    	let input2;
-    	let t7;
-    	let input3;
-    	let mounted;
-    	let dispose;
-
-    	function select_block_type(ctx, dirty) {
-    		if (/*availablePorts*/ ctx[14].length !== 0) return create_if_block_6;
-    		return create_else_block;
-    	}
-
-    	let current_block_type = select_block_type(ctx);
-    	let if_block = current_block_type(ctx);
-
-    	const block = {
-    		c: function create() {
-    			h1 = element("h1");
-    			h1.textContent = "Error: Unable to find port.";
-    			t1 = space();
-    			div0 = element("div");
-    			div0.textContent = "Ports found:";
-    			t3 = space();
-    			div1 = element("div");
-    			if_block.c();
-    			t4 = space();
-    			input0 = element("input");
-    			t5 = space();
-    			input1 = element("input");
-    			t6 = space();
-    			input2 = element("input");
-    			t7 = space();
-    			input3 = element("input");
-    			add_location(h1, file, 119, 4, 4546);
-    			add_location(div0, file, 120, 4, 4588);
-    			add_location(div1, file, 121, 4, 4617);
-    			set_style(input0, "padding", "10px");
-    			set_style(input0, "font-size", "20px");
-    			attr_dev(input0, "type", "button");
-    			input0.value = "Add 'COM'";
-    			add_location(input0, file, 130, 4, 4887);
-    			set_style(input1, "padding", "10px");
-    			set_style(input1, "font-size", "20px");
-    			attr_dev(input1, "type", "text");
-    			attr_dev(input1, "id", "portsSelect");
-    			add_location(input1, file, 135, 4, 5072);
-    			set_style(input2, "padding", "10px");
-    			set_style(input2, "font-size", "20px");
-    			attr_dev(input2, "type", "button");
-    			input2.value = "Submit";
-    			add_location(input2, file, 140, 4, 5229);
-    			set_style(input3, "padding", "10px");
-    			set_style(input3, "font-size", "20px");
-    			attr_dev(input3, "type", "button");
-    			input3.value = "Refresh";
-    			add_location(input3, file, 148, 4, 5461);
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, h1, anchor);
-    			insert_dev(target, t1, anchor);
-    			insert_dev(target, div0, anchor);
-    			insert_dev(target, t3, anchor);
-    			insert_dev(target, div1, anchor);
-    			if_block.m(div1, null);
-    			insert_dev(target, t4, anchor);
-    			insert_dev(target, input0, anchor);
-    			insert_dev(target, t5, anchor);
-    			insert_dev(target, input1, anchor);
-    			set_input_value(input1, /*portName*/ ctx[13]);
-    			insert_dev(target, t6, anchor);
-    			insert_dev(target, input2, anchor);
-    			insert_dev(target, t7, anchor);
-    			insert_dev(target, input3, anchor);
-
-    			if (!mounted) {
-    				dispose = [
-    					listen_dev(input0, "click", /*click_handler_1*/ ctx[29], false, false, false),
-    					listen_dev(input1, "input", /*input1_input_handler*/ ctx[30]),
-    					listen_dev(input2, "click", /*click_handler_2*/ ctx[31], false, false, false),
-    					listen_dev(input3, "click", /*click_handler_3*/ ctx[32], false, false, false)
-    				];
-
-    				mounted = true;
-    			}
-    		},
-    		p: function update(ctx, dirty) {
-    			if (current_block_type === (current_block_type = select_block_type(ctx)) && if_block) {
-    				if_block.p(ctx, dirty);
-    			} else {
-    				if_block.d(1);
-    				if_block = current_block_type(ctx);
-
-    				if (if_block) {
-    					if_block.c();
-    					if_block.m(div1, null);
-    				}
-    			}
-
-    			if (dirty[0] & /*portName*/ 8192 && input1.value !== /*portName*/ ctx[13]) {
-    				set_input_value(input1, /*portName*/ ctx[13]);
-    			}
-    		},
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(h1);
-    			if (detaching) detach_dev(t1);
-    			if (detaching) detach_dev(div0);
-    			if (detaching) detach_dev(t3);
-    			if (detaching) detach_dev(div1);
-    			if_block.d();
-    			if (detaching) detach_dev(t4);
-    			if (detaching) detach_dev(input0);
-    			if (detaching) detach_dev(t5);
-    			if (detaching) detach_dev(input1);
-    			if (detaching) detach_dev(t6);
-    			if (detaching) detach_dev(input2);
-    			if (detaching) detach_dev(t7);
-    			if (detaching) detach_dev(input3);
-    			mounted = false;
-    			run_all(dispose);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_default_slot_5.name,
-    		type: "slot",
-    		source: "(119:0) <Overlay bind:shown={showOverlay} closable={false}>",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    // (159:0) <Message          bind:shown={messageShown}          onClose={() => ipcRenderer.send("ready_for_data")}  >
-    function create_default_slot_4(ctx) {
-    	let html_tag;
-    	let html_anchor;
-
-    	const block = {
-    		c: function create() {
-    			html_anchor = empty();
-    			html_tag = new HtmlTag(html_anchor);
-    		},
-    		m: function mount(target, anchor) {
-    			html_tag.m(/*messageContent*/ ctx[11], target, anchor);
-    			insert_dev(target, html_anchor, anchor);
-    		},
-    		p: function update(ctx, dirty) {
-    			if (dirty[0] & /*messageContent*/ 2048) html_tag.p(/*messageContent*/ ctx[11]);
-    		},
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(html_anchor);
-    			if (detaching) html_tag.d();
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
     		id: create_default_slot_4.name,
     		type: "slot",
-    		source: "(159:0) <Message          bind:shown={messageShown}          onClose={() => ipcRenderer.send(\\\"ready_for_data\\\")}  >",
+    		source: "(111:0) <Overlay bind:shown={errOverlay}>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (165:4) {#if data?.c}
+    // (116:4) {#if data?.c}
     function create_if_block_5(ctx) {
     	let each_1_anchor;
     	let each_value = /*data*/ ctx[0].c;
@@ -5011,7 +4632,7 @@ var app = (function () {
     			insert_dev(target, each_1_anchor, anchor);
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty[0] & /*data, $darkMode, bS*/ 5242881) {
+    			if (dirty[0] & /*data, $darkMode*/ 16385) {
     				each_value = /*data*/ ctx[0].c;
     				validate_each_argument(each_value);
     				let i;
@@ -5045,17 +4666,17 @@ var app = (function () {
     		block,
     		id: create_if_block_5.name,
     		type: "if",
-    		source: "(165:4) {#if data?.c}",
+    		source: "(116:4) {#if data?.c}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (166:8) {#each data.c as cell, index}
+    // (117:8) {#each data.c as cell, index}
     function create_each_block(ctx) {
     	let div;
-    	let t0_value = /*cell*/ ctx[52].toFixed(2) + "";
+    	let t0_value = /*cell*/ ctx[36].toFixed(2) + "";
     	let t0;
     	let t1;
     	let div_style_value;
@@ -5066,9 +4687,9 @@ var app = (function () {
     			t0 = text(t0_value);
     			t1 = space();
     			attr_dev(div, "class", "cell");
-    			attr_dev(div, "style", div_style_value = "background-color: " + getColor(/*cell*/ ctx[52], /*$darkMode*/ ctx[22]));
-    			toggle_class(div, "balancing", /*bS*/ ctx[20][/*index*/ ctx[54]] === "1");
-    			add_location(div, file, 166, 12, 6026);
+    			attr_dev(div, "style", div_style_value = "background-color: " + getColor(/*cell*/ ctx[36], /*$darkMode*/ ctx[14]));
+    			toggle_class(div, "balancing", /*data*/ ctx[0].bS[/*index*/ ctx[38]] === "1");
+    			add_location(div, file, 117, 12, 4567);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -5076,14 +4697,14 @@ var app = (function () {
     			append_dev(div, t1);
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty[0] & /*data*/ 1 && t0_value !== (t0_value = /*cell*/ ctx[52].toFixed(2) + "")) set_data_dev(t0, t0_value);
+    			if (dirty[0] & /*data*/ 1 && t0_value !== (t0_value = /*cell*/ ctx[36].toFixed(2) + "")) set_data_dev(t0, t0_value);
 
-    			if (dirty[0] & /*data, $darkMode*/ 4194305 && div_style_value !== (div_style_value = "background-color: " + getColor(/*cell*/ ctx[52], /*$darkMode*/ ctx[22]))) {
+    			if (dirty[0] & /*data, $darkMode*/ 16385 && div_style_value !== (div_style_value = "background-color: " + getColor(/*cell*/ ctx[36], /*$darkMode*/ ctx[14]))) {
     				attr_dev(div, "style", div_style_value);
     			}
 
-    			if (dirty[0] & /*bS*/ 1048576) {
-    				toggle_class(div, "balancing", /*bS*/ ctx[20][/*index*/ ctx[54]] === "1");
+    			if (dirty[0] & /*data*/ 1) {
+    				toggle_class(div, "balancing", /*data*/ ctx[0].bS[/*index*/ ctx[38]] === "1");
     			}
     		},
     		d: function destroy(detaching) {
@@ -5095,14 +4716,14 @@ var app = (function () {
     		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(166:8) {#each data.c as cell, index}",
+    		source: "(117:8) {#each data.c as cell, index}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (177:4) {#if data?.c}
+    // (128:4) {#if data?.c}
     function create_if_block_4(ctx) {
     	let gauge0;
     	let t0;
@@ -5116,9 +4737,10 @@ var app = (function () {
     	gauge0 = new Gauge_1({
     			props: {
     				name: "Pack Voltage",
-    				value: /*voltage*/ ctx[3],
+    				value: /*data*/ ctx[0].voltage,
     				bounds: [50, 90],
-    				colorBounds: [65, 90]
+    				colorBounds: [65, 90],
+    				animationDuration: 0.09
     			},
     			$$inline: true
     		});
@@ -5126,7 +4748,7 @@ var app = (function () {
     	gauge1 = new Gauge_1({
     			props: {
     				name: "Min Cell Voltage",
-    				value: Math.min(.../*data*/ ctx[0].c),
+    				value: /*data*/ ctx[0].minCellVoltage,
     				bounds: [2.7, 4.2],
     				colorBounds: [3.2, 4.15]
     			},
@@ -5136,7 +4758,7 @@ var app = (function () {
     	gauge2 = new Gauge_1({
     			props: {
     				name: "Avg. Cell Voltage",
-    				value: /*voltage*/ ctx[3] / /*data*/ ctx[0].c.length,
+    				value: /*data*/ ctx[0].avgCellVoltage,
     				bounds: [2.7, 4.2],
     				colorBounds: [3.2, 4.15]
     			},
@@ -5146,7 +4768,7 @@ var app = (function () {
     	gauge3 = new Gauge_1({
     			props: {
     				name: "Max Cell Voltage",
-    				value: Math.max(.../*data*/ ctx[0].c),
+    				value: /*data*/ ctx[0].maxCellVoltage,
     				bounds: [2.7, 4.2],
     				colorBounds: [3.2, 4.15]
     			},
@@ -5175,16 +4797,16 @@ var app = (function () {
     		},
     		p: function update(ctx, dirty) {
     			const gauge0_changes = {};
-    			if (dirty[0] & /*voltage*/ 8) gauge0_changes.value = /*voltage*/ ctx[3];
+    			if (dirty[0] & /*data*/ 1) gauge0_changes.value = /*data*/ ctx[0].voltage;
     			gauge0.$set(gauge0_changes);
     			const gauge1_changes = {};
-    			if (dirty[0] & /*data*/ 1) gauge1_changes.value = Math.min(.../*data*/ ctx[0].c);
+    			if (dirty[0] & /*data*/ 1) gauge1_changes.value = /*data*/ ctx[0].minCellVoltage;
     			gauge1.$set(gauge1_changes);
     			const gauge2_changes = {};
-    			if (dirty[0] & /*voltage, data*/ 9) gauge2_changes.value = /*voltage*/ ctx[3] / /*data*/ ctx[0].c.length;
+    			if (dirty[0] & /*data*/ 1) gauge2_changes.value = /*data*/ ctx[0].avgCellVoltage;
     			gauge2.$set(gauge2_changes);
     			const gauge3_changes = {};
-    			if (dirty[0] & /*data*/ 1) gauge3_changes.value = Math.max(.../*data*/ ctx[0].c);
+    			if (dirty[0] & /*data*/ 1) gauge3_changes.value = /*data*/ ctx[0].maxCellVoltage;
     			gauge3.$set(gauge3_changes);
     		},
     		i: function intro(local) {
@@ -5217,14 +4839,14 @@ var app = (function () {
     		block,
     		id: create_if_block_4.name,
     		type: "if",
-    		source: "(177:4) {#if data?.c}",
+    		source: "(128:4) {#if data?.c}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (232:4) {#if data}
+    // (185:4) {#if data}
     function create_if_block_2(ctx) {
     	let div3;
     	let tempgauge;
@@ -5253,9 +4875,10 @@ var app = (function () {
 
     	gauge0 = new Gauge_1({
     			props: {
-    				name: "Amps",
-    				value: /*data*/ ctx[0]["pC"],
-    				bounds: [-50, 500]
+    				name: "Motor Amps",
+    				value: /*data*/ ctx[0].motorCurrent,
+    				bounds: [-50, 600],
+    				animationDuration: 0.09
     			},
     			$$inline: true
     		});
@@ -5263,21 +4886,22 @@ var app = (function () {
     	gauge1 = new Gauge_1({
     			props: {
     				name: "Power (kW)",
-    				value: Math.abs(/*data*/ ctx[0]["pC"] * /*voltage*/ ctx[3] / 1000),
-    				bounds: [0, 40]
+    				value: /*data*/ ctx[0].power,
+    				bounds: [0, 80],
+    				animationDuration: 0.09
     			},
     			$$inline: true
     		});
 
     	console_1 = new Console({
-    			props: { text: /*chargeConsoleText*/ ctx[6] },
+    			props: { text: /*chargeConsoleText*/ ctx[4] },
     			$$inline: true
     		});
 
     	gauge2 = new Gauge_1({
     			props: {
     				name: "12V Voltage",
-    				value: /*data*/ ctx[0]["tw"] * /*$twelveCorrectiveFactor*/ ctx[23],
+    				value: /*data*/ ctx[0].tw * /*$twelveCorrectiveFactor*/ ctx[15],
     				bounds: [10, 15]
     			},
     			$$inline: true
@@ -5308,21 +4932,21 @@ var app = (function () {
     			set_style(div0, "width", "50%");
     			set_style(div0, "font-weight", "bolder");
     			set_style(div0, "text-align", "center");
-    			add_location(div0, file, 235, 16, 8284);
+    			add_location(div0, file, 188, 16, 7286);
     			set_style(div1, "width", "50%");
     			set_style(div1, "font-weight", "bolder");
     			set_style(div1, "text-align", "center");
-    			add_location(div1, file, 241, 16, 8559);
+    			add_location(div1, file, 195, 16, 7628);
     			set_style(div2, "display", "flex");
-    			add_location(div2, file, 234, 12, 8238);
-    			attr_dev(div3, "class", div3_class_value = /*$darkMode*/ ctx[22] ? "darkIsland" : "island");
-    			add_location(div3, file, 232, 8, 8133);
+    			add_location(div2, file, 187, 12, 7240);
+    			attr_dev(div3, "class", div3_class_value = /*$darkMode*/ ctx[14] ? "darkIsland" : "island");
+    			add_location(div3, file, 185, 8, 7135);
     			set_style(div4, "width", "33.3%");
     			set_style(div4, "font-weight", "bolder");
     			set_style(div4, "text-align", "center");
-    			add_location(div4, file, 251, 12, 8981);
+    			add_location(div4, file, 206, 12, 8077);
     			set_style(div5, "display", "flex");
-    			add_location(div5, file, 250, 8, 8939);
+    			add_location(div5, file, 205, 8, 8035);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div3, anchor);
@@ -5350,21 +4974,21 @@ var app = (function () {
     			if (dirty[0] & /*data*/ 1) tempgauge_changes.data = /*data*/ ctx[0].t;
     			tempgauge.$set(tempgauge_changes);
     			const gauge0_changes = {};
-    			if (dirty[0] & /*data*/ 1) gauge0_changes.value = /*data*/ ctx[0]["pC"];
+    			if (dirty[0] & /*data*/ 1) gauge0_changes.value = /*data*/ ctx[0].motorCurrent;
     			gauge0.$set(gauge0_changes);
     			const gauge1_changes = {};
-    			if (dirty[0] & /*data, voltage*/ 9) gauge1_changes.value = Math.abs(/*data*/ ctx[0]["pC"] * /*voltage*/ ctx[3] / 1000);
+    			if (dirty[0] & /*data*/ 1) gauge1_changes.value = /*data*/ ctx[0].power;
     			gauge1.$set(gauge1_changes);
 
-    			if (!current || dirty[0] & /*$darkMode*/ 4194304 && div3_class_value !== (div3_class_value = /*$darkMode*/ ctx[22] ? "darkIsland" : "island")) {
+    			if (!current || dirty[0] & /*$darkMode*/ 16384 && div3_class_value !== (div3_class_value = /*$darkMode*/ ctx[14] ? "darkIsland" : "island")) {
     				attr_dev(div3, "class", div3_class_value);
     			}
 
     			const console_1_changes = {};
-    			if (dirty[0] & /*chargeConsoleText*/ 64) console_1_changes.text = /*chargeConsoleText*/ ctx[6];
+    			if (dirty[0] & /*chargeConsoleText*/ 16) console_1_changes.text = /*chargeConsoleText*/ ctx[4];
     			console_1.$set(console_1_changes);
     			const gauge2_changes = {};
-    			if (dirty[0] & /*data, $twelveCorrectiveFactor*/ 8388609) gauge2_changes.value = /*data*/ ctx[0]["tw"] * /*$twelveCorrectiveFactor*/ ctx[23];
+    			if (dirty[0] & /*data, $twelveCorrectiveFactor*/ 32769) gauge2_changes.value = /*data*/ ctx[0].tw * /*$twelveCorrectiveFactor*/ ctx[15];
     			gauge2.$set(gauge2_changes);
 
     			if (/*data*/ ctx[0]["CR"]) {
@@ -5429,14 +5053,14 @@ var app = (function () {
     		block,
     		id: create_if_block_2.name,
     		type: "if",
-    		source: "(232:4) {#if data}",
+    		source: "(185:4) {#if data}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (259:8) {#if data["CR"]}
+    // (214:8) {#if data["CR"]}
     function create_if_block_3(ctx) {
     	let div5;
     	let div0;
@@ -5512,24 +5136,24 @@ var app = (function () {
     			set_style(div0, "margin-bottom", "-5px");
     			set_style(div0, "font-weight", "bolder");
     			set_style(div0, "padding", "3px");
-    			set_style(div0, "color", /*$darkMode*/ ctx[22] ? "rgb(197, 197, 197)" : "");
-    			add_location(div0, file, 260, 16, 9411);
+    			set_style(div0, "color", /*$darkMode*/ ctx[14] ? "rgb(197, 197, 197)" : "");
+    			add_location(div0, file, 215, 16, 8504);
     			set_style(div1, "width", "33.3%");
     			set_style(div1, "font-weight", "bolder");
     			set_style(div1, "text-align", "center");
-    			add_location(div1, file, 264, 20, 9693);
+    			add_location(div1, file, 219, 20, 8786);
     			set_style(div2, "width", "33.3%");
     			set_style(div2, "font-weight", "bolder");
     			set_style(div2, "text-align", "center");
-    			add_location(div2, file, 272, 20, 10083);
+    			add_location(div2, file, 227, 20, 9176);
     			set_style(div3, "width", "33.3%");
     			set_style(div3, "font-weight", "bolder");
     			set_style(div3, "text-align", "center");
-    			add_location(div3, file, 280, 20, 10471);
+    			add_location(div3, file, 235, 20, 9564);
     			set_style(div4, "display", "flex");
-    			add_location(div4, file, 263, 16, 9643);
-    			attr_dev(div5, "class", div5_class_value = /*$darkMode*/ ctx[22] ? "darkIsland" : "island");
-    			add_location(div5, file, 259, 12, 9307);
+    			add_location(div4, file, 218, 16, 8736);
+    			attr_dev(div5, "class", div5_class_value = /*$darkMode*/ ctx[14] ? "darkIsland" : "island");
+    			add_location(div5, file, 214, 12, 8400);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div5, anchor);
@@ -5551,8 +5175,8 @@ var app = (function () {
     			current = true;
     		},
     		p: function update(ctx, dirty) {
-    			if (!current || dirty[0] & /*$darkMode*/ 4194304) {
-    				set_style(div0, "color", /*$darkMode*/ ctx[22] ? "rgb(197, 197, 197)" : "");
+    			if (!current || dirty[0] & /*$darkMode*/ 16384) {
+    				set_style(div0, "color", /*$darkMode*/ ctx[14] ? "rgb(197, 197, 197)" : "");
     			}
 
     			const gauge0_changes = {};
@@ -5566,7 +5190,7 @@ var app = (function () {
     			gauge2.$set(gauge2_changes);
     			if ((!current || dirty[0] & /*data*/ 1) && t5_value !== (t5_value = (/*data*/ ctx[0]["lcp"] / 1000).toFixed(1) + "")) set_data_dev(t5, t5_value);
 
-    			if (!current || dirty[0] & /*$darkMode*/ 4194304 && div5_class_value !== (div5_class_value = /*$darkMode*/ ctx[22] ? "darkIsland" : "island")) {
+    			if (!current || dirty[0] & /*$darkMode*/ 16384 && div5_class_value !== (div5_class_value = /*$darkMode*/ ctx[14] ? "darkIsland" : "island")) {
     				attr_dev(div5, "class", div5_class_value);
     			}
     		},
@@ -5604,14 +5228,14 @@ var app = (function () {
     		block,
     		id: create_if_block_3.name,
     		type: "if",
-    		source: "(259:8) {#if data[\\\"CR\\\"]}",
+    		source: "(214:8) {#if data[\\\"CR\\\"]}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (296:4) {#if data}
+    // (251:4) {#if data?.f}
     function create_if_block_1(ctx) {
     	let slider;
     	let current;
@@ -5656,19 +5280,19 @@ var app = (function () {
     		block,
     		id: create_if_block_1.name,
     		type: "if",
-    		source: "(296:4) {#if data}",
+    		source: "(251:4) {#if data?.f}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (335:0) <Overlay bind:shown={showSnake} closable="{false} ">
+    // (291:0) <Overlay bind:shown={showSnake} closable="{false} ">
     function create_default_slot_3(ctx) {
     	let snake;
     	let current;
     	snake = new Snake({ $$inline: true });
-    	snake.$on("closeOverlay", /*closeOverlay_handler*/ ctx[40]);
+    	snake.$on("closeOverlay", /*closeOverlay_handler*/ ctx[22]);
 
     	const block = {
     		c: function create() {
@@ -5697,19 +5321,19 @@ var app = (function () {
     		block,
     		id: create_default_slot_3.name,
     		type: "slot",
-    		source: "(335:0) <Overlay bind:shown={showSnake} closable=\\\"{false} \\\">",
+    		source: "(291:0) <Overlay bind:shown={showSnake} closable=\\\"{false} \\\">",
     		ctx
     	});
 
     	return block;
     }
 
-    // (339:0) <Overlay bind:shown={showC4} closable="{false}">
+    // (295:0) <Overlay bind:shown={showC4} closable="{false}">
     function create_default_slot_2(ctx) {
     	let c4;
     	let current;
     	c4 = new C4({ $$inline: true });
-    	c4.$on("closeOverlay", /*closeOverlay_handler_1*/ ctx[42]);
+    	c4.$on("closeOverlay", /*closeOverlay_handler_1*/ ctx[24]);
 
     	const block = {
     		c: function create() {
@@ -5738,14 +5362,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_2.name,
     		type: "slot",
-    		source: "(339:0) <Overlay bind:shown={showC4} closable=\\\"{false}\\\">",
+    		source: "(295:0) <Overlay bind:shown={showC4} closable=\\\"{false}\\\">",
     		ctx
     	});
 
     	return block;
     }
 
-    // (343:0) <Overlay bind:shown={showSunset}>
+    // (299:0) <Overlay bind:shown={showSunset}>
     function create_default_slot_1(ctx) {
     	let t0;
     	let t1_value = /*time*/ ctx[1].toLocaleString() + "";
@@ -5807,26 +5431,26 @@ var app = (function () {
     			t15 = space();
     			br3 = element("br");
     			t16 = text(" Current Mode: ");
-    			t17 = text(/*$forceMode*/ ctx[24]);
+    			t17 = text(/*$forceMode*/ ctx[16]);
     			t18 = text("\r\n    Time Offset: ");
-    			t19 = text(/*$timeOffset*/ ctx[21]);
+    			t19 = text(/*$timeOffset*/ ctx[13]);
     			t20 = text(" Hours\r\n    ");
     			input0 = element("input");
     			t21 = space();
     			input1 = element("input");
-    			add_location(br0, file, 343, 42, 12689);
-    			add_location(br1, file, 344, 54, 12749);
-    			add_location(br2, file, 345, 52, 12807);
-    			add_location(button0, file, 346, 4, 12817);
-    			add_location(button1, file, 347, 4, 12890);
-    			add_location(button2, file, 348, 4, 12961);
-    			add_location(br3, file, 349, 4, 13035);
+    			add_location(br0, file, 299, 42, 11840);
+    			add_location(br1, file, 300, 54, 11900);
+    			add_location(br2, file, 301, 52, 11958);
+    			add_location(button0, file, 302, 4, 11968);
+    			add_location(button1, file, 303, 4, 12041);
+    			add_location(button2, file, 304, 4, 12112);
+    			add_location(br3, file, 305, 4, 12186);
     			attr_dev(input0, "type", "button");
     			input0.value = "+";
-    			add_location(input0, file, 351, 4, 13110);
+    			add_location(input0, file, 307, 4, 12261);
     			attr_dev(input1, "type", "button");
     			input1.value = "-";
-    			add_location(input1, file, 352, 4, 13194);
+    			add_location(input1, file, 308, 4, 12345);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, t0, anchor);
@@ -5860,11 +5484,11 @@ var app = (function () {
 
     			if (!mounted) {
     				dispose = [
-    					listen_dev(button0, "click", /*click_handler_8*/ ctx[44], false, false, false),
-    					listen_dev(button1, "click", /*click_handler_9*/ ctx[45], false, false, false),
-    					listen_dev(button2, "click", /*click_handler_10*/ ctx[46], false, false, false),
-    					listen_dev(input0, "click", /*click_handler_11*/ ctx[47], false, false, false),
-    					listen_dev(input1, "click", /*click_handler_12*/ ctx[48], false, false, false)
+    					listen_dev(button0, "click", /*click_handler_4*/ ctx[26], false, false, false),
+    					listen_dev(button1, "click", /*click_handler_5*/ ctx[27], false, false, false),
+    					listen_dev(button2, "click", /*click_handler_6*/ ctx[28], false, false, false),
+    					listen_dev(input0, "click", /*click_handler_7*/ ctx[29], false, false, false),
+    					listen_dev(input1, "click", /*click_handler_8*/ ctx[30], false, false, false)
     				];
 
     				mounted = true;
@@ -5872,8 +5496,8 @@ var app = (function () {
     		},
     		p: function update(ctx, dirty) {
     			if (dirty[0] & /*time*/ 2 && t1_value !== (t1_value = /*time*/ ctx[1].toLocaleString() + "")) set_data_dev(t1, t1_value);
-    			if (dirty[0] & /*$forceMode*/ 16777216) set_data_dev(t17, /*$forceMode*/ ctx[24]);
-    			if (dirty[0] & /*$timeOffset*/ 2097152) set_data_dev(t19, /*$timeOffset*/ ctx[21]);
+    			if (dirty[0] & /*$forceMode*/ 65536) set_data_dev(t17, /*$forceMode*/ ctx[16]);
+    			if (dirty[0] & /*$timeOffset*/ 8192) set_data_dev(t19, /*$timeOffset*/ ctx[13]);
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(t0);
@@ -5913,22 +5537,24 @@ var app = (function () {
     		block,
     		id: create_default_slot_1.name,
     		type: "slot",
-    		source: "(343:0) <Overlay bind:shown={showSunset}>",
+    		source: "(299:0) <Overlay bind:shown={showSunset}>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (356:0) <Overlay bind:shown={showSettings}>
+    // (312:0) <Overlay bind:shown={showSettings}>
     function create_default_slot(ctx) {
     	let t0;
     	let input;
     	let t1;
-    	let br;
+    	let br0;
     	let t2;
-    	let t3_value = (/*data*/ ctx[0]["tw"] * /*$twelveCorrectiveFactor*/ ctx[23]).toFixed(2) + "";
+    	let t3_value = (/*data*/ ctx[0]["tw"] * /*$twelveCorrectiveFactor*/ ctx[15]).toFixed(2) + "";
     	let t3;
+    	let t4;
+    	let br1;
     	let mounted;
     	let dispose;
 
@@ -5937,41 +5563,48 @@ var app = (function () {
     			t0 = text("Corrective Factor for 12V Sensor: ");
     			input = element("input");
     			t1 = space();
-    			br = element("br");
+    			br0 = element("br");
     			t2 = text("\r\n    Current Value: ");
     			t3 = text(t3_value);
+    			t4 = space();
+    			br1 = element("br");
     			attr_dev(input, "type", "number");
-    			add_location(input, file, 356, 38, 13363);
-    			add_location(br, file, 356, 97, 13422);
+    			add_location(input, file, 312, 38, 12514);
+    			add_location(br0, file, 312, 97, 12573);
+    			add_location(br1, file, 313, 71, 12650);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, t0, anchor);
     			insert_dev(target, input, anchor);
-    			set_input_value(input, /*$twelveCorrectiveFactor*/ ctx[23]);
+    			set_input_value(input, /*$twelveCorrectiveFactor*/ ctx[15]);
     			insert_dev(target, t1, anchor);
-    			insert_dev(target, br, anchor);
+    			insert_dev(target, br0, anchor);
     			insert_dev(target, t2, anchor);
     			insert_dev(target, t3, anchor);
+    			insert_dev(target, t4, anchor);
+    			insert_dev(target, br1, anchor);
 
     			if (!mounted) {
-    				dispose = listen_dev(input, "input", /*input_input_handler*/ ctx[50]);
+    				dispose = listen_dev(input, "input", /*input_input_handler*/ ctx[32]);
     				mounted = true;
     			}
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty[0] & /*$twelveCorrectiveFactor*/ 8388608 && to_number(input.value) !== /*$twelveCorrectiveFactor*/ ctx[23]) {
-    				set_input_value(input, /*$twelveCorrectiveFactor*/ ctx[23]);
+    			if (dirty[0] & /*$twelveCorrectiveFactor*/ 32768 && to_number(input.value) !== /*$twelveCorrectiveFactor*/ ctx[15]) {
+    				set_input_value(input, /*$twelveCorrectiveFactor*/ ctx[15]);
     			}
 
-    			if (dirty[0] & /*data, $twelveCorrectiveFactor*/ 8388609 && t3_value !== (t3_value = (/*data*/ ctx[0]["tw"] * /*$twelveCorrectiveFactor*/ ctx[23]).toFixed(2) + "")) set_data_dev(t3, t3_value);
+    			if (dirty[0] & /*data, $twelveCorrectiveFactor*/ 32769 && t3_value !== (t3_value = (/*data*/ ctx[0]["tw"] * /*$twelveCorrectiveFactor*/ ctx[15]).toFixed(2) + "")) set_data_dev(t3, t3_value);
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(t0);
     			if (detaching) detach_dev(input);
     			if (detaching) detach_dev(t1);
-    			if (detaching) detach_dev(br);
+    			if (detaching) detach_dev(br0);
     			if (detaching) detach_dev(t2);
     			if (detaching) detach_dev(t3);
+    			if (detaching) detach_dev(t4);
+    			if (detaching) detach_dev(br1);
     			mounted = false;
     			dispose();
     		}
@@ -5981,14 +5614,14 @@ var app = (function () {
     		block,
     		id: create_default_slot.name,
     		type: "slot",
-    		source: "(356:0) <Overlay bind:shown={showSettings}>",
+    		source: "(312:0) <Overlay bind:shown={showSettings}>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (361:0) {#if showImage}
+    // (319:0) {#if showImage}
     function create_if_block(ctx) {
     	let div;
     	let img;
@@ -6003,10 +5636,10 @@ var app = (function () {
     			attr_dev(img, "height", "100%");
     			if (img.src !== (img_src_value = "static/logo.png")) attr_dev(img, "src", img_src_value);
     			attr_dev(img, "alt", "img");
-    			add_location(img, file, 362, 8, 13638);
+    			add_location(img, file, 320, 8, 13074);
     			attr_dev(div, "id", "photo");
     			set_style(div, "z-index", "5");
-    			add_location(div, file, 361, 4, 13535);
+    			add_location(div, file, 319, 4, 12971);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -6057,7 +5690,7 @@ var app = (function () {
     		block,
     		id: create_if_block.name,
     		type: "if",
-    		source: "(361:0) {#if showImage}",
+    		source: "(319:0) {#if showImage}",
     		ctx
     	});
 
@@ -6068,127 +5701,109 @@ var app = (function () {
     	let overlay0;
     	let updating_shown;
     	let t0;
-    	let overlay1;
-    	let updating_shown_1;
-    	let t1;
-    	let message;
-    	let updating_shown_2;
-    	let t2;
     	let div0;
     	let div0_class_value;
-    	let t3;
+    	let t1;
     	let div1;
-    	let t4;
+    	let t2;
     	let div6;
     	let div2;
     	let clock;
-    	let t5;
+    	let t3;
     	let img0;
     	let img0_src_value;
     	let div2_class_value;
-    	let t6;
+    	let t4;
     	let div5;
     	let div3;
+    	let t5;
+
+    	let t6_value = (/*lastUpdateDate*/ ctx[2].rear
+    	? /*lastUpdateDate*/ ctx[2].rear.toLocaleTimeString()
+    	: "Waiting for data...") + "";
+
+    	let t6;
     	let t7;
+    	let span;
     	let t8;
-    	let div4;
+    	let t9_value = (/*data*/ ctx[0]?.lbp / 1000).toFixed(1) + "";
     	let t9;
-    	let div5_class_value;
     	let t10;
-    	let graph;
+    	let br;
     	let t11;
-    	let div7;
+
+    	let t12_value = (/*lastUpdateDate*/ ctx[2].front
+    	? /*lastUpdateDate*/ ctx[2].front.toLocaleTimeString()
+    	: "Waiting for data...") + "";
+
     	let t12;
+    	let t13;
+    	let div4;
+    	let t14;
+    	let div5_class_value;
+    	let t15;
+    	let graph;
+    	let t16;
+    	let div7;
+    	let t17;
     	let div8;
     	let div8_class_value;
-    	let t13;
+    	let t18;
     	let div10;
-    	let ledselector;
-    	let t14;
     	let div9;
     	let button0;
     	let img1;
     	let img1_src_value;
-    	let t15;
+    	let t19;
     	let button1;
     	let img2;
     	let img2_src_value;
-    	let t16;
+    	let t20;
     	let button2;
     	let img3;
     	let img3_src_value;
-    	let t17;
+    	let t21;
     	let button3;
     	let img4;
     	let img4_src_value;
     	let div9_class_value;
-    	let t18;
-    	let overlay2;
-    	let updating_shown_3;
-    	let t19;
-    	let overlay3;
-    	let updating_shown_4;
-    	let t20;
-    	let overlay4;
-    	let updating_shown_5;
-    	let t21;
-    	let overlay5;
-    	let updating_shown_6;
     	let t22;
+    	let ledselector;
+    	let t23;
+    	let invertertoggler;
+    	let t24;
+    	let overlay1;
+    	let updating_shown_1;
+    	let t25;
+    	let overlay2;
+    	let updating_shown_2;
+    	let t26;
+    	let overlay3;
+    	let updating_shown_3;
+    	let t27;
+    	let overlay4;
+    	let updating_shown_4;
+    	let t28;
     	let if_block4_anchor;
     	let current;
     	let mounted;
     	let dispose;
 
     	function overlay0_shown_binding(value) {
-    		/*overlay0_shown_binding*/ ctx[27](value);
+    		/*overlay0_shown_binding*/ ctx[17](value);
     	}
 
     	let overlay0_props = {
-    		$$slots: { default: [create_default_slot_6] },
-    		$$scope: { ctx }
-    	};
-
-    	if (/*errOverlay*/ ctx[9] !== void 0) {
-    		overlay0_props.shown = /*errOverlay*/ ctx[9];
-    	}
-
-    	overlay0 = new Overlay({ props: overlay0_props, $$inline: true });
-    	binding_callbacks.push(() => bind(overlay0, "shown", overlay0_shown_binding));
-
-    	function overlay1_shown_binding(value) {
-    		/*overlay1_shown_binding*/ ctx[33](value);
-    	}
-
-    	let overlay1_props = {
-    		closable: false,
-    		$$slots: { default: [create_default_slot_5] },
-    		$$scope: { ctx }
-    	};
-
-    	if (/*showOverlay*/ ctx[15] !== void 0) {
-    		overlay1_props.shown = /*showOverlay*/ ctx[15];
-    	}
-
-    	overlay1 = new Overlay({ props: overlay1_props, $$inline: true });
-    	binding_callbacks.push(() => bind(overlay1, "shown", overlay1_shown_binding));
-
-    	function message_shown_binding(value) {
-    		/*message_shown_binding*/ ctx[35](value);
-    	}
-
-    	let message_props = {
-    		onClose: /*func*/ ctx[34],
     		$$slots: { default: [create_default_slot_4] },
     		$$scope: { ctx }
     	};
 
-    	if (/*messageShown*/ ctx[12] !== void 0) {
-    		message_props.shown = /*messageShown*/ ctx[12];
+    	if (/*errOverlay*/ ctx[7] !== void 0) {
+    		overlay0_props.shown = /*errOverlay*/ ctx[7];
     	}
 
-    	message = new Message({ props: message_props, $$inline: true });
-    	binding_callbacks.push(() => bind(message, "shown", message_shown_binding));
+    	overlay0 = new Overlay({ props: overlay0_props, $$inline: true });
+    	binding_callbacks.push(() => bind(overlay0, "shown", overlay0_shown_binding));
     	let if_block0 = /*data*/ ctx[0]?.c && create_if_block_5(ctx);
     	let if_block1 = /*data*/ ctx[0]?.c && create_if_block_4(ctx);
     	clock = new Clock({ $$inline: true });
@@ -6198,208 +5813,230 @@ var app = (function () {
     				axisSettings: [
     					{
     						axis: 0,
-    						color: /*$darkMode*/ ctx[22] ? "#33f8ff" : "#125256",
+    						color: /*$darkMode*/ ctx[14] ? "#33f8ff" : "#125256",
     						maxPoints: 35,
-    						units: "V",
+    						units: "A",
     						minIs0: false
+    					},
+    					{
+    						axis: 350,
+    						color: "black",
+    						maxPoints: 35,
+    						units: "kW",
+    						minIs0: true
     					}
     				],
-    				datas: /*graphData*/ ctx[7]
+    				datas: /*graphData*/ ctx[5]
     			},
     			$$inline: true
     		});
 
     	let if_block2 = /*data*/ ctx[0] && create_if_block_2(ctx);
-    	let if_block3 = /*data*/ ctx[0] && create_if_block_1(ctx);
+    	let if_block3 = /*data*/ ctx[0]?.f && create_if_block_1(ctx);
     	ledselector = new LEDSelector({ $$inline: true });
 
-    	function overlay2_shown_binding(value) {
-    		/*overlay2_shown_binding*/ ctx[41](value);
+    	invertertoggler = new InverterToggler({
+    			props: { inverterState: /*data*/ ctx[0]?.inverter },
+    			$$inline: true
+    		});
+
+    	function overlay1_shown_binding(value) {
+    		/*overlay1_shown_binding*/ ctx[23](value);
     	}
 
-    	let overlay2_props = {
+    	let overlay1_props = {
     		closable: "" + (false + " "),
     		$$slots: { default: [create_default_slot_3] },
     		$$scope: { ctx }
     	};
 
-    	if (/*showSnake*/ ctx[16] !== void 0) {
-    		overlay2_props.shown = /*showSnake*/ ctx[16];
+    	if (/*showSnake*/ ctx[9] !== void 0) {
+    		overlay1_props.shown = /*showSnake*/ ctx[9];
+    	}
+
+    	overlay1 = new Overlay({ props: overlay1_props, $$inline: true });
+    	binding_callbacks.push(() => bind(overlay1, "shown", overlay1_shown_binding));
+
+    	function overlay2_shown_binding(value) {
+    		/*overlay2_shown_binding*/ ctx[25](value);
+    	}
+
+    	let overlay2_props = {
+    		closable: false,
+    		$$slots: { default: [create_default_slot_2] },
+    		$$scope: { ctx }
+    	};
+
+    	if (/*showC4*/ ctx[10] !== void 0) {
+    		overlay2_props.shown = /*showC4*/ ctx[10];
     	}
 
     	overlay2 = new Overlay({ props: overlay2_props, $$inline: true });
     	binding_callbacks.push(() => bind(overlay2, "shown", overlay2_shown_binding));
 
     	function overlay3_shown_binding(value) {
-    		/*overlay3_shown_binding*/ ctx[43](value);
+    		/*overlay3_shown_binding*/ ctx[31](value);
     	}
 
     	let overlay3_props = {
-    		closable: false,
-    		$$slots: { default: [create_default_slot_2] },
+    		$$slots: { default: [create_default_slot_1] },
     		$$scope: { ctx }
     	};
 
-    	if (/*showC4*/ ctx[17] !== void 0) {
-    		overlay3_props.shown = /*showC4*/ ctx[17];
+    	if (/*showSunset*/ ctx[11] !== void 0) {
+    		overlay3_props.shown = /*showSunset*/ ctx[11];
     	}
 
     	overlay3 = new Overlay({ props: overlay3_props, $$inline: true });
     	binding_callbacks.push(() => bind(overlay3, "shown", overlay3_shown_binding));
 
     	function overlay4_shown_binding(value) {
-    		/*overlay4_shown_binding*/ ctx[49](value);
+    		/*overlay4_shown_binding*/ ctx[33](value);
     	}
 
     	let overlay4_props = {
-    		$$slots: { default: [create_default_slot_1] },
-    		$$scope: { ctx }
-    	};
-
-    	if (/*showSunset*/ ctx[18] !== void 0) {
-    		overlay4_props.shown = /*showSunset*/ ctx[18];
-    	}
-
-    	overlay4 = new Overlay({ props: overlay4_props, $$inline: true });
-    	binding_callbacks.push(() => bind(overlay4, "shown", overlay4_shown_binding));
-
-    	function overlay5_shown_binding(value) {
-    		/*overlay5_shown_binding*/ ctx[51](value);
-    	}
-
-    	let overlay5_props = {
     		$$slots: { default: [create_default_slot] },
     		$$scope: { ctx }
     	};
 
-    	if (/*showSettings*/ ctx[19] !== void 0) {
-    		overlay5_props.shown = /*showSettings*/ ctx[19];
+    	if (/*showSettings*/ ctx[12] !== void 0) {
+    		overlay4_props.shown = /*showSettings*/ ctx[12];
     	}
 
-    	overlay5 = new Overlay({ props: overlay5_props, $$inline: true });
-    	binding_callbacks.push(() => bind(overlay5, "shown", overlay5_shown_binding));
-    	let if_block4 = /*showImage*/ ctx[10] && create_if_block(ctx);
+    	overlay4 = new Overlay({ props: overlay4_props, $$inline: true });
+    	binding_callbacks.push(() => bind(overlay4, "shown", overlay4_shown_binding));
+    	let if_block4 = /*showImage*/ ctx[8] && create_if_block(ctx);
 
     	const block = {
     		c: function create() {
     			create_component(overlay0.$$.fragment);
     			t0 = space();
-    			create_component(overlay1.$$.fragment);
-    			t1 = space();
-    			create_component(message.$$.fragment);
-    			t2 = space();
     			div0 = element("div");
     			if (if_block0) if_block0.c();
-    			t3 = space();
+    			t1 = space();
     			div1 = element("div");
     			if (if_block1) if_block1.c();
-    			t4 = space();
+    			t2 = space();
     			div6 = element("div");
     			div2 = element("div");
     			create_component(clock.$$.fragment);
-    			t5 = space();
+    			t3 = space();
     			img0 = element("img");
-    			t6 = space();
+    			t4 = space();
     			div5 = element("div");
     			div3 = element("div");
-    			t7 = text(/*status*/ ctx[4]);
-    			t8 = space();
+    			t5 = text("Rear Data: ");
+    			t6 = text(t6_value);
+    			t7 = space();
+    			span = element("span");
+    			t8 = text("(BMS ");
+    			t9 = text(t9_value);
+    			t10 = text("\r\n                s ago)");
+    			br = element("br");
+    			t11 = text("\r\n            Front Data: ");
+    			t12 = text(t12_value);
+    			t13 = space();
     			div4 = element("div");
-    			t9 = text(/*chargeStatus*/ ctx[5]);
-    			t10 = space();
+    			t14 = text(/*chargeStatus*/ ctx[3]);
+    			t15 = space();
     			create_component(graph.$$.fragment);
-    			t11 = space();
+    			t16 = space();
     			div7 = element("div");
     			if (if_block2) if_block2.c();
-    			t12 = space();
+    			t17 = space();
     			div8 = element("div");
     			if (if_block3) if_block3.c();
-    			t13 = space();
+    			t18 = space();
     			div10 = element("div");
-    			create_component(ledselector.$$.fragment);
-    			t14 = space();
     			div9 = element("div");
     			button0 = element("button");
     			img1 = element("img");
-    			t15 = space();
+    			t19 = space();
     			button1 = element("button");
     			img2 = element("img");
-    			t16 = space();
+    			t20 = space();
     			button2 = element("button");
     			img3 = element("img");
-    			t17 = space();
+    			t21 = space();
     			button3 = element("button");
     			img4 = element("img");
-    			t18 = space();
-    			create_component(overlay2.$$.fragment);
-    			t19 = space();
-    			create_component(overlay3.$$.fragment);
-    			t20 = space();
-    			create_component(overlay4.$$.fragment);
-    			t21 = space();
-    			create_component(overlay5.$$.fragment);
     			t22 = space();
+    			create_component(ledselector.$$.fragment);
+    			t23 = space();
+    			create_component(invertertoggler.$$.fragment);
+    			t24 = space();
+    			create_component(overlay1.$$.fragment);
+    			t25 = space();
+    			create_component(overlay2.$$.fragment);
+    			t26 = space();
+    			create_component(overlay3.$$.fragment);
+    			t27 = space();
+    			create_component(overlay4.$$.fragment);
+    			t28 = space();
     			if (if_block4) if_block4.c();
     			if_block4_anchor = empty();
     			attr_dev(div0, "id", "cells");
-    			attr_dev(div0, "class", div0_class_value = /*$darkMode*/ ctx[22] ? "darkIsland" : "island");
-    			add_location(div0, file, 163, 0, 5892);
+    			attr_dev(div0, "class", div0_class_value = /*$darkMode*/ ctx[14] ? "darkIsland" : "island");
+    			add_location(div0, file, 114, 0, 4433);
     			set_style(div1, "color", "black");
     			set_style(div1, "text-align", "center");
     			set_style(div1, "font-weight", "bolder");
-    			add_location(div1, file, 175, 0, 6293);
+    			add_location(div1, file, 126, 0, 4839);
     			if (img0.src !== (img0_src_value = "./static/export.png")) attr_dev(img0, "src", img0_src_value);
     			attr_dev(img0, "width", "100%");
     			attr_dev(img0, "alt", "car logo");
     			set_style(img0, "transition", "3s ease");
-    			set_style(img0, "opacity", /*$darkMode*/ ctx[22] ? "75%" : "");
-    			add_location(img0, file, 204, 8, 7283);
-    			attr_dev(div2, "class", div2_class_value = /*$darkMode*/ ctx[22] ? "darkIsland" : "island");
-    			add_location(div2, file, 201, 4, 7181);
+    			set_style(img0, "opacity", /*$darkMode*/ ctx[14] ? "75%" : "");
+    			add_location(img0, file, 156, 8, 5872);
+    			attr_dev(div2, "class", div2_class_value = /*$darkMode*/ ctx[14] ? "darkIsland" : "island");
+    			add_location(div2, file, 153, 4, 5770);
+    			set_style(span, "color", /*data*/ ctx[0]?.lbp > 2000 ? "red" : "");
+    			add_location(span, file, 165, 12, 6416);
+    			add_location(br, file, 166, 29, 6536);
 
-    			set_style(div3, "background-color", /*time*/ ctx[1] - /*lastUpdateDate*/ ctx[2] > new Date(3000)
+    			set_style(div3, "background-color", /*time*/ ctx[1] - /*lastUpdateDate*/ ctx[2].rear > new Date(3000) || /*time*/ ctx[1] - /*lastUpdateDate*/ ctx[2].front > new Date(3000)
     			? "red"
     			: "");
 
     			attr_dev(div3, "class", "statusBox");
-    			add_location(div3, file, 209, 8, 7520);
+    			add_location(div3, file, 161, 8, 6109);
     			attr_dev(div4, "class", "statusBox");
-    			add_location(div4, file, 214, 8, 7706);
-    			attr_dev(div5, "class", div5_class_value = /*$darkMode*/ ctx[22] ? "darkIsland" : "island");
-    			add_location(div5, file, 208, 4, 7459);
+    			add_location(div4, file, 169, 8, 6682);
+    			attr_dev(div5, "class", div5_class_value = /*$darkMode*/ ctx[14] ? "darkIsland" : "island");
+    			add_location(div5, file, 160, 4, 6048);
     			set_style(div6, "position", "relative");
     			set_style(div6, "text-align", "center");
-    			add_location(div6, file, 200, 0, 7122);
-    			add_location(div7, file, 230, 0, 8102);
-    			attr_dev(div8, "class", div8_class_value = /*$darkMode*/ ctx[22] ? "darkIsland" : "island");
-    			add_location(div8, file, 294, 0, 10941);
+    			add_location(div6, file, 152, 0, 5711);
+    			add_location(div7, file, 183, 0, 7104);
+    			attr_dev(div8, "class", div8_class_value = /*$darkMode*/ ctx[14] ? "darkIsland" : "island");
+    			add_location(div8, file, 249, 0, 10034);
     			if (img1.src !== (img1_src_value = "./static/snake.svg")) attr_dev(img1, "src", img1_src_value);
     			attr_dev(img1, "alt", "snake");
-    			add_location(img1, file, 323, 85, 11748);
+    			add_location(img1, file, 277, 85, 10824);
     			attr_dev(button0, "class", "but svelte-twt6m2");
-    			toggle_class(button0, "dark", /*$darkMode*/ ctx[22]);
-    			add_location(button0, file, 323, 8, 11671);
+    			toggle_class(button0, "dark", /*$darkMode*/ ctx[14]);
+    			add_location(button0, file, 277, 8, 10747);
     			if (img2.src !== (img2_src_value = "./static/c4.svg")) attr_dev(img2, "src", img2_src_value);
     			attr_dev(img2, "alt", "c4");
-    			add_location(img2, file, 325, 82, 11900);
+    			add_location(img2, file, 279, 82, 10976);
     			attr_dev(button1, "class", "but svelte-twt6m2");
-    			toggle_class(button1, "dark", /*$darkMode*/ ctx[22]);
-    			add_location(button1, file, 325, 8, 11826);
+    			toggle_class(button1, "dark", /*$darkMode*/ ctx[14]);
+    			add_location(button1, file, 279, 8, 10902);
     			if (img3.src !== (img3_src_value = "./static/sunset.svg")) attr_dev(img3, "src", img3_src_value);
     			attr_dev(img3, "alt", "sunset");
-    			add_location(img3, file, 327, 86, 12043);
+    			add_location(img3, file, 281, 86, 11119);
     			attr_dev(button2, "class", "but svelte-twt6m2");
-    			toggle_class(button2, "dark", /*$darkMode*/ ctx[22]);
-    			add_location(button2, file, 327, 8, 11965);
+    			toggle_class(button2, "dark", /*$darkMode*/ ctx[14]);
+    			add_location(button2, file, 281, 8, 11041);
     			if (img4.src !== (img4_src_value = "./static/details.svg")) attr_dev(img4, "src", img4_src_value);
     			attr_dev(img4, "alt", "details");
-    			add_location(img4, file, 329, 88, 12278);
+    			add_location(img4, file, 283, 88, 11354);
     			attr_dev(button3, "class", "but svelte-twt6m2");
-    			toggle_class(button3, "dark", /*$darkMode*/ ctx[22]);
-    			add_location(button3, file, 329, 8, 12198);
-    			attr_dev(div9, "class", div9_class_value = /*$darkMode*/ ctx[22] ? "darkIsland" : "island");
-    			add_location(div9, file, 322, 4, 11610);
-    			add_location(div10, file, 320, 0, 11579);
+    			toggle_class(button3, "dark", /*$darkMode*/ ctx[14]);
+    			add_location(button3, file, 283, 8, 11274);
+    			attr_dev(div9, "class", div9_class_value = /*$darkMode*/ ctx[14] ? "darkIsland" : "island");
+    			add_location(div9, file, 276, 4, 10686);
+    			add_location(div10, file, 275, 0, 10675);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -6407,71 +6044,78 @@ var app = (function () {
     		m: function mount(target, anchor) {
     			mount_component(overlay0, target, anchor);
     			insert_dev(target, t0, anchor);
-    			mount_component(overlay1, target, anchor);
-    			insert_dev(target, t1, anchor);
-    			mount_component(message, target, anchor);
-    			insert_dev(target, t2, anchor);
     			insert_dev(target, div0, anchor);
     			if (if_block0) if_block0.m(div0, null);
-    			insert_dev(target, t3, anchor);
+    			insert_dev(target, t1, anchor);
     			insert_dev(target, div1, anchor);
     			if (if_block1) if_block1.m(div1, null);
-    			insert_dev(target, t4, anchor);
+    			insert_dev(target, t2, anchor);
     			insert_dev(target, div6, anchor);
     			append_dev(div6, div2);
     			mount_component(clock, div2, null);
-    			append_dev(div2, t5);
+    			append_dev(div2, t3);
     			append_dev(div2, img0);
-    			append_dev(div6, t6);
+    			append_dev(div6, t4);
     			append_dev(div6, div5);
     			append_dev(div5, div3);
+    			append_dev(div3, t5);
+    			append_dev(div3, t6);
     			append_dev(div3, t7);
-    			append_dev(div5, t8);
+    			append_dev(div3, span);
+    			append_dev(span, t8);
+    			append_dev(span, t9);
+    			append_dev(span, t10);
+    			append_dev(div3, br);
+    			append_dev(div3, t11);
+    			append_dev(div3, t12);
+    			append_dev(div5, t13);
     			append_dev(div5, div4);
-    			append_dev(div4, t9);
-    			append_dev(div6, t10);
+    			append_dev(div4, t14);
+    			append_dev(div6, t15);
     			mount_component(graph, div6, null);
-    			insert_dev(target, t11, anchor);
+    			insert_dev(target, t16, anchor);
     			insert_dev(target, div7, anchor);
     			if (if_block2) if_block2.m(div7, null);
-    			insert_dev(target, t12, anchor);
+    			insert_dev(target, t17, anchor);
     			insert_dev(target, div8, anchor);
     			if (if_block3) if_block3.m(div8, null);
-    			insert_dev(target, t13, anchor);
+    			insert_dev(target, t18, anchor);
     			insert_dev(target, div10, anchor);
-    			mount_component(ledselector, div10, null);
-    			append_dev(div10, t14);
     			append_dev(div10, div9);
     			append_dev(div9, button0);
     			append_dev(button0, img1);
-    			append_dev(div9, t15);
+    			append_dev(div9, t19);
     			append_dev(div9, button1);
     			append_dev(button1, img2);
-    			append_dev(div9, t16);
+    			append_dev(div9, t20);
     			append_dev(div9, button2);
     			append_dev(button2, img3);
-    			append_dev(div9, t17);
+    			append_dev(div9, t21);
     			append_dev(div9, button3);
     			append_dev(button3, img4);
-    			insert_dev(target, t18, anchor);
+    			append_dev(div10, t22);
+    			mount_component(ledselector, div10, null);
+    			append_dev(div10, t23);
+    			mount_component(invertertoggler, div10, null);
+    			insert_dev(target, t24, anchor);
+    			mount_component(overlay1, target, anchor);
+    			insert_dev(target, t25, anchor);
     			mount_component(overlay2, target, anchor);
-    			insert_dev(target, t19, anchor);
+    			insert_dev(target, t26, anchor);
     			mount_component(overlay3, target, anchor);
-    			insert_dev(target, t20, anchor);
+    			insert_dev(target, t27, anchor);
     			mount_component(overlay4, target, anchor);
-    			insert_dev(target, t21, anchor);
-    			mount_component(overlay5, target, anchor);
-    			insert_dev(target, t22, anchor);
+    			insert_dev(target, t28, anchor);
     			if (if_block4) if_block4.m(target, anchor);
     			insert_dev(target, if_block4_anchor, anchor);
     			current = true;
 
     			if (!mounted) {
     				dispose = [
-    					listen_dev(button0, "click", /*click_handler_4*/ ctx[36], false, false, false),
-    					listen_dev(button1, "click", /*click_handler_5*/ ctx[37], false, false, false),
-    					listen_dev(button2, "click", /*click_handler_6*/ ctx[38], false, false, false),
-    					listen_dev(button3, "click", /*click_handler_7*/ ctx[39], false, false, false)
+    					listen_dev(button0, "click", /*click_handler*/ ctx[18], false, false, false),
+    					listen_dev(button1, "click", /*click_handler_1*/ ctx[19], false, false, false),
+    					listen_dev(button2, "click", /*click_handler_2*/ ctx[20], false, false, false),
+    					listen_dev(button3, "click", /*click_handler_3*/ ctx[21], false, false, false)
     				];
 
     				mounted = true;
@@ -6480,43 +6124,17 @@ var app = (function () {
     		p: function update(ctx, dirty) {
     			const overlay0_changes = {};
 
-    			if (dirty[0] & /*err*/ 256 | dirty[1] & /*$$scope*/ 134217728) {
+    			if (dirty[0] & /*err*/ 64 | dirty[1] & /*$$scope*/ 256) {
     				overlay0_changes.$$scope = { dirty, ctx };
     			}
 
-    			if (!updating_shown && dirty[0] & /*errOverlay*/ 512) {
+    			if (!updating_shown && dirty[0] & /*errOverlay*/ 128) {
     				updating_shown = true;
-    				overlay0_changes.shown = /*errOverlay*/ ctx[9];
+    				overlay0_changes.shown = /*errOverlay*/ ctx[7];
     				add_flush_callback(() => updating_shown = false);
     			}
 
     			overlay0.$set(overlay0_changes);
-    			const overlay1_changes = {};
-
-    			if (dirty[0] & /*showOverlay, portName, availablePorts*/ 57344 | dirty[1] & /*$$scope*/ 134217728) {
-    				overlay1_changes.$$scope = { dirty, ctx };
-    			}
-
-    			if (!updating_shown_1 && dirty[0] & /*showOverlay*/ 32768) {
-    				updating_shown_1 = true;
-    				overlay1_changes.shown = /*showOverlay*/ ctx[15];
-    				add_flush_callback(() => updating_shown_1 = false);
-    			}
-
-    			overlay1.$set(overlay1_changes);
-    			const message_changes = {};
-
-    			if (dirty[0] & /*messageContent*/ 2048 | dirty[1] & /*$$scope*/ 134217728) {
-    				message_changes.$$scope = { dirty, ctx };
-    			}
-
-    			if (!updating_shown_2 && dirty[0] & /*messageShown*/ 4096) {
-    				updating_shown_2 = true;
-    				message_changes.shown = /*messageShown*/ ctx[12];
-    				add_flush_callback(() => updating_shown_2 = false);
-    			}
-
-    			message.$set(message_changes);
 
     			if (/*data*/ ctx[0]?.c) {
     				if (if_block0) {
@@ -6531,7 +6149,7 @@ var app = (function () {
     				if_block0 = null;
     			}
 
-    			if (!current || dirty[0] & /*$darkMode*/ 4194304 && div0_class_value !== (div0_class_value = /*$darkMode*/ ctx[22] ? "darkIsland" : "island")) {
+    			if (!current || dirty[0] & /*$darkMode*/ 16384 && div0_class_value !== (div0_class_value = /*$darkMode*/ ctx[14] ? "darkIsland" : "island")) {
     				attr_dev(div0, "class", div0_class_value);
     			}
 
@@ -6558,41 +6176,60 @@ var app = (function () {
     				check_outros();
     			}
 
-    			if (!current || dirty[0] & /*$darkMode*/ 4194304) {
-    				set_style(img0, "opacity", /*$darkMode*/ ctx[22] ? "75%" : "");
+    			if (!current || dirty[0] & /*$darkMode*/ 16384) {
+    				set_style(img0, "opacity", /*$darkMode*/ ctx[14] ? "75%" : "");
     			}
 
-    			if (!current || dirty[0] & /*$darkMode*/ 4194304 && div2_class_value !== (div2_class_value = /*$darkMode*/ ctx[22] ? "darkIsland" : "island")) {
+    			if (!current || dirty[0] & /*$darkMode*/ 16384 && div2_class_value !== (div2_class_value = /*$darkMode*/ ctx[14] ? "darkIsland" : "island")) {
     				attr_dev(div2, "class", div2_class_value);
     			}
 
-    			if (!current || dirty[0] & /*status*/ 16) set_data_dev(t7, /*status*/ ctx[4]);
+    			if ((!current || dirty[0] & /*lastUpdateDate*/ 4) && t6_value !== (t6_value = (/*lastUpdateDate*/ ctx[2].rear
+    			? /*lastUpdateDate*/ ctx[2].rear.toLocaleTimeString()
+    			: "Waiting for data...") + "")) set_data_dev(t6, t6_value);
+
+    			if ((!current || dirty[0] & /*data*/ 1) && t9_value !== (t9_value = (/*data*/ ctx[0]?.lbp / 1000).toFixed(1) + "")) set_data_dev(t9, t9_value);
+
+    			if (!current || dirty[0] & /*data*/ 1) {
+    				set_style(span, "color", /*data*/ ctx[0]?.lbp > 2000 ? "red" : "");
+    			}
+
+    			if ((!current || dirty[0] & /*lastUpdateDate*/ 4) && t12_value !== (t12_value = (/*lastUpdateDate*/ ctx[2].front
+    			? /*lastUpdateDate*/ ctx[2].front.toLocaleTimeString()
+    			: "Waiting for data...") + "")) set_data_dev(t12, t12_value);
 
     			if (!current || dirty[0] & /*time, lastUpdateDate*/ 6) {
-    				set_style(div3, "background-color", /*time*/ ctx[1] - /*lastUpdateDate*/ ctx[2] > new Date(3000)
+    				set_style(div3, "background-color", /*time*/ ctx[1] - /*lastUpdateDate*/ ctx[2].rear > new Date(3000) || /*time*/ ctx[1] - /*lastUpdateDate*/ ctx[2].front > new Date(3000)
     				? "red"
     				: "");
     			}
 
-    			if (!current || dirty[0] & /*chargeStatus*/ 32) set_data_dev(t9, /*chargeStatus*/ ctx[5]);
+    			if (!current || dirty[0] & /*chargeStatus*/ 8) set_data_dev(t14, /*chargeStatus*/ ctx[3]);
 
-    			if (!current || dirty[0] & /*$darkMode*/ 4194304 && div5_class_value !== (div5_class_value = /*$darkMode*/ ctx[22] ? "darkIsland" : "island")) {
+    			if (!current || dirty[0] & /*$darkMode*/ 16384 && div5_class_value !== (div5_class_value = /*$darkMode*/ ctx[14] ? "darkIsland" : "island")) {
     				attr_dev(div5, "class", div5_class_value);
     			}
 
     			const graph_changes = {};
 
-    			if (dirty[0] & /*$darkMode*/ 4194304) graph_changes.axisSettings = [
+    			if (dirty[0] & /*$darkMode*/ 16384) graph_changes.axisSettings = [
     				{
     					axis: 0,
-    					color: /*$darkMode*/ ctx[22] ? "#33f8ff" : "#125256",
+    					color: /*$darkMode*/ ctx[14] ? "#33f8ff" : "#125256",
     					maxPoints: 35,
-    					units: "V",
+    					units: "A",
     					minIs0: false
+    				},
+    				{
+    					axis: 350,
+    					color: "black",
+    					maxPoints: 35,
+    					units: "kW",
+    					minIs0: true
     				}
     			];
 
-    			if (dirty[0] & /*graphData*/ 128) graph_changes.datas = /*graphData*/ ctx[7];
+    			if (dirty[0] & /*graphData*/ 32) graph_changes.datas = /*graphData*/ ctx[5];
     			graph.$set(graph_changes);
 
     			if (/*data*/ ctx[0]) {
@@ -6618,7 +6255,7 @@ var app = (function () {
     				check_outros();
     			}
 
-    			if (/*data*/ ctx[0]) {
+    			if (/*data*/ ctx[0]?.f) {
     				if (if_block3) {
     					if_block3.p(ctx, dirty);
 
@@ -6641,88 +6278,91 @@ var app = (function () {
     				check_outros();
     			}
 
-    			if (!current || dirty[0] & /*$darkMode*/ 4194304 && div8_class_value !== (div8_class_value = /*$darkMode*/ ctx[22] ? "darkIsland" : "island")) {
+    			if (!current || dirty[0] & /*$darkMode*/ 16384 && div8_class_value !== (div8_class_value = /*$darkMode*/ ctx[14] ? "darkIsland" : "island")) {
     				attr_dev(div8, "class", div8_class_value);
     			}
 
-    			if (dirty[0] & /*$darkMode*/ 4194304) {
-    				toggle_class(button0, "dark", /*$darkMode*/ ctx[22]);
+    			if (dirty[0] & /*$darkMode*/ 16384) {
+    				toggle_class(button0, "dark", /*$darkMode*/ ctx[14]);
     			}
 
-    			if (dirty[0] & /*$darkMode*/ 4194304) {
-    				toggle_class(button1, "dark", /*$darkMode*/ ctx[22]);
+    			if (dirty[0] & /*$darkMode*/ 16384) {
+    				toggle_class(button1, "dark", /*$darkMode*/ ctx[14]);
     			}
 
-    			if (dirty[0] & /*$darkMode*/ 4194304) {
-    				toggle_class(button2, "dark", /*$darkMode*/ ctx[22]);
+    			if (dirty[0] & /*$darkMode*/ 16384) {
+    				toggle_class(button2, "dark", /*$darkMode*/ ctx[14]);
     			}
 
-    			if (dirty[0] & /*$darkMode*/ 4194304) {
-    				toggle_class(button3, "dark", /*$darkMode*/ ctx[22]);
+    			if (dirty[0] & /*$darkMode*/ 16384) {
+    				toggle_class(button3, "dark", /*$darkMode*/ ctx[14]);
     			}
 
-    			if (!current || dirty[0] & /*$darkMode*/ 4194304 && div9_class_value !== (div9_class_value = /*$darkMode*/ ctx[22] ? "darkIsland" : "island")) {
+    			if (!current || dirty[0] & /*$darkMode*/ 16384 && div9_class_value !== (div9_class_value = /*$darkMode*/ ctx[14] ? "darkIsland" : "island")) {
     				attr_dev(div9, "class", div9_class_value);
     			}
 
+    			const invertertoggler_changes = {};
+    			if (dirty[0] & /*data*/ 1) invertertoggler_changes.inverterState = /*data*/ ctx[0]?.inverter;
+    			invertertoggler.$set(invertertoggler_changes);
+    			const overlay1_changes = {};
+
+    			if (dirty[0] & /*showSnake*/ 512 | dirty[1] & /*$$scope*/ 256) {
+    				overlay1_changes.$$scope = { dirty, ctx };
+    			}
+
+    			if (!updating_shown_1 && dirty[0] & /*showSnake*/ 512) {
+    				updating_shown_1 = true;
+    				overlay1_changes.shown = /*showSnake*/ ctx[9];
+    				add_flush_callback(() => updating_shown_1 = false);
+    			}
+
+    			overlay1.$set(overlay1_changes);
     			const overlay2_changes = {};
 
-    			if (dirty[0] & /*showSnake*/ 65536 | dirty[1] & /*$$scope*/ 134217728) {
+    			if (dirty[0] & /*showC4*/ 1024 | dirty[1] & /*$$scope*/ 256) {
     				overlay2_changes.$$scope = { dirty, ctx };
     			}
 
-    			if (!updating_shown_3 && dirty[0] & /*showSnake*/ 65536) {
-    				updating_shown_3 = true;
-    				overlay2_changes.shown = /*showSnake*/ ctx[16];
-    				add_flush_callback(() => updating_shown_3 = false);
+    			if (!updating_shown_2 && dirty[0] & /*showC4*/ 1024) {
+    				updating_shown_2 = true;
+    				overlay2_changes.shown = /*showC4*/ ctx[10];
+    				add_flush_callback(() => updating_shown_2 = false);
     			}
 
     			overlay2.$set(overlay2_changes);
     			const overlay3_changes = {};
 
-    			if (dirty[0] & /*showC4*/ 131072 | dirty[1] & /*$$scope*/ 134217728) {
+    			if (dirty[0] & /*$timeOffset, $forceMode, time*/ 73730 | dirty[1] & /*$$scope*/ 256) {
     				overlay3_changes.$$scope = { dirty, ctx };
     			}
 
-    			if (!updating_shown_4 && dirty[0] & /*showC4*/ 131072) {
-    				updating_shown_4 = true;
-    				overlay3_changes.shown = /*showC4*/ ctx[17];
-    				add_flush_callback(() => updating_shown_4 = false);
+    			if (!updating_shown_3 && dirty[0] & /*showSunset*/ 2048) {
+    				updating_shown_3 = true;
+    				overlay3_changes.shown = /*showSunset*/ ctx[11];
+    				add_flush_callback(() => updating_shown_3 = false);
     			}
 
     			overlay3.$set(overlay3_changes);
     			const overlay4_changes = {};
 
-    			if (dirty[0] & /*$timeOffset, $forceMode, time*/ 18874370 | dirty[1] & /*$$scope*/ 134217728) {
+    			if (dirty[0] & /*data, $twelveCorrectiveFactor*/ 32769 | dirty[1] & /*$$scope*/ 256) {
     				overlay4_changes.$$scope = { dirty, ctx };
     			}
 
-    			if (!updating_shown_5 && dirty[0] & /*showSunset*/ 262144) {
-    				updating_shown_5 = true;
-    				overlay4_changes.shown = /*showSunset*/ ctx[18];
-    				add_flush_callback(() => updating_shown_5 = false);
+    			if (!updating_shown_4 && dirty[0] & /*showSettings*/ 4096) {
+    				updating_shown_4 = true;
+    				overlay4_changes.shown = /*showSettings*/ ctx[12];
+    				add_flush_callback(() => updating_shown_4 = false);
     			}
 
     			overlay4.$set(overlay4_changes);
-    			const overlay5_changes = {};
 
-    			if (dirty[0] & /*data, $twelveCorrectiveFactor*/ 8388609 | dirty[1] & /*$$scope*/ 134217728) {
-    				overlay5_changes.$$scope = { dirty, ctx };
-    			}
-
-    			if (!updating_shown_6 && dirty[0] & /*showSettings*/ 524288) {
-    				updating_shown_6 = true;
-    				overlay5_changes.shown = /*showSettings*/ ctx[19];
-    				add_flush_callback(() => updating_shown_6 = false);
-    			}
-
-    			overlay5.$set(overlay5_changes);
-
-    			if (/*showImage*/ ctx[10]) {
+    			if (/*showImage*/ ctx[8]) {
     				if (if_block4) {
     					if_block4.p(ctx, dirty);
 
-    					if (dirty[0] & /*showImage*/ 1024) {
+    					if (dirty[0] & /*showImage*/ 256) {
     						transition_in(if_block4, 1);
     					}
     				} else {
@@ -6744,72 +6384,67 @@ var app = (function () {
     		i: function intro(local) {
     			if (current) return;
     			transition_in(overlay0.$$.fragment, local);
-    			transition_in(overlay1.$$.fragment, local);
-    			transition_in(message.$$.fragment, local);
     			transition_in(if_block1);
     			transition_in(clock.$$.fragment, local);
     			transition_in(graph.$$.fragment, local);
     			transition_in(if_block2);
     			transition_in(if_block3);
     			transition_in(ledselector.$$.fragment, local);
+    			transition_in(invertertoggler.$$.fragment, local);
+    			transition_in(overlay1.$$.fragment, local);
     			transition_in(overlay2.$$.fragment, local);
     			transition_in(overlay3.$$.fragment, local);
     			transition_in(overlay4.$$.fragment, local);
-    			transition_in(overlay5.$$.fragment, local);
     			transition_in(if_block4);
     			current = true;
     		},
     		o: function outro(local) {
     			transition_out(overlay0.$$.fragment, local);
-    			transition_out(overlay1.$$.fragment, local);
-    			transition_out(message.$$.fragment, local);
     			transition_out(if_block1);
     			transition_out(clock.$$.fragment, local);
     			transition_out(graph.$$.fragment, local);
     			transition_out(if_block2);
     			transition_out(if_block3);
     			transition_out(ledselector.$$.fragment, local);
+    			transition_out(invertertoggler.$$.fragment, local);
+    			transition_out(overlay1.$$.fragment, local);
     			transition_out(overlay2.$$.fragment, local);
     			transition_out(overlay3.$$.fragment, local);
     			transition_out(overlay4.$$.fragment, local);
-    			transition_out(overlay5.$$.fragment, local);
     			transition_out(if_block4);
     			current = false;
     		},
     		d: function destroy(detaching) {
     			destroy_component(overlay0, detaching);
     			if (detaching) detach_dev(t0);
-    			destroy_component(overlay1, detaching);
-    			if (detaching) detach_dev(t1);
-    			destroy_component(message, detaching);
-    			if (detaching) detach_dev(t2);
     			if (detaching) detach_dev(div0);
     			if (if_block0) if_block0.d();
-    			if (detaching) detach_dev(t3);
+    			if (detaching) detach_dev(t1);
     			if (detaching) detach_dev(div1);
     			if (if_block1) if_block1.d();
-    			if (detaching) detach_dev(t4);
+    			if (detaching) detach_dev(t2);
     			if (detaching) detach_dev(div6);
     			destroy_component(clock);
     			destroy_component(graph);
-    			if (detaching) detach_dev(t11);
+    			if (detaching) detach_dev(t16);
     			if (detaching) detach_dev(div7);
     			if (if_block2) if_block2.d();
-    			if (detaching) detach_dev(t12);
+    			if (detaching) detach_dev(t17);
     			if (detaching) detach_dev(div8);
     			if (if_block3) if_block3.d();
-    			if (detaching) detach_dev(t13);
+    			if (detaching) detach_dev(t18);
     			if (detaching) detach_dev(div10);
     			destroy_component(ledselector);
-    			if (detaching) detach_dev(t18);
+    			destroy_component(invertertoggler);
+    			if (detaching) detach_dev(t24);
+    			destroy_component(overlay1, detaching);
+    			if (detaching) detach_dev(t25);
     			destroy_component(overlay2, detaching);
-    			if (detaching) detach_dev(t19);
+    			if (detaching) detach_dev(t26);
     			destroy_component(overlay3, detaching);
-    			if (detaching) detach_dev(t20);
+    			if (detaching) detach_dev(t27);
     			destroy_component(overlay4, detaching);
-    			if (detaching) detach_dev(t21);
-    			destroy_component(overlay5, detaching);
-    			if (detaching) detach_dev(t22);
+    			if (detaching) detach_dev(t28);
     			if (if_block4) if_block4.d(detaching);
     			if (detaching) detach_dev(if_block4_anchor);
     			mounted = false;
@@ -6829,24 +6464,22 @@ var app = (function () {
     }
 
     function instance($$self, $$props, $$invalidate) {
-    	let bS;
     	let $timeOffset;
     	let $darkMode;
     	let $twelveCorrectiveFactor;
     	let $forceMode;
     	validate_store(timeOffset, "timeOffset");
-    	component_subscribe($$self, timeOffset, $$value => $$invalidate(21, $timeOffset = $$value));
+    	component_subscribe($$self, timeOffset, $$value => $$invalidate(13, $timeOffset = $$value));
     	validate_store(darkMode, "darkMode");
-    	component_subscribe($$self, darkMode, $$value => $$invalidate(22, $darkMode = $$value));
+    	component_subscribe($$self, darkMode, $$value => $$invalidate(14, $darkMode = $$value));
     	validate_store(twelveCorrectiveFactor, "twelveCorrectiveFactor");
-    	component_subscribe($$self, twelveCorrectiveFactor, $$value => $$invalidate(23, $twelveCorrectiveFactor = $$value));
+    	component_subscribe($$self, twelveCorrectiveFactor, $$value => $$invalidate(15, $twelveCorrectiveFactor = $$value));
     	validate_store(forceMode, "forceMode");
-    	component_subscribe($$self, forceMode, $$value => $$invalidate(24, $forceMode = $$value));
+    	component_subscribe($$self, forceMode, $$value => $$invalidate(16, $forceMode = $$value));
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots("App", slots, []);
     	const { ipcRenderer } = require("electron");
-    	let data, time, lastUpdateDate;
-    	let voltage = data?.c.reduce((a, b) => a + b);
+    	let data = {}, time, lastUpdateDate = { "front": undefined, "rear": undefined };
     	let status = "Waiting for data...";
     	let chargeStatus = "Waiting for charging data...";
     	let chargeConsoleText = "";
@@ -6864,41 +6497,58 @@ var app = (function () {
     		return () => clearInterval(interval);
     	});
 
-    	let graphData = [[]];
+    	// let graphData = [[]];
+    	let graphData = [[], []];
 
-    	// let graphData = [[], []];
+    	setInterval(
+    		() => {
+    			if (data.motorCurrent && data.power) {
+    				graphData[0].push(data.motorCurrent);
+    				graphData[1].push(data.power);
+    			}
+
+    			$$invalidate(5, graphData);
+    		},
+    		250
+    	);
+
     	// When adding power back: axis settings here. {axis: 350, color: "black", maxPoints: 35x`, units: "kW", minIs0: true,},
     	let err, errOverlay;
 
     	ipcRenderer.on("error", (event, _err) => {
-    		$$invalidate(8, err = _err);
-    		$$invalidate(9, errOverlay = true);
+    		$$invalidate(6, err = _err);
+    		$$invalidate(7, errOverlay = true);
     	});
 
     	let showImage = true;
 
     	ipcRenderer.on("data", (event, _data) => {
-    		if (_data.s === "normal") {
-    			if (showImage) {
-    				$$invalidate(10, showImage = false);
-    				console.log("2 or 4) Got data");
+    		if (_data.id === "front" && _data.s === "ok") {
+    			// console.log(_data)
+    			$$invalidate(2, lastUpdateDate.front = new Date(new Date().getTime() + $timeOffset * 60 * 60 * 1000), lastUpdateDate);
+
+    			$$invalidate(0, data.ignition = _data.ignition, data);
+    			$$invalidate(0, data.reverse = _data.reverse, data);
+    			$$invalidate(0, data.inverter = _data.inverter, data);
+    			$$invalidate(0, data.voltage = _data.voltage, data);
+    			$$invalidate(0, data.motorCurrent = _data.motorCurrent, data);
+    			$$invalidate(0, data.power = _data.power, data);
+    			$$invalidate(0, data.batteryCurrent = _data.batteryCurrent, data);
+    		} else if (_data.s === "normal") {
+    			if (showImage) $$invalidate(8, showImage = false);
+
+    			// If we have not gotten a recent update from the front, deduce voltage.
+    			if (data.ignition) {
+    				$$invalidate(0, data.voltage = _data.c.reduce((a, b) => a + b), data);
     			}
 
-    			$$invalidate(3, voltage = _data.c.reduce((a, b) => a + b));
-
-    			if (voltage && _data.hasOwnProperty("pC")) {
-    				graphData[0].push(voltage);
-
-    				// graphData[1].push(Math.abs((_data.pC * voltage) / 1000));
-    				$$invalidate(7, graphData);
-    			}
-
-    			$$invalidate(12, messageShown = false);
     			_data.f = Math.round(_data.f * 100 / 256);
-    			$$invalidate(0, data = _data);
-    			$$invalidate(4, status = `Got last data ${new Date(new Date().getTime() + $timeOffset * 60 * 60 * 1000).toLocaleTimeString()} (BMS ${(data["lbp"] / 1000).toFixed(1)} s ago)`);
+    			Object.assign(data, _data); //Updates the data object with any new changes from the _data object
+    			$$invalidate(0, data.minCellVoltage = Math.min(..._data.c), data);
+    			$$invalidate(0, data.maxCellVoltage = Math.max(..._data.c), data);
+    			$$invalidate(0, data.avgCellVoltage = _data.c.reduce((a, b) => a + b) / _data.c.length, data);
+    			$$invalidate(0, data.bS = data.bS.toString(2).split("").reverse().join(""), data);
 
-    			//todo add the last time we got data from the BMS.
     			const options = [
     				"Waiting for plug",
     				"Plugged in, not charging",
@@ -6908,114 +6558,58 @@ var app = (function () {
     			];
 
     			if (chargeStatus !== options[_data.ch]) {
-    				$$invalidate(5, chargeStatus = options[_data.ch]);
-    				$$invalidate(6, chargeConsoleText += new Date(new Date().getTime() + $timeOffset * 60 * 60 * 1000).toLocaleTimeString() + " " + chargeStatus + "\n");
+    				$$invalidate(3, chargeStatus = options[_data.ch]);
+    				$$invalidate(4, chargeConsoleText += new Date(new Date().getTime() + $timeOffset * 60 * 60 * 1000).toLocaleTimeString() + " " + chargeStatus + "\n");
     			}
 
-    			$$invalidate(2, lastUpdateDate = new Date(new Date().getTime() + $timeOffset * 60 * 60 * 1000));
+    			$$invalidate(2, lastUpdateDate.rear = new Date(new Date().getTime() + $timeOffset * 60 * 60 * 1000), lastUpdateDate);
     		} else if (_data.s === "bms_error") {
     			console.log("BMS Error: " + _data.error);
-    		} else if (_data.s === "log") {
-    			console.log(_data.m);
     		}
     	});
 
-    	ipcRenderer.on("select_port", (event, _data) => {
-    		$$invalidate(15, showOverlay = true);
-    		$$invalidate(14, availablePorts = _data);
-    		console.log("2) Selecting port");
-    	});
-
-    	let messageContent = "";
-    	let messageShown = false;
-
-    	ipcRenderer.on("response", (event, _data) => {
-    		$$invalidate(11, messageContent = _data);
-    		$$invalidate(12, messageShown = true);
-    		console.log("5) Got response.");
-    	});
-
-    	function sendPort(portName) {
-    		console.log("3) Sending port " + portName);
-    		ipcRenderer.send("selected_port", portName);
-    		$$invalidate(15, showOverlay = false);
-    	}
-
-    	let portName = "";
-    	let availablePorts;
-    	let showOverlay = false;
     	let showSnake = false;
     	let showC4 = false;
     	let showSunset = false;
     	let showSettings = false;
     	const writable_props = [];
 
-    	Object.keys($$props).forEach(key => {
+    	Object_1.keys($$props).forEach(key => {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console_2.warn(`<App> was created with unknown prop '${key}'`);
     	});
 
     	function overlay0_shown_binding(value) {
     		errOverlay = value;
-    		$$invalidate(9, errOverlay);
+    		$$invalidate(7, errOverlay);
     	}
 
-    	const click_handler = port => $$invalidate(13, portName = port);
-    	const click_handler_1 = () => $$invalidate(13, portName = "COM" + portName);
-
-    	function input1_input_handler() {
-    		portName = this.value;
-    		$$invalidate(13, portName);
-    	}
-
-    	const click_handler_2 = () => {
-    		sendPort(portName);
-    		$$invalidate(15, showOverlay = false);
-    	};
-
-    	const click_handler_3 = () => {
-    		$$invalidate(15, showOverlay = false);
-    		setTimeout(() => ipcRenderer.send("ready_for_data"), 500);
-    	};
+    	const click_handler = () => $$invalidate(9, showSnake = true);
+    	const click_handler_1 = () => $$invalidate(10, showC4 = true);
+    	const click_handler_2 = () => $$invalidate(11, showSunset = true);
+    	const click_handler_3 = () => $$invalidate(12, showSettings = true);
+    	const closeOverlay_handler = () => $$invalidate(9, showSnake = false);
 
     	function overlay1_shown_binding(value) {
-    		showOverlay = value;
-    		$$invalidate(15, showOverlay);
+    		showSnake = value;
+    		$$invalidate(9, showSnake);
     	}
 
-    	const func = () => ipcRenderer.send("ready_for_data");
-
-    	function message_shown_binding(value) {
-    		messageShown = value;
-    		$$invalidate(12, messageShown);
-    	}
-
-    	const click_handler_4 = () => $$invalidate(16, showSnake = true);
-    	const click_handler_5 = () => $$invalidate(17, showC4 = true);
-    	const click_handler_6 = () => $$invalidate(18, showSunset = true);
-    	const click_handler_7 = () => $$invalidate(19, showSettings = true);
-    	const closeOverlay_handler = () => $$invalidate(16, showSnake = false);
+    	const closeOverlay_handler_1 = () => $$invalidate(10, showC4 = false);
 
     	function overlay2_shown_binding(value) {
-    		showSnake = value;
-    		$$invalidate(16, showSnake);
+    		showC4 = value;
+    		$$invalidate(10, showC4);
     	}
 
-    	const closeOverlay_handler_1 = () => $$invalidate(17, showC4 = false);
+    	const click_handler_4 = () => forceMode.set("Light");
+    	const click_handler_5 = () => forceMode.set("Dark");
+    	const click_handler_6 = () => forceMode.set("Adaptive");
+    	const click_handler_7 = () => timeOffset.update(e => e + 1);
+    	const click_handler_8 = () => timeOffset.update(e => e - 1);
 
     	function overlay3_shown_binding(value) {
-    		showC4 = value;
-    		$$invalidate(17, showC4);
-    	}
-
-    	const click_handler_8 = () => forceMode.set("Light");
-    	const click_handler_9 = () => forceMode.set("Dark");
-    	const click_handler_10 = () => forceMode.set("Adaptive");
-    	const click_handler_11 = () => timeOffset.update(e => e + 1);
-    	const click_handler_12 = () => timeOffset.update(e => e - 1);
-
-    	function overlay4_shown_binding(value) {
     		showSunset = value;
-    		$$invalidate(18, showSunset);
+    		$$invalidate(11, showSunset);
     	}
 
     	function input_input_handler() {
@@ -7023,21 +6617,19 @@ var app = (function () {
     		twelveCorrectiveFactor.set($twelveCorrectiveFactor);
     	}
 
-    	function overlay5_shown_binding(value) {
+    	function overlay4_shown_binding(value) {
     		showSettings = value;
-    		$$invalidate(19, showSettings);
+    		$$invalidate(12, showSettings);
     	}
 
     	$$self.$capture_state = () => ({
     		onMount,
-    		setContext,
     		fade,
     		Overlay,
     		Gauge: Gauge_1,
     		TempGauge,
     		Graph,
     		Slider,
-    		Message,
     		Console,
     		LEDSelector,
     		Snake,
@@ -7050,11 +6642,11 @@ var app = (function () {
     		timeOffset,
     		twelveCorrectiveFactor,
     		C4,
+    		InverterToggler,
     		ipcRenderer,
     		data,
     		time,
     		lastUpdateDate,
-    		voltage,
     		status,
     		chargeStatus,
     		chargeConsoleText,
@@ -7062,17 +6654,10 @@ var app = (function () {
     		err,
     		errOverlay,
     		showImage,
-    		messageContent,
-    		messageShown,
-    		sendPort,
-    		portName,
-    		availablePorts,
-    		showOverlay,
     		showSnake,
     		showC4,
     		showSunset,
     		showSettings,
-    		bS,
     		$timeOffset,
     		$darkMode,
     		$twelveCorrectiveFactor,
@@ -7083,93 +6668,58 @@ var app = (function () {
     		if ("data" in $$props) $$invalidate(0, data = $$props.data);
     		if ("time" in $$props) $$invalidate(1, time = $$props.time);
     		if ("lastUpdateDate" in $$props) $$invalidate(2, lastUpdateDate = $$props.lastUpdateDate);
-    		if ("voltage" in $$props) $$invalidate(3, voltage = $$props.voltage);
-    		if ("status" in $$props) $$invalidate(4, status = $$props.status);
-    		if ("chargeStatus" in $$props) $$invalidate(5, chargeStatus = $$props.chargeStatus);
-    		if ("chargeConsoleText" in $$props) $$invalidate(6, chargeConsoleText = $$props.chargeConsoleText);
-    		if ("graphData" in $$props) $$invalidate(7, graphData = $$props.graphData);
-    		if ("err" in $$props) $$invalidate(8, err = $$props.err);
-    		if ("errOverlay" in $$props) $$invalidate(9, errOverlay = $$props.errOverlay);
-    		if ("showImage" in $$props) $$invalidate(10, showImage = $$props.showImage);
-    		if ("messageContent" in $$props) $$invalidate(11, messageContent = $$props.messageContent);
-    		if ("messageShown" in $$props) $$invalidate(12, messageShown = $$props.messageShown);
-    		if ("portName" in $$props) $$invalidate(13, portName = $$props.portName);
-    		if ("availablePorts" in $$props) $$invalidate(14, availablePorts = $$props.availablePorts);
-    		if ("showOverlay" in $$props) $$invalidate(15, showOverlay = $$props.showOverlay);
-    		if ("showSnake" in $$props) $$invalidate(16, showSnake = $$props.showSnake);
-    		if ("showC4" in $$props) $$invalidate(17, showC4 = $$props.showC4);
-    		if ("showSunset" in $$props) $$invalidate(18, showSunset = $$props.showSunset);
-    		if ("showSettings" in $$props) $$invalidate(19, showSettings = $$props.showSettings);
-    		if ("bS" in $$props) $$invalidate(20, bS = $$props.bS);
+    		if ("status" in $$props) status = $$props.status;
+    		if ("chargeStatus" in $$props) $$invalidate(3, chargeStatus = $$props.chargeStatus);
+    		if ("chargeConsoleText" in $$props) $$invalidate(4, chargeConsoleText = $$props.chargeConsoleText);
+    		if ("graphData" in $$props) $$invalidate(5, graphData = $$props.graphData);
+    		if ("err" in $$props) $$invalidate(6, err = $$props.err);
+    		if ("errOverlay" in $$props) $$invalidate(7, errOverlay = $$props.errOverlay);
+    		if ("showImage" in $$props) $$invalidate(8, showImage = $$props.showImage);
+    		if ("showSnake" in $$props) $$invalidate(9, showSnake = $$props.showSnake);
+    		if ("showC4" in $$props) $$invalidate(10, showC4 = $$props.showC4);
+    		if ("showSunset" in $$props) $$invalidate(11, showSunset = $$props.showSunset);
+    		if ("showSettings" in $$props) $$invalidate(12, showSettings = $$props.showSettings);
     	};
 
     	if ($$props && "$$inject" in $$props) {
     		$$self.$inject_state($$props.$$inject);
     	}
 
-    	$$self.$$.update = () => {
-    		if ($$self.$$.dirty[0] & /*data*/ 1) {
-    			$$invalidate(20, bS = data?.bS.toString(2).split("").reverse().join(""));
-    		}
-
-    		if ($$self.$$.dirty[0] & /*data*/ 1) {
-    			setContext("animationDuration", data ? data.i : 1);
-    		}
-    	};
-
     	return [
     		data,
     		time,
     		lastUpdateDate,
-    		voltage,
-    		status,
     		chargeStatus,
     		chargeConsoleText,
     		graphData,
     		err,
     		errOverlay,
     		showImage,
-    		messageContent,
-    		messageShown,
-    		portName,
-    		availablePorts,
-    		showOverlay,
     		showSnake,
     		showC4,
     		showSunset,
     		showSettings,
-    		bS,
     		$timeOffset,
     		$darkMode,
     		$twelveCorrectiveFactor,
     		$forceMode,
-    		ipcRenderer,
-    		sendPort,
     		overlay0_shown_binding,
     		click_handler,
     		click_handler_1,
-    		input1_input_handler,
     		click_handler_2,
     		click_handler_3,
+    		closeOverlay_handler,
     		overlay1_shown_binding,
-    		func,
-    		message_shown_binding,
+    		closeOverlay_handler_1,
+    		overlay2_shown_binding,
     		click_handler_4,
     		click_handler_5,
     		click_handler_6,
     		click_handler_7,
-    		closeOverlay_handler,
-    		overlay2_shown_binding,
-    		closeOverlay_handler_1,
-    		overlay3_shown_binding,
     		click_handler_8,
-    		click_handler_9,
-    		click_handler_10,
-    		click_handler_11,
-    		click_handler_12,
-    		overlay4_shown_binding,
+    		overlay3_shown_binding,
     		input_input_handler,
-    		overlay5_shown_binding
+    		overlay4_shown_binding
     	];
     }
 

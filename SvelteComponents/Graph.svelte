@@ -27,7 +27,13 @@
     $: update(datas);
 
     function update(_unused) {
+        if (datas.length === 0) {
+            return;
+        }
         for (let i = 0; i < objects.length; i++) {
+            if (datas[i].length === 0) {
+                continue;
+            }
             datas[i] = datas[i].slice(
                 Math.max(datas[i].length - axisSettings[i].maxPoints, 0)
             );
