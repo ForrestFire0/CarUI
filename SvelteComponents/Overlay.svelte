@@ -8,23 +8,24 @@
     }
 </script>
 
-<svelte:window on:keydown={handleKeydown} />
+<svelte:window on:keydown={handleKeydown}/>
 
-{#if shown}
-    <div
+<div
         class="overlay"
         class:closable
         on:click={() => {
             if (closable) shown = false;
-        }}>
-        <div
+        }}
+        on:keydown={handleKeydown}
+        style="visibility: {shown ? 'visible' : 'hidden'};"
+>
+    <div
             class="container"
             style={"width: " + width + "%"}
             on:click|stopPropagation>
-            <slot />
-        </div>
+        <slot/>
     </div>
-{/if}
+</div>
 
 <style>
     .overlay {
@@ -38,6 +39,7 @@
         background-color: rgba(0, 0, 0, 0.5);
         z-index: 3; /* Specify a stack order in case you're using a different order for other elements */
     }
+
     .closable {
         cursor: pointer;
     }
@@ -45,8 +47,8 @@
     .container {
         padding: 5%;
         margin: auto auto auto auto;
-        background-color: white;
+        background-color: var(--bg-color);
         cursor: default;
-        box-shadow: 0 0 10px 10px #3a3a3a;
+        box-shadow: 0 0 10px 10px rgba(58, 58, 58, 0.29);
     }
 </style>

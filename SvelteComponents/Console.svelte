@@ -1,6 +1,4 @@
 <script>
-    import {darkMode} from "./stores";
-
     export let text;
     let textarea;
     $: if (text && textarea) {
@@ -8,13 +6,13 @@
     }
 </script>
 
-<textarea readonly bind:this={textarea} class="{$darkMode ? 'darkIsland' : 'island'}"
-          style="color: {$darkMode? '#c5c5c5' : 'black'}">{text}</textarea>
+<textarea readonly bind:this={textarea}>{text}</textarea>
 
 <style>
     textarea {
-        height: 15%;
-        padding: 2%;
+        height: 20%;
+        width: 50%;
+        padding: 1.1vw;
         font-size: 1.1vw;
     }
 </style>

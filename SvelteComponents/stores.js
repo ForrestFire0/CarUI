@@ -1,4 +1,4 @@
-import {readable, writable, get} from 'svelte/store';
+import {readable, writable, get, derived} from 'svelte/store';
 
 /**
  * @param {string} localStorageKey The localStorageKey this should be saved under.
@@ -7,15 +7,17 @@ import {readable, writable, get} from 'svelte/store';
  *  If the initial value is an array, the push method is added.
  *  If the initial value is a date, the value when read from local storage is parsed into a date.
  */
-function storable(localStorageKey, initial) {
+export function storable(localStorageKey, initial) {
     if (typeof storable.usedKeys == 'undefined') {
         // It has not... perform the initialization
         storable.usedKeys = [];
     }
     if (storable.usedKeys.includes(localStorageKey)) {
         console.log('Err: cannot use the same key')
+        console.log(storable.usedKeys)
+        return;
     }
-    storable.usedKeys.push()
+    storable.usedKeys.push(localStorageKey)
     let initial_value = JSON.parse(localStorage[localStorageKey] ? localStorage[localStorageKey] : JSON.stringify(initial));
     if (initial instanceof Date) {
         console.log(initial_value)
@@ -34,32 +36,46 @@ function storable(localStorageKey, initial) {
     return ret;
 }
 
-
 import SunCalc from '../public/libs/suncalc';
-export const timeOffset = storable('timeOffset', 0);
-const times = SunCalc.getTimes(new Date(new Date().getTime() + timeOffset.get() * 60 * 60 * 1000), 39.1532, -77.0669)
-export let today_sunset = times.sunset;
-export let today_sunrise = times.sunrise;
 
-export const darkMode = readable(new Date() <= today_sunrise || new Date() > today_sunset, set => {
-    const update = () => {
-        let dm, now = new Date(new Date().getTime() + timeOffset.get() * 60 * 60 * 1000);
-        if (get(forceMode) === 'Light') dm = false
-        else if (get(forceMode) === 'Dark') dm = true;
-        else if (get(forceMode) === 'Adaptive') {
-            const times = SunCalc.getTimes(now, 39.1532, -77.0669)
-            today_sunset = times.sunset;
-            today_sunrise = times.sunrise;
-            dm = (now <= today_sunrise || now > today_sunset)
-        }
-        set(dm);
-        window.document.body.style.backgroundColor = dm ? '#42514f' : ''
-    };
-    update();
-    const interval = setInterval(update, 1000)
+export const forceMode = storable('forceMode', 'Adaptive')
+export const timeOffset = storable('timeOffset', 0);
+export const currentTime = derived(timeOffset, ($timeOffset, set) => {
+    console.log($timeOffset);
+    const update = () => set(new Date(new Date().getTime() + $timeOffset * 1000 * 60 * 60))
+    const interval = setInterval(update, 1000);
+    update()
     return () => clearInterval(interval);
 });
+export const darkMode = derived([currentTime, forceMode], ([$currentTime, $forceMode], set) => {
+    let dm;
+    if ($forceMode === 'Light') dm = false
+    else if ($forceMode === 'Dark') dm = true;
+    else if ($forceMode === 'Adaptive') {
+        try {
+            const times = SunCalc.getTimes($currentTime, 39.1532, -77.0669)
+            const today_sunset = times.sunset;
+            const today_sunrise = times.sunrise;
+            // console.log(today_sunrise);
+            // console.log(today_sunset);
+            // console.log($currentTime);
+            dm = ($currentTime <= today_sunrise || $currentTime > today_sunset)
+        } catch (e) {
+            dm = false;
+        }
+    }
+    set(dm);
+});
+// darkMode.subscribe((dm) => {
+//     console.log("The dark mode was updated to " + dm);
+//     console.trace()
+// })
+// forceMode.subscribe((dm) => {
+//     console.log("The force mode was updated to " + dm);
+//     console.trace()
+// })
+export const twelveCorrectiveFactor = storable('twelveCorrectiveFactor', 1);
+export const gForceScale = storable('gForceScale', 1);
 
-export const twelveCorrectiveFactor = storable('timeOffset', 1);
-
-export const forceMode = writable('Adaptive')
+darkMode.subscribe((dm) => document.documentElement.setAttribute('data-theme', dm ? 'dark' : 'light'))
+// forceMode.set('Dark')

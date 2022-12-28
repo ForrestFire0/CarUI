@@ -7,7 +7,6 @@
       <excludeFolder url="file://$MODULE_DIR$/public/static" />
       <excludeFolder url="file://$MODULE_DIR$/public/libs" />
     </content>
-    <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
 </module>

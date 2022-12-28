@@ -1,6 +1,7 @@
 if (require('electron-squirrel-startup')) return app.quit();
 
 const {app, BrowserWindow, ipcMain} = require('electron')
+const path = require("path");
 
 let send_fake_data, fs, SerialPort, Readline, rearPort, frontPort;
 
@@ -13,27 +14,29 @@ if (process.env.COMPUTERNAME === "FORRESTS-LAPTOP" && process.env.fakeData) {
     Readline = require('@serialport/parser-readline');
 }
 
-function createPort(portID) {
+async function createPort(portID) {
     let port;
     if (portID.startsWith('FAKE')) {
         console.log('creating rearPort with id ' + portID + ' note: is fake');
         setInterval(() => {
             const string = fs.readFileSync(`fake/${portID}.json`);
             parseAndSend(string)
-        }, portID === 'FAKE_FRONT' ? 100 : 2100)
+        }, portID === 'FAKE_FRONT' ? 200 : 1520)
         return "Its a fake port bozo";
     }
     console.log('creating port @ ' + portID);
-    port = new SerialPort(portID, {baudRate: 115200}, (err) => {
-        if (err) {
-            console.log('Unable to open rearPort: ', err.message);
-            win.webContents.send('response', '<h1>Fail!</h1><p>Port unable to be opened.</p><small>' + err.message + '</small>')
-        } else {
-            win.webContents.send('response', '<h1>Success!</h1><p>Port successfully opened.</p>')
-            console.log('Successfully opened port.')
-        }
+    port = await new Promise((resolve, reject) => {
+        const port = new SerialPort(portID, {baudRate: 115200}, (err) => {
+            if (err) {
+                console.log('Unable to open rearPort: ', err.message);
+                resolve(undefined);
+            } else {
+                console.log('Successfully opened port.')
+                resolve(port)
+            }
+        });
     });
-    if (!port) return console.log('Port not created...');
+    if (!port) return;
     const parser = port.pipe(new Readline({delimiter: '\n'}));
     parser.on('data', data => {
         parseAndSend(data);
@@ -42,34 +45,35 @@ function createPort(portID) {
 }
 
 
-ipcMain.on('ready_for_data', () => {
-    if(rearPort) return;
+ipcMain.on('ready', () => {
+    if (rearPort) return;
     console.log('The program is ready for data');
     if (send_fake_data) {
         frontPort = createPort('FAKE_FRONT')
         rearPort = createPort('FAKE_REAR')
         return
     }
-    if (process.env.COMPUTERNAME !== "FORRESTS-LAPTOP") {
-        frontPort = createPort('COM3');
-        rearPort = createPort('COM4');
+    if (process.env.COMPUTERNAME === "FORRESTS-LAPTOP") {
+        frontPort = createPort('COM13');
+        rearPort = createPort('COM19');
     } else {
-        // frontPort = createPort('COM3');
+        frontPort = createPort('COM3');
         rearPort = createPort('COM4');
     }
 });
 
 ipcMain.on('inverter', (event, on) => {
-    console.log('The user has requested inverter port.', on)
     if (frontPort && !send_fake_data)
-        frontPort.write(Buffer.from(`i${on ? 'y' : 'n'}\n`));
+        frontPort.write(Buffer.from(`i${on ? 'y' : 'n'}\n`, 'utf8'));
     else console.log('No frontPort')
+    console.log('Inverter port set to ' + on)
 });
 
 ipcMain.on('led_select', (event, led) => {
-    if (rearPort)
+    if (rearPort && !send_fake_data)
         rearPort.write(Buffer.from([led]))
     else console.log('No rearPort')
+    console.log('The user has selected LED ' + led)
 });
 
 let win;
@@ -77,14 +81,12 @@ let win;
 function createWindow() {
     win = new BrowserWindow({
         webPreferences: {
-            nodeIntegration: true,
-            // allowRunningInsecureContent: true
+            preload: path.join(__dirname, 'preload.js'),
         },
         width: 1280,
         height: 800,
         fullscreen: process.env.COMPUTERNAME !== "FORRESTS-LAPTOP",
     })
-
     win.loadFile('public/index.html')
 }
 

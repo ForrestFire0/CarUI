@@ -4,24 +4,75 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="47c87456-3895-42de-b242-fcbbfc4b82a1" name="Changes" comment="Working on New Laptop">
-      <change afterPath="$PROJECT_DIR$/SvelteComponents/InverterToggler.svelte" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/fake/FAKE_FRONT.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/static/outlet.svg" afterDir="false" />
+    <list default="true" id="47c87456-3895-42de-b242-fcbbfc4b82a1" name="Changes" comment="Front Arduino support">
+      <change afterPath="$PROJECT_DIR$/OLD.svelte" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/SvelteComponents/BatteryIndicator.svelte" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/SvelteComponents/CellViewer.svelte" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/SvelteComponents/GForceMonitor.svelte" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/SvelteComponents/Inputs/ImageButton.svelte" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/SvelteComponents/Inputs/LabeledSwitch.svelte" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/SvelteComponents/ObjectViewer.svelte" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/SvelteComponents/StickyInfo.svelte" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/SvelteComponents/data.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/preload.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/static/Metropolis/Metropolis-Black.woff2" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/static/Metropolis/Metropolis-BlackItalic.woff2" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/static/Metropolis/Metropolis-Bold.woff2" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/static/Metropolis/Metropolis-BoldItalic.woff2" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/static/Metropolis/Metropolis-ExtraBold.woff2" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/static/Metropolis/Metropolis-ExtraBoldItalic.woff2" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/static/Metropolis/Metropolis-ExtraLight.woff2" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/static/Metropolis/Metropolis-ExtraLightItalic.woff2" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/static/Metropolis/Metropolis-Light.woff2" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/static/Metropolis/Metropolis-LightItalic.woff2" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/static/Metropolis/Metropolis-Medium.woff2" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/static/Metropolis/Metropolis-MediumItalic.woff2" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/static/Metropolis/Metropolis-Regular.woff2" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/static/Metropolis/Metropolis-RegularItalic.woff2" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/static/Metropolis/Metropolis-SemiBold.woff2" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/static/Metropolis/Metropolis-SemiBoldItalic.woff2" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/static/Metropolis/Metropolis-Thin.woff2" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/static/Metropolis/Metropolis-ThinItalic.woff2" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/static/Universal-Sans.ttf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/static/battery.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/static/charger.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/static/temp.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/screens/Accessories.svelte" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/screens/Battery.svelte" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/screens/Power.svelte" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/screens/Raw.svelte" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/CarUI.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/CarUI.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/App.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/App.svelte" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SvelteComponents/Gauge.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/SvelteComponents/Gauge.svelte" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SvelteComponents/Graph.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/SvelteComponents/Graph.svelte" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SvelteComponents/TempGauge.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/SvelteComponents/TempGauge.svelte" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data.json" beforeDir="false" afterPath="$PROJECT_DIR$/fake/FAKE_REAR.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SvelteComponents/C4.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/SvelteComponents/Games/C4.svelte" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SvelteComponents/Clock.svelte" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/SvelteComponents/Console.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/SvelteComponents/Console.svelte" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SvelteComponents/Gauge.svelte" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/SvelteComponents/Graph.svelte" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/SvelteComponents/InverterToggler.svelte" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/SvelteComponents/LEDSelector.svelte" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/SvelteComponents/Message.svelte" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/SvelteComponents/Overlay.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/SvelteComponents/Overlay.svelte" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SvelteComponents/Slider.svelte" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/SvelteComponents/Snake.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/SvelteComponents/Games/Snake.svelte" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SvelteComponents/stores.js" beforeDir="false" afterPath="$PROJECT_DIR$/SvelteComponents/stores.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/electron.js" beforeDir="false" afterPath="$PROJECT_DIR$/electron.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/make/squirrel.windows/x64/RELEASES" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/make/squirrel.windows/x64/car-ui-1.1.0 Setup.exe" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fake/FAKE_FRONT.json" beforeDir="false" afterPath="$PROJECT_DIR$/fake/FAKE_FRONT.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fake/FAKE_REAR.json" beforeDir="false" afterPath="$PROJECT_DIR$/fake/FAKE_REAR.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/graphicstwo.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/public/build/bundle.css" beforeDir="false" afterPath="$PROJECT_DIR$/public/build/bundle.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/public/build/bundle.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/build/bundle.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/public/build/bundle.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/public/build/bundle.js.map" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/public/global.css" beforeDir="false" afterPath="$PROJECT_DIR$/public/global.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/libs/bootstrap.min.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/libs/bootstrap.min.css.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/static/cross.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/static/details.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rollup.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/rollup.config.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -34,6 +85,18 @@
         <option value="LEDSelector" />
         <option value="Snake" />
         <option value="Clock" />
+        <option value="SummaryScreen" />
+        <option value="Battery" />
+        <option value="Power" />
+        <option value="Raw" />
+        <option value="Screen" />
+        <option value="LabeledSwitch" />
+        <option value="History" />
+        <option value="CellViewer" />
+        <option value="BatteryIndicator" />
+        <option value="GForceMonitor" />
+        <option value="StickyInfo" />
+        <option value="NumberWithButtons" />
         <option value="JavaScript File" />
       </list>
     </option>
@@ -63,25 +126,34 @@
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/forre/Projects/CarUI/SvelteComponents&quot;,
+    &quot;javascript.nodejs.core.library.configured.version&quot;: &quot;16.13.1&quot;,
+    &quot;javascript.nodejs.core.library.typings.version&quot;: &quot;16.18.10&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/forre/Projects/CarUI/SvelteComponents/Inputs&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;C:\\Program Files\\JetBrains\\PyCharm 2021.2.3\\plugins\\javascript-impl\\jsLanguageServicesImpl\\external&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\forre\Projects\CarUI\SvelteComponents\Inputs" />
+      <recent name="C:\Users\forre\Projects\CarUI" />
       <recent name="C:\Users\forre\Projects\CarUI\SvelteComponents" />
       <recent name="C:\Users\forre\Projects\CarUI\scripts" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\forre\Projects\CarUI\SvelteComponents\Inputs" />
+      <recent name="C:\Users\forre\Projects\CarUI\SvelteComponents\Games" />
       <recent name="C:\Users\forre\Projects\CarUI\fake" />
       <recent name="C:\Users\forre\Projects\CarUI\public\static" />
     </key>
   </component>
-  <component name="RunManager" selected="Shell Script.Build and Push">
+  <component name="RunManager" selected="npm.Electron with Serial">
     <configuration name="Build and Push" type="ShConfigurationType">
       <option name="SCRIPT_TEXT" value="" />
       <option name="INDEPENDENT_SCRIPT_PATH" value="false" />
@@ -131,12 +203,40 @@
         <option name="LaunchBrowser.Before.Run" url="http://localhost:5000" />
       </method>
     </configuration>
+    <configuration name="svelte-build" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="svelte-build" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <configuration name="svelte-start" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="svelte-start" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
     <list>
       <item itemvalue="npm.Electron with Serial" />
       <item itemvalue="npm.Electron" />
       <item itemvalue="npm.Svelte Only" />
+      <item itemvalue="npm.svelte-build" />
+      <item itemvalue="npm.svelte-start" />
       <item itemvalue="Shell Script.Build and Push" />
     </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="npm.svelte-build" />
+        <item itemvalue="npm.svelte-start" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -187,7 +287,26 @@
       <workItem from="1667252107966" duration="10000" />
       <workItem from="1669505832577" duration="8087000" />
       <workItem from="1669651980469" duration="2774000" />
-      <workItem from="1669659036481" duration="1150000" />
+      <workItem from="1669659036481" duration="1372000" />
+      <workItem from="1669731102364" duration="1681000" />
+      <workItem from="1669849807988" duration="636000" />
+      <workItem from="1671221631422" duration="49000" />
+      <workItem from="1671221739563" duration="17600000" />
+      <workItem from="1671297121775" duration="15514000" />
+      <workItem from="1671397646274" duration="5440000" />
+      <workItem from="1671467609280" duration="11034000" />
+      <workItem from="1671498134080" duration="5064000" />
+      <workItem from="1671548697404" duration="5000" />
+      <workItem from="1671549356826" duration="14672000" />
+      <workItem from="1671632821731" duration="10403000" />
+      <workItem from="1671648578977" duration="1842000" />
+      <workItem from="1671671770707" duration="12000" />
+      <workItem from="1671671968972" duration="125000" />
+      <workItem from="1671736889960" duration="4000" />
+      <workItem from="1671909870312" duration="544000" />
+      <workItem from="1672028624815" duration="386000" />
+      <workItem from="1672201034520" duration="1846000" />
+      <workItem from="1672241631677" duration="4413000" />
     </task>
     <task id="LOCAL-00001" summary="Working on New Laptop">
       <created>1640745620251</created>

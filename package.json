@@ -4,7 +4,7 @@
   "description": "The UI for the Car",
   "main": "electron.js",
   "scripts": {
-    "start": "concurrently \"npm:svelte-dev\" \"electron-forge start\"",
+    "start": "concurrently \"rollup -c -w --environment BUILD:production\" \"electron-forge start\"",
     "package": "electron-forge package",
     "make": "electron-forge make",
     "svelte-build": "rollup -c",
@@ -12,30 +12,32 @@
     "svelte-start": "sirv public --no-clear"
   },
   "dependencies": {
-    "concurrently": "^6.1.0",
+    "chart.js": "^4.1.1",
+    "concurrently": "^6.5.1",
     "electron-squirrel-startup": "^1.0.0",
     "node-window-manager": "^2.2.4",
-    "serialport": "^9.0.2",
-    "sirv-cli": "^1.0.0"
+    "serialport": "^9.2.8",
+    "sirv-cli": "^1.0.14",
+    "svelte-chartjs": "^3.1.0"
   },
   "author": "Forrest Milner",
   "license": "ISC",
   "devDependencies": {
-    "@electron-forge/cli": "^6.0.0-beta.54",
-    "@electron-forge/maker-deb": "^6.0.0-beta.54",
-    "@electron-forge/maker-rpm": "^6.0.0-beta.54",
-    "@electron-forge/maker-squirrel": "^6.0.0-beta.54",
-    "@electron-forge/maker-zip": "^6.0.0-beta.54",
-    "@rollup/plugin-commonjs": "^17.0.0",
-    "@rollup/plugin-node-resolve": "^11.0.0",
-    "electron": "^11.4.3",
-    "electron-rebuild": "^2.3.4",
-    "rollup": "^2.3.4",
+    "@electron-forge/cli": "^6.0.4",
+    "@electron-forge/maker-deb": "^6.0.4",
+    "@electron-forge/maker-rpm": "^6.0.4",
+    "@electron-forge/maker-squirrel": "^6.0.4",
+    "@electron-forge/maker-zip": "^6.0.4",
+    "@rollup/plugin-commonjs": "^17.1.0",
+    "@rollup/plugin-node-resolve": "^11.2.1",
+    "electron": "^22.0.0",
+    "electron-rebuild": "^2.3.5",
+    "rollup": "^2.79.1",
     "rollup-plugin-css-only": "^3.1.0",
-    "rollup-plugin-livereload": "^2.0.0",
-    "rollup-plugin-svelte": "^7.0.0",
-    "rollup-plugin-terser": "^7.0.0",
-    "svelte": "^3.0.0"
+    "rollup-plugin-livereload": "^2.0.5",
+    "rollup-plugin-svelte": "^7.1.0",
+    "rollup-plugin-terser": "^7.0.2",
+    "svelte": "^3.55.0"
   },
   "config": {
     "forge": {
