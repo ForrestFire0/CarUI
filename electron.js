@@ -1,6 +1,5 @@
-if (require('electron-squirrel-startup')) return app.quit();
-
 const {app, BrowserWindow, ipcMain} = require('electron')
+if (require('electron-squirrel-startup')) return app.quit();
 const path = require("path");
 
 let send_fake_data, fs, SerialPort, Readline, rearPort, frontPort;
@@ -31,7 +30,7 @@ async function createPort(portID) {
                 console.log('Unable to open rearPort: ', err.message);
                 resolve(undefined);
             } else {
-                console.log('Successfully opened port.')
+                console.log('Successfully opened port @ ' + portID);
                 resolve(port)
             }
         });
@@ -45,7 +44,7 @@ async function createPort(portID) {
 }
 
 
-ipcMain.on('ready', () => {
+ipcMain.on('ready', async () => {
     if (rearPort) return;
     console.log('The program is ready for data');
     if (send_fake_data) {
@@ -54,11 +53,11 @@ ipcMain.on('ready', () => {
         return
     }
     if (process.env.COMPUTERNAME === "FORRESTS-LAPTOP") {
-        frontPort = createPort('COM13');
-        rearPort = createPort('COM19');
+        frontPort = await createPort('COM3');
+        rearPort = await createPort('COM20');
     } else {
-        frontPort = createPort('COM3');
-        rearPort = createPort('COM4');
+        frontPort = await createPort('COM6');
+        rearPort = await createPort('COM5');
     }
 });
 
@@ -99,11 +98,11 @@ function parseAndSend(string) {
             for (const [key, value] of Object.entries(jsonData)) {
                 if (!excluded.includes(key)) {
                     if (typeof value === 'number')
-                        jsonData[key] = (Math.random() - 0.5) * value * 0.05 + value;
+                        jsonData[key] = (Math.random() - 0.5) * value * 0.001 + value;
                     if (typeof value === 'object')
                         for (const [k, v] of Object.entries(value)) {
                             if (typeof v === 'number')
-                                value[k] = (Math.random() - 0.5) * v * 0.05 + v;
+                                value[k] = (Math.random() - 0.5) * v * 0.001 + v;
                         }
                 }
             }
@@ -131,3 +130,23 @@ app.on('window-all-closed', () => {
         app.quit()
     }
 })
+
+let currentFile = undefined;
+ipcMain.on('file_open', (event) => {
+    // If /logs doesn't exist, create the folder
+    if (!fs.existsSync('./logs')) {
+        fs.mkdirSync('./logs');
+    }
+
+    //Set current file to log, then the current month, day, hour, minute, second considering the timezone
+    currentFile = `./logs/log${new Date().toLocaleString('en-US', {timeZone: 'America/New_York'})
+            .replace(/[/, :]/g, '-')
+            .replaceAll('--', '-')}.txt`;
+    fs.writeFileSync(currentFile, '');
+});
+
+ipcMain.on('file_write', (event, data) => {
+    if (currentFile) {
+        fs.appendFileSync(currentFile, data);
+    }
+});

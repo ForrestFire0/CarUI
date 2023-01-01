@@ -8,36 +8,86 @@
     import Battery from "./screens/Battery.svelte";
     import Raw from "./screens/Raw.svelte";
     import {onMount} from "svelte";
+    import {currentTime, timeOffset} from "./SvelteComponents/stores";
 
-    try {
-        console.log(`This app is using Chrome (v${window.versions.chrome()}), Node.js (v${window.versions.node()}), and Electron (v${window.versions.electron()})`)
-    } catch (e) {
-        console.log("This app is running with just svelte")
+    if (window.versions) {
+        try {
+            console.log(`This app is using Chrome (v${window.versions.chrome()}), Node.js (v${window.versions.node()}), and Electron (v${window.versions.electron()})`)
+        } catch (e) {
+            console.log("This app is running with just svelte")
+        }
+        window.communications.on("data", (event, d) => {
+            // console.log("Received data from main process", d);
+            updateDatas(d, $timeOffset);
+        });
+    } else {
+        const updateFront = () => updateDatas({
+            "id": "front",
+            "s": "ok",
+            "inverter": false,
+            "ignition": true,
+            "reverse": false,
+            "voltage": 78,
+            "motorCurrent": 500,
+            "power": 7.8,
+            "batteryCurrent": 100,
+            "accelerometer": {"x": 0.1, "y": 0.2},
+            "speed": 30
+        }, $timeOffset);
+        const updateBack = () => updateDatas({
+            "s": "normal",
+            "t": [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24],
+            "pC": 10,
+            "bS": 0,
+            "c": [3.7, 3.8, 3.9, 3.7, 3.8, 3.9, 3.7, 3.8, 3.9, 3.7, 3.8, 3.9, 3.7, 3.8, 3.9, 3.7, 3.8, 3.9, 3.7, 3.8, 3.9],
+            "bt": [20, 20, 20, 20],
+            "f": 130,
+            "h": 5,
+            "ch": 1,
+            "i": 1,
+            "CC": 17.25,
+            "CIV": 250,
+            "COV": 70.37,
+            "CT": 21,
+            "CR": true,
+            "lcp": 500,
+            "lbp": 700,
+            "tw": 13.56
+        }, $timeOffset);
+        setInterval(updateFront, 1000);
+        setInterval(updateBack, 2500);
+        updateFront(); updateBack();
     }
-    window.communications.on("data", (event, d) => {
-        // console.log("Received data from main process", d);
-        updateDatas(d);
-    });
 
     const screens = [Power, Battery, Accessories, Raw];
-    // const screens = [Power];
+    // const screens = [Raw];
 
     // Every time the user scrolls, the function will be called.
     // The variable scrolling should be true if we scrolled in the last second.
     let scrolling = false;
-    let scrollTimeout = null;
 
     let selectedPage = screens[0];
+    let hideTime = 0;
+
+    currentTime.subscribe((time) => {
+        if (time - hideTime > 1000) {
+            scrolling = false;
+        }
+    });
 
     function scroll(e) {
-        scrolling = true;
-        if (scrollTimeout) clearTimeout(scrollTimeout)
-        scrollTimeout = setTimeout(() => scrolling = false, 650);
-        selectedPage = screens[Math.round(e.target.scrollTop / (e.target.scrollHeight / screens.length))];
+        if (!scrolling)
+            scrolling = true;
+        hideTime = Date.now();
+        const newSelectedPage = screens[Math.round(e.target.scrollTop / (e.target.scrollHeight / screens.length))]
+        if (newSelectedPage !== selectedPage) {
+            selectedPage = newSelectedPage;
+        }
     }
 
     onMount(() => {
-        window.communications.send("ready");
+        if (window.versions)
+            window.communications.send("ready");
     });
 </script>
 
@@ -100,8 +150,7 @@
         <h5>screens</h5>
         {#each screens as s}
             <h2>
-                <a href="#{s.name}"
-                   style="color: {s === selectedPage ?'var(--font-color)':'var(--font-muted-color)'}; transition: color 0.5s; text-decoration: none;">{s.name}</a>
+                <a style="color: {s === selectedPage ?'var(--font-color)':'var(--font-muted-color)'}; transition: color 0.5s; text-decoration: none;">{s.name}</a>
             </h2>
         {/each}
     </div>
@@ -111,7 +160,7 @@
 </div>
 <div class="window" on:scroll={scroll}>
     {#each screens as screen}
-        <div style="height: 100vh; width: 100vw; scroll-snap-align: start; position: relative;" id="{screen.name}">
+        <div style="height: 100vh; width: 100vw; scroll-snap-align: start; position: relative;">
             <svelte:component this={screen}/>
         </div>
     {/each}

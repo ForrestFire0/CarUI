@@ -41,7 +41,6 @@ import SunCalc from '../public/libs/suncalc';
 export const forceMode = storable('forceMode', 'Adaptive')
 export const timeOffset = storable('timeOffset', 0);
 export const currentTime = derived(timeOffset, ($timeOffset, set) => {
-    console.log($timeOffset);
     const update = () => set(new Date(new Date().getTime() + $timeOffset * 1000 * 60 * 60))
     const interval = setInterval(update, 1000);
     update()

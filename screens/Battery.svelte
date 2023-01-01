@@ -72,10 +72,14 @@
                     drawOnChartArea: false,
                 },
             }
+        },
+        animation: {
+            duration: 0
         }
     }
 
     setInterval(() => {
+        if ($BMSData.batteryVoltage < 50) return;
         data.datasets[0].data.push($BMSData.batteryVoltage);
         data.datasets[1].data.push($remainingAH * 3.7 * 21 * 0.0035);
         const str = new Date().toLocaleString('en-US', {hour: 'numeric', minute: 'numeric', hour12: true})
@@ -85,8 +89,13 @@
             data.datasets[1].data.shift();
             data.labels.shift();
         }
+        // adjust the scales of both the y-axis and y1 to be the min and max of data.datasets[0] and data.datasets[1] respectively.
+        options.scales.y.min = Math.min(...data.datasets[0].data) - 0.1;
+        options.scales.y.max = Math.max(...data.datasets[0].data) + 0.1;
+        options.scales.y1.min = Math.min(...data.datasets[1].data) - 1;
+        options.scales.y1.max = Math.max(...data.datasets[1].data) + 1;
         data = data;
-    }, 60000);
+    }, window.versions ? 60000 : 2000);
 
 </script>
 
@@ -97,20 +106,14 @@
         padding-top: 5px;
     }
 
-    table, td {
-        /*border: 1px solid black;*/
-    }
-
     td {
         padding: 20px;
     }
 
     td img {
         width: 50px;
-        /*height: 40px;*/
     }
 
-    /*    td with image as children should have no padding*/
     td:has(img) {
         padding: 0;
     }

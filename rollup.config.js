@@ -2,8 +2,8 @@ import svelte from 'rollup-plugin-svelte';
 import commonjs from '@rollup/plugin-commonjs';
 import resolve from '@rollup/plugin-node-resolve';
 import livereload from 'rollup-plugin-livereload';
-import {terser} from 'rollup-plugin-terser';
 import css from 'rollup-plugin-css-only';
+import {terser} from "rollup-plugin-terser";
 
 const production = !process.env.ROLLUP_WATCH || !(process.env.COMPUTERNAME === "FORRESTS-LAPTOP" && process.env.fakeData);
 
@@ -74,9 +74,8 @@ export default {
         !production && livereload('public'),
 
         // If we're building for production (npm run build
-        // instead of npm run dev), minify
-        //We will not minify because it breaks the code, and a small package isn't necessary.
-        // production && terser()
+        // instead of npm run dev, minify
+        production && terser({'keep_classnames': true})
     ],
     watch: {
         clearScreen: false

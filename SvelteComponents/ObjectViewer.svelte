@@ -1,14 +1,18 @@
 <script>
     //Can be number, string, boolean, object, array.
 
-    function shorten(str) {
-        if (typeof str !== 'string') {
-            str = String(str);
+    function shorten(val) {
+        if (typeof val === 'number') {
+            return parseFloat(val.toFixed(2));
+        }
+        if (typeof val !== 'string') {
+            val = String(val);
         }
         const maxLen = 11;
-        if (str.length > maxLen) return str.substring(0, maxLen - 3) + '...'
-        return str;
+        if (val.length > maxLen) return val.substring(0, maxLen - 3) + '...'
+        return val;
     }
+
     let unsub;
 
     export let value;
@@ -34,12 +38,16 @@
 </style>
 {#if ['number', 'string', 'boolean'].includes(typeof value) || value == null}
     <span>
-        {value}
+        {#if name !== 'Object'}
+            {name}:
+        {/if}
+
+        {typeof value == 'number' ? parseFloat(value.toFixed(2)) : value}
     </span>
 {:else if Array.isArray(value)}
     <div on:click={() => expanded = !expanded} style="cursor: pointer">
         {#if expanded}▼ Array({value.length})
-        {:else}▶ Array({value.length}) [{value.join(', ')}]
+        {:else}▶ Array({value.length}) [{value.map(e => shorten(e)).join(', ')}]
         {/if}
     </div>
     {#if expanded}
@@ -58,9 +66,7 @@
         <table style="border-collapse: collapse;">
             {#each Object.entries(value) as [key, val]}
                 <tr>
-                    <td>
-                        <svelte:self value={key}/>
-                    </td>
+                    <td>{key}</td>
                     <td>
                         <svelte:self value={value[key]}/>
                     </td>

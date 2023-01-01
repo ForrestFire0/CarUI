@@ -6,12 +6,13 @@
   "scripts": {
     "start": "concurrently \"rollup -c -w --environment BUILD:production\" \"electron-forge start\"",
     "package": "electron-forge package",
-    "make": "electron-forge make",
+    "make": "npm run svelte-build && electron-forge make",
     "svelte-build": "rollup -c",
-    "svelte-dev": "rollup -c -w",
+    "svelte-dev": "rollup -c -w --environment BUILD:development",
     "svelte-start": "sirv public --no-clear"
   },
   "dependencies": {
+    "aws-sdk": "^2.1283.0",
     "chart.js": "^4.1.1",
     "concurrently": "^6.5.1",
     "electron-squirrel-startup": "^1.0.0",

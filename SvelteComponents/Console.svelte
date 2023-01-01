@@ -1,15 +1,36 @@
-<script>
-    export let text;
-    let textarea;
-    $: if (text && textarea) {
-        textarea.scrollTop = textarea.scrollHeight;
+<script context="module">
+    import {writable} from "svelte/store";
+    import {currentTime} from "./stores";
+
+    let content = writable('');
+    let ct;
+    currentTime.subscribe(value => ct = value);
+
+    export function write(msg) {
+        // Add the day of the week + the time to the message
+        content.update(c => {
+            c = c + `${["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"][ct.getDay()]} ${ct.toLocaleTimeString()} ${msg}<br>`
+            if (c.length > 10000) {
+                c = c.slice(c.length - 10000);
+            }
+            return c;
+        })
     }
 </script>
 
-<textarea readonly bind:this={textarea}>{text}</textarea>
+<script>
+    let textarea;
+    $: if ($content && textarea) {
+        textarea.scrollTop = textarea.scrollHeight;
+    }
+
+</script>
+
+<div bind:this={textarea}>{@html $content}</div>
 
 <style>
-    textarea {
+    div {
+        overflow-y: scroll;
         height: 20%;
         width: 50%;
         padding: 1.1vw;

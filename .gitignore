@@ -1,8 +1,8 @@
 node_modules/
 
 **/out/*
-!**/out/make
 *.nupkg
+/public/build
 
 # Default ignored files
 /shelf/
@@ -12,3 +12,5 @@ node_modules/
 /dataSources.local.xml
 # Editor-based HTTP Client requests
 /httpRequests/
+/logs/
+/scripts/upload.js
