@@ -89,20 +89,22 @@
 </style>
 
 <h1>Logger</h1>
-<div><small><i>Tap to remove a logged attribute.</i></small></div>
 {#each attributes as attribute, i}
-    <div on:click={() =>{attributes.splice(i, 1); attributes = attributes}}> - {attribute[0]}</div>
+    <div on:click={() =>{if(!logging) {attributes.splice(i, 1); attributes = attributes}}}> - {attribute[0]}</div>
 {/each}
-<select on:change={(ev) => {attributes.push(possibleAttributes.find(e => e[0] === ev.target.value)); ev.target.selectedIndex = 0; attributes = attributes;}}>
-    <option value="" disabled selected>Choose an attribute</option>
-    {#each possibleAttributes as attribute}
-        {#if !attributes.includes(attribute)}
-            <option value={attribute[0]}>{attribute[0]}</option>
-        {/if}
-    {/each}
-</select>
+{#if !logging}
+    <div><small><i>Tap to remove a logged attribute.</i></small></div>
+    <select on:change={(ev) => {attributes.push(possibleAttributes.find(e => e[0] === ev.target.value)); ev.target.selectedIndex = 0; attributes = attributes;}}>
+        <option value="" disabled selected>Choose an attribute</option>
+        {#each possibleAttributes as attribute}
+            {#if !attributes.includes(attribute)}
+                <option value={attribute[0]}>{attribute[0]}</option>
+            {/if}
+        {/each}
+    </select>
+{/if}
 <h3>Logging Frequency</h3>
-<div>
+<div style="max-height: 20vh; overflow-y: auto;">
     {#if logging}
         Logging {keys.length ? keys.join(', ') : 'literally nothing'} @ {frequency}
     {:else }

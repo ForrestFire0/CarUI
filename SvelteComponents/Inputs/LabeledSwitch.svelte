@@ -39,6 +39,10 @@
         cursor: pointer;
         background-color: #b2b2b2;
         box-shadow: inset 0 0 0 1px #9e9e9e, 0 1px 1px 0 rgba(0, 0, 0, 0.2);
+        margin-block-start: 1em;
+        margin-block-end: 1em;
+        margin-inline-start: 0;
+        margin-inline-end: 0;
     }
 
     button {

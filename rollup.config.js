@@ -8,6 +8,7 @@ import {terser} from "rollup-plugin-terser";
 const production = !process.env.ROLLUP_WATCH || !(process.env.COMPUTERNAME === "FORRESTS-LAPTOP" && process.env.fakeData);
 
 console.log(`We are${production ? "" : " not"} in production.`);
+console.log(`We are${process.env.serve ? "" : " not"} serving.`);
 
 function serve() {
     let server;
@@ -67,7 +68,7 @@ export default {
 
         // In dev mode, call `npm run start` once
         // the bundle has been generated
-        !production && serve(),
+        !production && process.env.serve && serve(),
 
         // Watch the `public` directory and refresh the
         // browser on changes when not in production

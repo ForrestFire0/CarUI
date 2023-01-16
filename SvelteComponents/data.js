@@ -1,5 +1,5 @@
 import {get, writable} from 'svelte/store';
-import {storable} from "./stores";
+import {active, storable} from "./stores";
 
 // The issue we are having is that data comes sporadically from the front and back Arduino's.
 // Some pages just need to the current state. But it becomes tricky when we need the history of datapoints (the graphs)
@@ -35,14 +35,15 @@ export const chargerData = writable({
     lastChargerPing: new Date().getTime(),
 });
 export const updateDatas = (data, off) => {
-    let lastUpdateTime, updateTime = new Date().getTime() + off * 60 * 60 * 1000, current, ignore = true, batteryFull = false;
+    let lastUpdateTime, updateTime = new Date().getTime() + off * 60 * 60 * 1000, current, ignore = true,
+        batteryFull = false;
     if (data.id === 'front') {
         deviceStatusData.update(e => {
             lastUpdateTime = e.lastFrontContact;
             e.lastFrontContact = updateTime;
             e.reverse = data.reverse;
+            if (e.ignition !== data.ignition) active.set(data.ignition); //If the current ignition is false, then we are not active.
             e.ignition = data.ignition;
-            // console.log(data.ignition)
             return e;
         })
         controllerData.update((cD) => {
@@ -86,6 +87,14 @@ export const updateDatas = (data, off) => {
             cD.inputVoltage = data.CIV;
             cD.outputVoltage = data.COV;
             cD.temp = data.CT;
+            // If we are not active, and the charger goes from not running to running, then we are active.
+            if (!cD.running && data.CR && !get(active)) {
+                console.log('Charger is running, and we are not active. Going to battery page.');
+                window.location.hash = '';
+                window.location.hash = '#Battery';
+                // Also scroll the window to the Battery page.
+                active.set(true);
+            }
             cD.running = data.CR;
             cD.lastChargerPing = data.lcp;
             current = data.CC;
@@ -97,11 +106,10 @@ export const updateDatas = (data, off) => {
     if (!ignore && lastUpdateTime) {
         remainingAH.update((rAH) => {
             // console.log('updating remainingAH', rAH.toFixed(3), current.toFixed(0), (updateTime - lastUpdateTime).toFixed(0), 'delta:', (current * (updateTime - lastUpdateTime) / 1000 / 60 / 60))
-            if(Math.abs(lastUpdateTime - updateTime) > 1000 * 60) return rAH;
+            if (Math.abs(lastUpdateTime - updateTime) > 1000 * 60) return rAH;
             if (batteryFull) return 136;
             rAH = rAH + (current * (updateTime - lastUpdateTime) / 1000 / 60 / 60); // Amps * ms = A*ms / 1000 = A*s / 3600 = Ah
-            if (rAH < 0) rAH = 0;
-            return rAH;
+            return Math.clamp(rAH, 0, 136);
         });
     }
 }

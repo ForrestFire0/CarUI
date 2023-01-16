@@ -17,6 +17,7 @@ async function createPort(portID) {
     let port;
     if (portID.startsWith('FAKE')) {
         console.log('creating rearPort with id ' + portID + ' note: is fake');
+        win.webContents.send('console', 'creating rearPort with id ' + portID + ' note: is fake');
         setInterval(() => {
             const string = fs.readFileSync(`fake/${portID}.json`);
             parseAndSend(string)
@@ -28,9 +29,11 @@ async function createPort(portID) {
         const port = new SerialPort(portID, {baudRate: 115200}, (err) => {
             if (err) {
                 console.log('Unable to open rearPort: ', err.message);
+                win.webContents.send('console', 'Unable to open rearPort: ' + err.message)
                 resolve(undefined);
             } else {
                 console.log('Successfully opened port @ ' + portID);
+                win.webContents.send('console', 'Successfully opened port @ ' + portID)
                 resolve(port)
             }
         });
@@ -108,18 +111,13 @@ function parseAndSend(string) {
             }
             jsonData['fake'] = true
         }
-        // console.log(Date.now() + ' Got Data')
         win.webContents.send('data', jsonData)
-    } catch
-        (error) {
+    } catch (error) {
         console.log(string)
+        win.webContents.send('console', 'Error parsing data: ' + error.message)
     }
 }
 
-function sendError(err) {
-    console.log("Error: " + err);
-    win.webContents.send('error', err)
-}
 
 app.whenReady().then(createWindow)
 
@@ -140,8 +138,8 @@ ipcMain.on('file_open', (event) => {
 
     //Set current file to log, then the current month, day, hour, minute, second considering the timezone
     currentFile = `./logs/log${new Date().toLocaleString('en-US', {timeZone: 'America/New_York'})
-            .replace(/[/, :]/g, '-')
-            .replaceAll('--', '-')}.txt`;
+        .replace(/[/, :]/g, '-')
+        .replaceAll('--', '-')}.txt`;
     fs.writeFileSync(currentFile, '');
 });
 

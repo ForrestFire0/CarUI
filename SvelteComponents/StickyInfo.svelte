@@ -6,9 +6,9 @@
 <style>
     .container {
         display: flex;
-        /*flex-direction: column;*/
         align-items: center;
         justify-content: center;
+        font-size: .6em;
     }
 
     .container > * {
@@ -22,10 +22,10 @@
     .pill {
         display: inline-block;
         position: relative;
-        width: 100px;
-        height: 25px;
+        width: 4em;
+        height: 1em;
         border-radius: 25px;
-        border: 1px solid grey;
+        border: .1em solid grey;
     }
 
     .level {
@@ -46,7 +46,7 @@
     }
 </style>
 
-<div style="text-align: center; font-size: 3vw; font-weight: bolder; margin-top: 5px">
+<div style="text-align: center; font-size: 1em; font-weight: bolder; margin-top: 5px">
     {$currentTime.toLocaleTimeString()}
 </div>
 <div class="container">

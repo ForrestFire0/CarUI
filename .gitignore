@@ -14,3 +14,4 @@ node_modules/
 /httpRequests/
 /logs/
 /scripts/upload.js
+/scripts/git-filter-repo

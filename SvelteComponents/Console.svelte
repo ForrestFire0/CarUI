@@ -20,13 +20,16 @@
 
 <script>
     let textarea;
-    $: if ($content && textarea) {
+    let autoscroll = true;
+    $: if ($content && textarea && autoscroll) {
         textarea.scrollTop = textarea.scrollHeight;
     }
-
 </script>
 
-<div bind:this={textarea}>{@html $content}</div>
+<div bind:this={textarea} on:touchstart={() => {autoscroll = false}}>{@html $content}</div>
+{#if !autoscroll}
+    <button on:click={() => autoscroll = true}>Autoscroll</button>
+{/if}
 
 <style>
     div {

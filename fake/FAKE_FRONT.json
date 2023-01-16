@@ -5,8 +5,8 @@
   "ignition": true,
   "voltage": 78,
   "motorCurrent": 500,
-  "power": 7.8,
-  "batteryCurrent": 100,
-  "accelerometer": {"x": 0.1, "y": 0.2},
-  "speed": 30
+  "power": 3,
+  "batteryCurrent": 10,
+  "accelerometer": {"x": 0.2, "y": 0},
+  "speed": 45
 }
