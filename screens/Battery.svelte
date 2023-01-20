@@ -137,7 +137,7 @@
         </tr>
         <tr>
             <td><img src="./static/battery.svg" alt="batt"></td>
-            <td>{$chargerData.running ? $chargerData.outputVoltage.toFixed(1) : ' - '} V</td>
+            <td>{$chargerData.running ? $chargerData.outputVoltage.toFixed(1) : $BMSData.batteryVoltage.toFixed(1)} V</td>
         </tr>
         <tr>
             <td><img src="./static/battery.svg" alt="batt"></td>

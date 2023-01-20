@@ -57,10 +57,12 @@
     <div style="overflow-y: scroll; height: 80vh;">
         <h1>Settings</h1>
         <h3>12V Sensor Calibration</h3>
-        <NumberInput bind:value={$twelveCorrectiveFactor} formatNumber={(n) => (100 * n).toFixed(0) + '%'} step={0.01}/> <br>
+        <NumberInput bind:value={$twelveCorrectiveFactor} formatNumber={(n) => (100 * n).toFixed(0) + '%'} step={0.01}/>
+        <br>
         Current Value: {($deviceStatusData.twelveVolt * $twelveCorrectiveFactor).toFixed(2)} <br>
         <h3>G Force Scale</h3>
-        <NumberInput bind:value={$gForceScale} formatNumber={(n) => (100 * n).toFixed(0) + '%'} step={0.01}/><br>
+        <NumberInput bind:value={$gForceScale} formatNumber={(n) => (100 * n).toFixed(0) + '%'} step={0.01}/>
+        <br>
         <!--    <button on:click={() => ipcRenderer.send('standby_mode', {})}>Enter Standby Mode</button>-->
         <!--    <br><small><i>Standby mode will charge the batteries when the voltage drops below 3.5 volts per cell and stop when it reaches 3.7 volts per cell.</i></small>-->
         <!--    Current Time: {time.toLocaleString()} <br>-->
@@ -89,6 +91,22 @@
             from {$BMSData.batteryVoltage.toFixed(2)}V</small>
         <h3>Time Offset</h3>
         <NumberInput bind:value={$timeOffset} formatNumber={(n) => n.toFixed(0) + ' Hours'} step={1}/>
+        <h3>Connection Status</h3>
+        <table>
+            <tr>
+                <th>Device</th>
+                <th>Delay</th>
+            </tr>
+            <tr>
+                <td>Front Arduino</td>
+                <td>{Math.max(Math.round(($currentTime - $deviceStatusData.lastFrontContact)/1000), 0)} s</td>
+            </tr>
+            <tr>
+                <td>Back Arduino</td>
+                <td>{Math.max(Math.round(($currentTime - $deviceStatusData.lastBackContact)/1000), 0)} s</td>
+            </tr>
+        </table>
+        <button on:click={() => {if (window.versions) window.communications.send("reset")}}>Reset Connections</button>
     </div>
 </Overlay>
 

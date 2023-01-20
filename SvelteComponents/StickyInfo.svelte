@@ -63,22 +63,8 @@
         </div>
     </div>
 </div>
-{#if $currentTime > $deviceStatusData.lastFrontContact + 60000}
-    <div style="color: red; font-size: 1.4vw; font-weight: bolder; margin-top: 5px">
-        Error - No Contact with Front Node! (a good while ago)
-    </div>
-{:else if $currentTime > $deviceStatusData.lastFrontContact + 3000}
-    <div style="color: orange; font-size: 1.4vw; font-weight: bolder; margin-top: 5px">
-        Error - No Contact with Front Node! ({(($currentTime - $deviceStatusData.lastFrontContact) / 1000).toFixed(0)}s ago)
-    </div>
-{/if}
-
-{#if $currentTime > $deviceStatusData.lastBackContact + 60000}
-    <div style="color: red; font-size: 1.4vw; font-weight: bolder; margin-top: 5px">
-        Error - No Contact with Back Node! (a good while ago)
-    </div>
-{:else if $currentTime > $deviceStatusData.lastBackContact + 3000}
-    <div style="color: orange; font-size: 1.4vw; font-weight: bolder; margin-top: 5px">
-        Error - No Contact with Back Node! ({(($currentTime - $deviceStatusData.lastBackContact) / 1000).toFixed(0)}s ago)
+{#if $currentTime > $deviceStatusData.lastFrontContact + 3000 || $currentTime > $deviceStatusData.lastBackContact + 3000}
+    <div style="text-align: center; font-size: 1em; font-weight: bolder; margin-top: 5px">
+        <span style="color: red">No contact</span>
     </div>
 {/if}

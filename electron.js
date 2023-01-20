@@ -64,6 +64,30 @@ ipcMain.on('ready', async () => {
     }
 });
 
+ipcMain.on('reset', async () => {
+    try {
+        rearPort.close();
+    } catch (_) {
+    }
+    try {
+        frontPort.close();
+    } catch (_) {
+    }
+
+    if (send_fake_data) {
+        frontPort = createPort('FAKE_FRONT')
+        rearPort = createPort('FAKE_REAR')
+        return
+    }
+    if (process.env.COMPUTERNAME === "FORRESTS-LAPTOP") {
+        frontPort = await createPort('COM3');
+        rearPort = await createPort('COM20');
+    } else {
+        frontPort = await createPort('COM6');
+        rearPort = await createPort('COM5');
+    }
+});
+
 ipcMain.on('inverter', (event, on) => {
     if (frontPort && !send_fake_data)
         frontPort.write(Buffer.from(`i${on ? 'y' : 'n'}\n`, 'utf8'));

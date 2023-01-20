@@ -4,21 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="47c87456-3895-42de-b242-fcbbfc4b82a1" name="Changes" comment="Removed biggo files">
-      <change afterPath="$PROJECT_DIR$/SvelteComponents/Games/CarGame.svelte" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+    <list default="true" id="47c87456-3895-42de-b242-fcbbfc4b82a1" name="Changes" comment="Clock sleep mode">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/App.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/App.svelte" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SvelteComponents/Console.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/SvelteComponents/Console.svelte" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SvelteComponents/GForceMonitor.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/SvelteComponents/GForceMonitor.svelte" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SvelteComponents/Games/Logger.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/SvelteComponents/Games/Logger.svelte" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SvelteComponents/Inputs/LabeledSwitch.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/SvelteComponents/Inputs/LabeledSwitch.svelte" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SvelteComponents/StickyInfo.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/SvelteComponents/StickyInfo.svelte" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SvelteComponents/data.js" beforeDir="false" afterPath="$PROJECT_DIR$/SvelteComponents/data.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SvelteComponents/stores.js" beforeDir="false" afterPath="$PROJECT_DIR$/SvelteComponents/stores.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/electron.js" beforeDir="false" afterPath="$PROJECT_DIR$/electron.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fake/FAKE_FRONT.json" beforeDir="false" afterPath="$PROJECT_DIR$/fake/FAKE_FRONT.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/rollup.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/rollup.config.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/screens/Accessories.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/screens/Accessories.svelte" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/screens/Battery.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/screens/Battery.svelte" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -248,7 +239,9 @@
       <workItem from="1673141225690" duration="5621000" />
       <workItem from="1673454533071" duration="17000" />
       <workItem from="1673636391670" duration="9583000" />
-      <workItem from="1673835933940" duration="6334000" />
+      <workItem from="1673835933940" duration="7029000" />
+      <workItem from="1674182782838" duration="1496000" />
+      <workItem from="1674184329212" duration="284000" />
     </task>
     <task id="LOCAL-00001" summary="Working on New Laptop">
       <created>1640745620251</created>
@@ -271,7 +264,14 @@
       <option name="project" value="LOCAL" />
       <updated>1672248582721</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Clock sleep mode">
+      <created>1673844441547</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1673844441547</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -294,6 +294,7 @@
     <MESSAGE value="complete overhaul" />
     <MESSAGE value="Automated push after make" />
     <MESSAGE value="Removed biggo files" />
-    <option name="LAST_COMMIT_MESSAGE" value="Removed biggo files" />
+    <MESSAGE value="Clock sleep mode" />
+    <option name="LAST_COMMIT_MESSAGE" value="Clock sleep mode" />
   </component>
 </project>
