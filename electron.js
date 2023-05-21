@@ -9,8 +9,8 @@ if (process.env.COMPUTERNAME === "FORRESTS-LAPTOP" && process.env.fakeData) {
     console.log("Sending Fake Data")
     send_fake_data = true;
 } else {
-    SerialPort = require('serialport');
-    Readline = require('@serialport/parser-readline');
+    SerialPort = require('serialport').SerialPort;
+    Readline = require('@serialport/parser-readline').ReadlineParser;
 }
 
 async function createPort(portID) {
@@ -26,7 +26,7 @@ async function createPort(portID) {
     }
     console.log('creating port @ ' + portID);
     port = await new Promise((resolve, reject) => {
-        const port = new SerialPort(portID, {baudRate: 115200}, (err) => {
+        const port = new SerialPort({path: portID, baudRate: 115200}, (err) => {
             if (err) {
                 console.log('Unable to open rearPort: ', err.message);
                 win.webContents.send('console', 'Unable to open rearPort: ' + err.message)
@@ -57,8 +57,8 @@ ipcMain.on('ready', async () => {
     }
     if (process.env.COMPUTERNAME === "FORRESTS-LAPTOP") {
         frontPort = await createPort('COM4');
-        rearPort = createPort('FAKE_REAR')
-        // rearPort = await createPort('COM20');
+        // rearPort = createPort('FAKE_REAR')
+        rearPort = await createPort('COM20');
     } else {
         frontPort = await createPort('COM6');
         rearPort = await createPort('COM5');
