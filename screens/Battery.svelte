@@ -19,6 +19,8 @@
     import 'chart.js/auto';
     import CellViewer from "../SvelteComponents/CellViewer.svelte";
     import BatteryIndicator from "../SvelteComponents/BatteryIndicator.svelte";
+    import {batteryGraphDurationCustomValue, batteryGraphDurationSelection} from "../SvelteComponents/stores";
+    import ChargerIndicator from "../SvelteComponents/ChargerIndicator.svelte";
 
     export let data = {
         labels: [],
@@ -77,25 +79,42 @@
             duration: 0
         }
     }
+    let interval;
+    function updateBatteryGraphDuration(sel, custom, numDatapoints=120) {
+        let duration = {
+            '1 m': 60 * 1000,
+            '3 m': 3 * 60 * 1000,
+            '1 hr': 60 * 60 * 1000,
+            'Custom': custom
+        }[sel];
+        clearInterval(interval);
 
-    setInterval(() => {
-        if ($BMSData.batteryVoltage < 50) return;
-        data.datasets[0].data.push($BMSData.batteryVoltage);
-        data.datasets[1].data.push($remainingAH * 3.7 * 21 * 0.0035);
-        const str = new Date().toLocaleString('en-US', {hour: 'numeric', minute: 'numeric', hour12: true})
-        data.labels.push(str.substring(0, str.length - 3));
-        if (data.datasets[0].data.length > 60) {
-            data.datasets[0].data.shift();
-            data.datasets[1].data.shift();
-            data.labels.shift();
-        }
-        // adjust the scales of both the y-axis and y1 to be the min and max of data.datasets[0] and data.datasets[1] respectively.
-        options.scales.y.min = Math.min(...data.datasets[0].data) - 0.1;
-        options.scales.y.max = Math.max(...data.datasets[0].data) + 0.1;
-        options.scales.y1.min = Math.min(...data.datasets[1].data) - 1;
-        options.scales.y1.max = Math.max(...data.datasets[1].data) + 1;
-        data = data;
-    }, window.versions ? 60000 : 2000);
+        interval = setInterval(() => {
+            if ($BMSData.batteryVoltage < 50) return;
+            data.datasets[0].data.push($BMSData.batteryVoltage);
+            data.datasets[1].data.push($remainingAH * 3.7 * 21 * 0.0035);
+            const showSeconds = duration < 5 * 60 * 1000;
+            const date = new Date();
+            const hours = date.getHours() % 12 === 0 ? 12 : date.getHours() % 12;
+            const minutes = date.getMinutes();
+            const seconds = date.getSeconds();
+            const time = `${hours}:${minutes < 10 ? '0' : ''}${minutes}${showSeconds ? `:${seconds < 10 ? '0' : ''}${seconds}` : ''}`;
+            data.labels.push(time);
+            if (data.datasets[0].data.length > numDatapoints) {
+                data.datasets[0].data.shift();
+                data.datasets[1].data.shift();
+                data.labels.shift();
+            }
+            // adjust the scales of both the y-axis and y1 to be the min and max of data.datasets[0] and data.datasets[1] respectively.
+            options.scales.y.min = Math.min(...data.datasets[0].data) - 0.5;
+            options.scales.y.max = Math.max(...data.datasets[0].data) + 0.5;
+            options.scales.y1.min = Math.min(...data.datasets[1].data) - 1;
+            options.scales.y1.max = Math.max(...data.datasets[1].data) + 1;
+            data = data;
+        }, duration / numDatapoints);
+    }
+
+    $: updateBatteryGraphDuration($batteryGraphDurationSelection, $batteryGraphDurationCustomValue);
 
 </script>
 
@@ -119,36 +138,16 @@
     }
 
 </style>
-<div style="position: absolute; top: 25vh; left: 26.5vw; width: 50vw; height: 50vh">
-    <Line {data} {options}/>
-</div>
-<div style="position: absolute; top: 25vh; left: 2vw; width: 17vw; height: 50vh">
+<div style="position: absolute; top: 20vh; left: 2vw; height: 35vh">
     <BatteryIndicator/>
 </div>
-
-<div style="position: absolute; top: 2vw; right: 2vw;">
-    <div style="display: flex; justify-content: center; height: 20vh; transition: opacity 1s linear; opacity: {$chargerData.running ? 100 : 50}%">
-        <img src="./static/charger.svg" alt="charger" style="height: 16vh;">
-    </div>
-    <table>
-        <tr>
-            <td><img src="./static/outlet.svg" alt="outlet"></td>
-            <td>{$chargerData.running ? $chargerData.inputVoltage.toFixed(0) : ' - '} V</td>
-        </tr>
-        <tr>
-            <td><img src="./static/battery.svg" alt="batt"></td>
-            <td>{$chargerData.running ? $chargerData.outputVoltage.toFixed(1) : $BMSData.batteryVoltage.toFixed(1)} V</td>
-        </tr>
-        <tr>
-            <td><img src="./static/battery.svg" alt="batt"></td>
-            <td>{$chargerData.running ? $chargerData.current.toFixed(1) : ' - '} A</td>
-        </tr>
-        <tr>
-            <td><img src="./static/temp.svg" alt="temp"></td>
-            <td>{$chargerData.running ? $chargerData.temp.toFixed(1) : ' - '} C</td>
-        </tr>
-    </table>
+<div style="position: absolute; top: 20vh; left: 25vw; width: 50vw; height: 50vh">
+    <Line {data} {options}/>
 </div>
+<div style="position: absolute; top: 20vh; right: 2vw; height: 35vh">
+    <ChargerIndicator/>
+</div>
+
 <div style="position: absolute; bottom: 0; width: 100vw; height: 20vw">
     <CellViewer/>
 </div>

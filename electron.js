@@ -3,11 +3,11 @@ if (require('electron-squirrel-startup')) return app.quit();
 const path = require("path");
 
 let send_fake_data, fs, SerialPort, Readline, rearPort, frontPort;
+fs = require('fs');
 
 if (process.env.COMPUTERNAME === "FORRESTS-LAPTOP" && process.env.fakeData) {
     console.log("Sending Fake Data")
     send_fake_data = true;
-    fs = require('fs');
 } else {
     SerialPort = require('serialport');
     Readline = require('@serialport/parser-readline');
@@ -56,8 +56,9 @@ ipcMain.on('ready', async () => {
         return
     }
     if (process.env.COMPUTERNAME === "FORRESTS-LAPTOP") {
-        frontPort = await createPort('COM3');
-        rearPort = await createPort('COM20');
+        frontPort = await createPort('COM4');
+        rearPort = createPort('FAKE_REAR')
+        // rearPort = await createPort('COM20');
     } else {
         frontPort = await createPort('COM6');
         rearPort = await createPort('COM5');
@@ -65,13 +66,11 @@ ipcMain.on('ready', async () => {
 });
 
 ipcMain.on('reset', async () => {
-    try {
+    if(rearPort.isOpen) {
         rearPort.close();
-    } catch (_) {
     }
-    try {
+    if(frontPort.isOpen) {
         frontPort.close();
-    } catch (_) {
     }
 
     if (send_fake_data) {
@@ -80,8 +79,8 @@ ipcMain.on('reset', async () => {
         return
     }
     if (process.env.COMPUTERNAME === "FORRESTS-LAPTOP") {
-        frontPort = await createPort('COM3');
-        rearPort = await createPort('COM20');
+        frontPort = await createPort('COM4');
+        rearPort = createPort('FAKE_REAR')
     } else {
         frontPort = await createPort('COM6');
         rearPort = await createPort('COM5');
@@ -133,6 +132,7 @@ function parseAndSend(string) {
                         }
                 }
             }
+            jsonData['CR'] = false;
             jsonData['fake'] = true
         }
         win.webContents.send('data', jsonData)

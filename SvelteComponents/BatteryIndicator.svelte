@@ -1,5 +1,5 @@
 <script>
-    import {remainingAH} from "./data";
+    import {chargerData, remainingAH} from "./data";
 
     let percent;
     $: percent = $remainingAH / 1.36;
@@ -15,24 +15,6 @@
         --gradient-color-orange: linear-gradient(90deg, hsl(22, 89%, 46%) 15%, hsl(54, 90%, 45%) 100%);
         --gradient-color-yellow: linear-gradient(90deg, hsl(54, 89%, 46%) 15%, hsl(92, 90%, 45%) 100%);
         --gradient-color-green: linear-gradient(90deg, hsl(92, 89%, 46%) 15%, hsl(92, 90%, 68%) 100%);
-    }
-
-    .card {
-        position: relative;
-        width: 100%;
-        height: 240px;
-        background-color: #CECECEFF;
-        padding: 1.5rem 2rem;
-        border-radius: 1.5rem;
-        display: grid;
-        grid-template-columns: 100px 100px;
-        align-items: center;
-        box-shadow: 2px 2px 5px grey, inset 0 -0.6em 1em -0.35em rgba(0, 0, 0, 0.11), inset 0 0.6em 2em -0.3em rgba(255, 255, 255, 0.15), inset 0 0 0 0.05em rgba(255, 255, 255, 0.12);
-    }
-
-    :global([data-theme="dark"]) .card {
-        background-color: hsl(0, 0%, 9%);
-        box-shadow: 2px 2px 9px 0 hsl(0deg 0% 9%)
     }
 
 
@@ -68,12 +50,13 @@
         background: var(--gradient-color-red);
         box-shadow: inset -10px 0 12px hsla(0, 0%, 0%, .1), inset 12px 0 12px hsla(0, 0%, 0%, .15);
         transition: .3s;
+        overflow: hidden;
     }
 
     .liquid::after {
         content: '';
         position: absolute;
-        height: 8px;
+        height: 14px;
         background: var(--gradient-color-red);
         box-shadow: inset 0 -3px 6px hsla(0, 0%, 0%, .2);
         left: 0;
@@ -81,24 +64,6 @@
         margin: 0 auto;
         top: -4px;
         border-radius: 50%;
-    }
-
-    @keyframes charging {
-        0% {
-            text-shadow: none;
-        }
-        100% {
-            text-shadow: 0 0 6px hsl(92, 90%, 68%);
-        }
-    }
-
-    @keyframes low-battery {
-        0% {
-            text-shadow: none;
-        }
-        100% {
-            text-shadow: 0 0 8px hsl(7, 89%, 46%);
-        }
     }
 
     .gradient-color-red, .gradient-color-red::after {
@@ -116,9 +81,36 @@
     .gradient-color-green, .gradient-color-green::after {
         background: var(--gradient-color-green);
     }
+
+    .shine {
+        content: '';
+        top: 0;
+        position: absolute;
+        transform: translateX(100%);
+        width: 220px;
+        height: 100%;
+        z-index: 1;
+        animation: slide 1s infinite;
+        background: linear-gradient(to top,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.34) 30%,
+        rgba(255, 255, 255, 0.34) 30%,
+        rgba(128, 186, 232, 0) 99%,
+        rgba(125, 185, 232, 0) 100%);
+        border-radius: 0;
+    }
+
+    @keyframes slide {
+        0% {
+            transform: translateY(100%);
+        }
+        100% {
+            transform: translateY(-100%);
+        }
+    }
 </style>
 
-<div class="card">
+<div class="card" style="display: grid; grid-template-columns: 100px 100px; align-items: center;">
     <div class="battery_text">Battery
         <div style="font-size: 2.5rem; padding-top: 5px">
             {percent.toFixed(0)}%
@@ -130,8 +122,11 @@
                  class:gradient-color-red={percent <= 20}
                  class:gradient-color-orange={percent > 20 && percent <= 40}
                  class:gradient-color-yellow={percent <= 80 && percent > 40}
-                 class:gradient-color-green={percent > 80}
-            ></div>
+                 class:gradient-color-green={percent > 80}>
+                {#if $chargerData.running}
+                    <div class="shine"></div>
+                {/if}
+            </div>
         </div>
     </div>
 </div>

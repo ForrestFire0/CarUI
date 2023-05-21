@@ -2,6 +2,7 @@
     export let shown = false;
     export let closable = true;
     export let width = 50;
+    export let keepInMarkdown = true;
 
     function handleKeydown(e) {
         if (closable && e.keyCode === 27) shown = false;
@@ -10,22 +11,24 @@
 
 <svelte:window on:keydown={handleKeydown}/>
 
-<div
-        class="overlay"
-        class:closable
-        on:click={() => {
+{#if keepInMarkdown || shown}
+    <div
+            class="overlay"
+            class:closable
+            on:click={() => {
             if (closable) shown = false;
         }}
-        on:keydown={handleKeydown}
-        style="visibility: {shown ? 'visible' : 'hidden'};"
->
-    <div
-            class="container"
-            style={"width: " + width + "%"}
-            on:click|stopPropagation>
-        <slot/>
+            on:keydown={handleKeydown}
+            style="visibility: {shown || !keepInMarkdown ? 'visible' : 'hidden'};"
+    >
+        <div
+                class="container"
+                style={"width: " + width + "%"}
+                on:click|stopPropagation>
+            <slot/>
+        </div>
     </div>
-</div>
+{/if}
 
 <style>
     .overlay {

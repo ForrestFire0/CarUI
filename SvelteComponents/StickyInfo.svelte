@@ -1,5 +1,5 @@
 <script>
-    import {deviceStatusData, remainingAH} from "./data";
+    import {BMSData, deviceStatusData, remainingAH} from "./data";
     import {currentTime} from "./stores";
 </script>
 
@@ -66,5 +66,10 @@
 {#if $currentTime > $deviceStatusData.lastFrontContact + 3000 || $currentTime > $deviceStatusData.lastBackContact + 3000}
     <div style="text-align: center; font-size: 1em; font-weight: bolder; margin-top: 5px">
         <span style="color: red">No contact</span>
+    </div>
+{/if}
+{#if $BMSData.lastBMSPing > 3000}
+    <div style="text-align: center; font-size: 1em; font-weight: bolder; margin-top: 5px">
+        <span style="color: red">No BMS contact</span>
     </div>
 {/if}

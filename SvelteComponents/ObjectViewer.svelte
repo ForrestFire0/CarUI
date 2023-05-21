@@ -27,6 +27,9 @@
 </script>
 
 <style>
+    * {
+        font-size: larger;
+    }
     td {
         border: 1px solid black;
     }

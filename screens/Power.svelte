@@ -45,7 +45,7 @@
 
 <div id="container">
     <div><div><span>{$deviceStatusData.ignition ? $controllerData.speed.toFixed(0) : '0'}</span>mph</div></div>
-    <div><GForceMonitor/>G Force Scale: {$gForceScale.toFixed(2)}g</div>
+    <div><GForceMonitor/></div>
     <div><div><span>{$deviceStatusData.ignition ? $controllerData.power.toFixed(1) : ' - '}</span>kW</div></div>
     <div><div><span>{$deviceStatusData.ignition ? $controllerData.motorCurrent.toFixed(0) : ' - '}</span>A</div>Motor Amps</div>
 </div>

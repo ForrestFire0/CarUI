@@ -75,6 +75,9 @@ export const darkMode = derived([currentTime, forceMode], ([$currentTime, $force
 // })
 export const twelveCorrectiveFactor = storable('twelveCorrectiveFactor', 1);
 export const gForceScale = storable('gForceScale', 1);
+export const batteryGraphDurationSelection = storable('batteryGraphDurationSelection', '1m');
+export const batteryGraphDurationCustomValue = storable('batteryGraphDurationCustomValue', 60*1000);
+export const accelerometerCalibration = storable('accelerometerCalibration', {x: 0, y: 0});
 export const active = storable('active', false);
 
 darkMode.subscribe((dm) => document.documentElement.setAttribute('data-theme', dm ? 'dark' : 'light'))

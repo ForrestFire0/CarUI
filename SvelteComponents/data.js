@@ -1,5 +1,5 @@
 import {get, writable} from 'svelte/store';
-import {active, storable} from "./stores";
+import {accelerometerCalibration, active, storable} from "./stores";
 
 // The issue we are having is that data comes sporadically from the front and back Arduino's.
 // Some pages just need to the current state. But it becomes tricky when we need the history of datapoints (the graphs)
@@ -34,6 +34,9 @@ export const chargerData = writable({
     running: true,
     lastChargerPing: new Date().getTime(),
 });
+
+let accelerometerCalibrationLocal;
+accelerometerCalibration.subscribe((value) => accelerometerCalibrationLocal = value);
 export const updateDatas = (data, off) => {
     let lastUpdateTime, updateTime = new Date().getTime() + off * 60 * 60 * 1000, current, ignore = true,
         batteryFull = false;
@@ -42,7 +45,9 @@ export const updateDatas = (data, off) => {
             lastUpdateTime = e.lastFrontContact;
             e.lastFrontContact = updateTime;
             e.reverse = data.reverse;
-            if (e.ignition !== data.ignition) active.set(data.ignition); //If the current ignition is false, then we are not active.
+            if (e.ignition !== data.ignition) { //If the current ignition is false, then we are not active.
+                active.set(data.ignition);
+            }
             e.ignition = data.ignition;
             return e;
         })
@@ -52,6 +57,8 @@ export const updateDatas = (data, off) => {
             cD.power = data.power;
             cD.batteryCurrent = data.batteryCurrent;
             cD.accelerometer = data.accelerometer;
+            cD.accelerometer.x += accelerometerCalibrationLocal.x;
+            cD.accelerometer.y += accelerometerCalibrationLocal.y;
             cD.speed = data.speed;
             current = -data.batteryCurrent;
             ignore = current > -10 || !data.ignition;
@@ -117,6 +124,8 @@ export const updateDatas = (data, off) => {
 export function SOCFromVoltage(voltage) {
     const voltages = [3, 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 3.7, 3.8, 3., 4, 4.1, 4.2];
     const SOC = [0.000, 0.769, 2.564, 7.631, 22.938, 44.578, 60.941, 70.970, 80.998, 89.444, 97.361, 100.000, 100.000];
+    //debug print out voltages|soc using console.table
+    // console.table(voltages.map((v,i)=>({voltage:v,SOC:SOC[i]})));
     // if voltage is outside the range of voltages, return the first or last SOC
     if (voltage <= voltages[0]) return SOC[0];
     if (voltage >= voltages[voltages.length - 1]) return SOC[SOC.length - 1];
@@ -125,4 +134,17 @@ export function SOCFromVoltage(voltage) {
     while (voltage > voltages[i]) i++;
     // interpolate between the two voltages
     return SOC[i - 1] + (SOC[i] - SOC[i - 1]) * (voltage - voltages[i - 1]) / (voltages[i] - voltages[i - 1]);
+}
+
+export function humanizeDuration(millis) {
+    let ret = '';
+    let parts = [];
+    parts.push([Math.floor(millis / 1000 / 60 / 60), 'h']);
+    parts.push([Math.floor(millis / 1000 / 60) % 60, 'm']);
+    parts.push([Math.floor(millis / 1000) % 60, 's']);
+
+    parts = parts.filter((p) => p[0] > 0);
+    parts.length = Math.min(parts.length, 1);
+    parts.forEach((p) => ret += p[0] + p[1]);
+    return ret;
 }

@@ -7,6 +7,6 @@
   "motorCurrent": 500,
   "power": 3,
   "batteryCurrent": 10,
-  "accelerometer": {"x": 0.2, "y": 0},
+  "accelerometer": {"x": 0, "y": 0},
   "speed": 45
 }

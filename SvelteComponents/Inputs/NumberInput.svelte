@@ -2,6 +2,7 @@
     export let value = 0;
     export let step = 1;
     export let formatNumber = (number) => number;
+    export let bounds = [-Infinity, Infinity]
 
     // when plus is held for more than 500ms, the value will increase by step every 100ms
     let interval = null;
@@ -10,22 +11,23 @@
 
     function increase(e) {
         if (e.touches) e.preventDefault();
-        value += step;
+        set(value + step);
         timeout = setTimeout(() => {
             start = Date.now();
             interval = setInterval(() => {
-                value += step * (Math.floor((Date.now() - start) / 1000) + 1);
+                set(value + step * (Math.floor((Date.now() - start) / 1000) + 1));
             }, 100);
         }, 500);
     }
 
     function decrease(e) {
         if (e.touches) e.preventDefault();
-        value -= step;
+        set(value - step);
         start = Date.now();
         timeout = setTimeout(() => {
             interval = setInterval(() => {
-                value -= step * (Math.floor((Date.now() - start) / 1000) + 1);
+                if (bounds)
+                    set(value - step * (Math.floor((Date.now() - start) / 1000) + 1));
             }, 100);
         }, 500);
     }
@@ -34,6 +36,13 @@
         clearTimeout(timeout);
         clearInterval(interval);
         timeout = null;
+    }
+
+    function set(v) {
+        if (bounds)
+            value = Math.clamp(v, ...bounds);
+        else
+            value = v;
     }
 </script>
 

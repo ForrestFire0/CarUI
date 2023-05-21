@@ -73,7 +73,7 @@
     let hideTime = 0;
 
     currentTime.subscribe((time) => {
-        if (time - hideTime > 1000) {
+        if (time - hideTime > 200) {
             scrolling = false;
         }
     });
