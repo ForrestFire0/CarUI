@@ -132,7 +132,6 @@ function parseAndSend(string) {
                         }
                 }
             }
-            jsonData['CR'] = false;
             jsonData['fake'] = true
         }
         win.webContents.send('data', jsonData)

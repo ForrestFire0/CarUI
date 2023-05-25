@@ -38,7 +38,6 @@
                 }
                 keys.push(key);
             }
-
             attributes.forEach(([key, value]) => {
                 addKeys(get(value), key)
                 const unsub = value.subscribe((value) => {
@@ -51,9 +50,10 @@
             if (window.versions) window.fileWriter.open();
             const writer = window.fileWriter ? window.fileWriter.write : console.log;
             // Write the keys as a comma seperated array.
-            writer(keys.join(',') + '\n');
+            writer('time,' + keys.join(',') + '\n');
             let intervalID = setInterval(() => {
-                writer(keys.map(key => {
+                writer((new Date()).getTime() + ',' +
+                    keys.map(key => {
                     const val = getNestedObject(lastValues, key)
                     if (typeof val === 'number') return val.toExponential(3);
                     return val;
