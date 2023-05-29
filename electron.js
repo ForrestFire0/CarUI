@@ -107,6 +107,7 @@ function createWindow() {
     win = new BrowserWindow({
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
+            backgroundThrottling: false,
         },
         width: 1280,
         height: 800,

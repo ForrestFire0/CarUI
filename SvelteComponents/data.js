@@ -12,7 +12,8 @@ export const controllerData = writable({
     motorCurrent: 450,
     power: 23,
     batteryCurrent: 296,
-    accelerometer: {x: 0, y: .2}
+    accelerometer: {x: 0, y: .2},
+    avgMpkWh: 0,
 });
 export const inverterData = writable({on: false});
 export const deviceStatusData = writable({
@@ -122,8 +123,8 @@ export const updateDatas = (data, off) => {
 }
 
 export function SOCFromVoltage(voltage) {
-    const voltages = [3, 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 3.7, 3.8, 3., 4, 4.1, 4.2];
-    const SOC = [0.000, 0.769, 2.564, 7.631, 22.938, 44.578, 60.941, 70.970, 80.998, 89.444, 97.361, 100.000, 100.000];
+    const voltages = [3.03, 3.13, 3.23, 3.33, 3.43, 3.53, 3.63, 3.73, 3.83, 3.93, 4.03, 4.13, 4.17];
+    const SOC = [0.000, 0.508, 1.015, 2.538, 9.645, 22.843, 47.208, 62.437, 72.081, 81.392, 89.993, 95.649, 100.000];
     //debug print out voltages|soc using console.table
     // console.table(voltages.map((v,i)=>({voltage:v,SOC:SOC[i]})));
     // if voltage is outside the range of voltages, return the first or last SOC

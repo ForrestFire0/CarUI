@@ -50,9 +50,10 @@
             if (window.versions) window.fileWriter.open();
             const writer = window.fileWriter ? window.fileWriter.write : console.log;
             // Write the keys as a comma seperated array.
-            writer('time,' + keys.join(',') + '\n');
+            const startMS = Date.now();
+            writer('time,elapsedMS,' + keys.join(',') + '\n');
             let intervalID = setInterval(() => {
-                writer((new Date()).getTime() + ',' +
+                writer((new Date()).toISOString() + ',' + (Date.now() - startMS) + ',' +
                     keys.map(key => {
                     const val = getNestedObject(lastValues, key)
                     if (typeof val === 'number') return val.toExponential(3);

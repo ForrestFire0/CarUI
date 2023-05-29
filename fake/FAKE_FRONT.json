@@ -4,9 +4,9 @@
   "inverter": false,
   "ignition": true,
   "voltage": 78,
-  "motorCurrent": 500,
-  "power": 3,
+  "motorCurrent": 100,
+  "power": 15,
   "batteryCurrent": 10,
   "accelerometer": {"x": 0, "y": 0},
-  "speed": 45
+  "speed": 20
 }

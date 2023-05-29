@@ -8,7 +8,6 @@
     import {
         BMSData, controllerData,
         deviceStatusData, humanizeDuration,
-        inverterData,
         numCells,
         remainingAH,
         SOCFromVoltage
