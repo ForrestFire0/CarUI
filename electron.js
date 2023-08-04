@@ -67,10 +67,20 @@ ipcMain.on('ready', async () => {
 
 ipcMain.on('reset', async () => {
     if(rearPort.isOpen) {
-        rearPort.close();
+        await new Promise(((resolve, reject) => {
+            rearPort.close((err) => {
+                if (err) reject(err);
+                else resolve();
+            })
+        }))
     }
     if(frontPort.isOpen) {
-        frontPort.close();
+        await new Promise(((resolve, reject) => {
+            frontPort.close((err) => {
+                if (err) reject(err);
+                else resolve();
+            })
+        }))
     }
 
     if (send_fake_data) {
@@ -95,10 +105,21 @@ ipcMain.on('inverter', (event, on) => {
 });
 
 ipcMain.on('led_select', (event, led) => {
-    if (rearPort && !send_fake_data)
+    if (rearPort && !send_fake_data) {
+        rearPort.write(Buffer.from('l', 'utf8'));
         rearPort.write(Buffer.from([led]))
+    }
     else console.log('No rearPort')
     console.log('The user has selected LED ' + led)
+});
+
+ipcMain.on('charger_current', (event, current) => {
+    if (rearPort && !send_fake_data) {
+        rearPort.write(Buffer.from('c', 'utf8'));
+        rearPort.write(Buffer.from([current]))
+    }
+    else console.log('No frontPort')
+    console.log('The user has selected charger current ' + current)
 });
 
 let win;

@@ -13,7 +13,15 @@
     });
 
     $: {
-        eff.set($controllerData.speed / $controllerData.power);
+        if ($deviceStatusData.ignition) {
+            if ($controllerData.power === 0)
+                eff.set(100);
+            else
+                eff.set(Math.min($controllerData.speed / $controllerData.power, 100));
+        } else {
+            console.log($deviceStatusData.ignition, $controllerData.power)
+            eff.set(0);
+        }
         let speed = $deviceStatusData.ignition ? Number($controllerData.speed.toFixed(0)) : 0; // Our current speed, integer.
         rawSpeed = speed;
         if (speed === 0) stableValue = 0;
@@ -45,7 +53,7 @@
         {#if showGForce}
             <GForceMonitor/>
         {:else}
-            <div><span>{$deviceStatusData.ignition ? $eff.toFixed(1) : 0}</span> mi/kWh</div>
+            <div><span>{($deviceStatusData.ignition && $eff >= 0.1) ? ($eff < 90 ? $eff.toFixed(1) : 'Inf') : 0}</span> mi/kWh</div>
         {/if}
     </div>
     <div>

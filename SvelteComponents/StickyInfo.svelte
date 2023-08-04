@@ -1,5 +1,5 @@
 <script>
-    import {BMSData, deviceStatusData, remainingAH} from "./data";
+    import {BMSData, deviceStatusData, numCells, remainingAH} from "./data";
     import {currentTime} from "./stores";
 </script>
 
@@ -51,7 +51,7 @@
 </div>
 <div class="container">
     <span style="border-right: 1px grey solid; padding-right: 7px; display: inline-block; margin-right: 0">
-            {($remainingAH * 3.7 * 21 * 0.0035).toFixed(0)}mi
+            {($remainingAH * 3.7 * numCells * 0.0035).toFixed(0)}mi
     </span>
     <span>
         {($remainingAH / 1.36).toFixed(0)}%

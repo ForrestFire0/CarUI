@@ -9,7 +9,7 @@
     let data_sources = Object.entries(datas).filter(([k, v]) => typeof v === 'object' && 'subscribe' in v)
 
     // If we notice deviceStatusData.status change, then we will add that to the console string
-    const options = ["Waiting for plug", "Plugged in, not charging", "Charging paused, balancing cells", "Charging!", "Waiting For Charger"];
+    const options = ["Waiting for plug", "Plugged in, not charging", "Charging paused, balancing cells", "Charging!", "Waiting For Charger", "Charging paused, balancing cells.", "Charging via outlet"];
     let lastStatus = undefined;
     $: if (typeof $deviceStatusData.state === "number" && $deviceStatusData.state !== lastStatus) {
         write(options[$deviceStatusData.state]);

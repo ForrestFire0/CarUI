@@ -5,7 +5,8 @@ import {accelerometerCalibration, active, storable} from "./stores";
 // Some pages just need to the current state. But it becomes tricky when we need the history of datapoints (the graphs)
 // We also do not want to rerender everything if something hasn't changed.
 // Compromise - we will compartmentalize by different components.
-export const numCells = 21;
+export const numCells = 41;
+export const numBMSCells = 21;
 export const controllerData = writable({
     speed: 0,
     voltage: 77.7,
@@ -29,6 +30,7 @@ export const BMSData = writable({balanceStatus: 0, cellVoltages: [], lastBMSPing
 export const remainingAH = storable('remainingAH', 136);
 export const chargerData = writable({
     current: 10,
+    maximumCurrent: 10,
     inputVoltage: 150,
     outputVoltage: 78,
     temp: 35,
@@ -36,11 +38,13 @@ export const chargerData = writable({
     lastChargerPing: new Date().getTime(),
 });
 
+let lastCapacityUpdate = new Date().getTime(); // If more than 12 hours have elapsed since a capacity update, we will update capacity based on pack voltage.
+
 let accelerometerCalibrationLocal;
 accelerometerCalibration.subscribe((value) => accelerometerCalibrationLocal = value);
 export const updateDatas = (data, off) => {
-    let lastUpdateTime, updateTime = new Date().getTime() + off * 60 * 60 * 1000, current, ignore = true,
-        batteryFull = false;
+    let lastUpdateTime, updateTime = new Date().getTime() + off * 60 * 60 * 1000, current, skipCapacityUpdate = true;
+    let batteryFull = false;
     if (data.id === 'front') {
         deviceStatusData.update(e => {
             lastUpdateTime = e.lastFrontContact;
@@ -62,7 +66,7 @@ export const updateDatas = (data, off) => {
             cD.accelerometer.y += accelerometerCalibrationLocal.y;
             cD.speed = data.speed;
             current = -data.batteryCurrent;
-            ignore = current > -10 || !data.ignition;
+            skipCapacityUpdate = current > -10 || !data.ignition;
             return cD;
         })
         inverterData.update((iD) => {
@@ -70,6 +74,7 @@ export const updateDatas = (data, off) => {
             return iD;
         })
     } else if (data.s === 'normal') {
+        let bmsBatteryVoltage = data.c.reduce((a, b) => a + b, 0);
         deviceStatusData.update(e => {
             lastUpdateTime = e.lastBackContact;
             e.lastBackContact = updateTime;
@@ -87,31 +92,39 @@ export const updateDatas = (data, off) => {
             bD.balanceStatus = data.bS;
             bD.cellVoltages = data.c;
             bD.lastBMSPing = data.lbp;
-            bD.batteryVoltage = data.c.reduce((a, b) => a + b, 0);
+            bD.batteryVoltage = bmsBatteryVoltage;
             return bD;
         })
         chargerData.update((cD) => {
             cD.current = data.CC;
+            cD.maximumCurrent = data.CMC;
             cD.inputVoltage = data.CIV;
             cD.outputVoltage = data.COV;
             cD.temp = data.CT;
             // If we are not active, and the charger goes from not running to running, then we are active.
             if (!cD.running && data.CR && !get(active)) {
                 console.log('Charger is running, and we are not active. Going to battery page.');
+                active.set(true);
                 window.location.hash = '';
                 window.location.hash = '#Battery';
                 // Also scroll the window to the Battery page.
-                active.set(true);
             }
             cD.running = data.CR;
             cD.lastChargerPing = data.lcp;
+            cD.current
             current = data.CC;
-            ignore = !data.CR;
+            skipCapacityUpdate = !data.CR;
             batteryFull = data.CR && (numCells * 4.15 < cD.outputVoltage);
             return cD;
         })
+        // If more than 12 hours have elapsed since a capacity update, we will update capacity based on pack voltage.
+        // console.log(new Date().getTime(), lastCapacityUpdate, new Date().getTime() - lastCapacityUpdate);
+        if (new Date().getTime() - lastCapacityUpdate > 1000 * 60 * 60 * 12) {
+            remainingAH.set(1.36 * SOCFromVoltage(bmsBatteryVoltage/numBMSCells));
+            // console.log('Updating capacity based on pack voltage to    ', get(remainingAH));
+        }
     }
-    if (!ignore && lastUpdateTime) {
+    if (!skipCapacityUpdate && lastUpdateTime) {
         remainingAH.update((rAH) => {
             // console.log('updating remainingAH', rAH.toFixed(3), current.toFixed(0), (updateTime - lastUpdateTime).toFixed(0), 'delta:', (current * (updateTime - lastUpdateTime) / 1000 / 60 / 60))
             if (Math.abs(lastUpdateTime - updateTime) > 1000 * 60) return rAH;
@@ -119,6 +132,7 @@ export const updateDatas = (data, off) => {
             rAH = rAH + (current * (updateTime - lastUpdateTime) / 1000 / 60 / 60); // Amps * ms = A*ms / 1000 = A*s / 3600 = Ah
             return Math.clamp(rAH, 0, 136);
         });
+        lastCapacityUpdate = new Date().getTime();
     }
 }
 

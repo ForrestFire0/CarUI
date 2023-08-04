@@ -1,4 +1,7 @@
 <script>
+
+    import {createEventDispatcher} from "svelte";
+    const dispatch = createEventDispatcher();
     export let value = 0;
     export let step = 1;
     export let formatNumber = (number) => number;
@@ -43,6 +46,8 @@
             value = Math.clamp(v, ...bounds);
         else
             value = v;
+        // noinspection JSCheckFunctionSignatures
+        dispatch("change", value);
     }
 </script>
 
@@ -86,8 +91,7 @@
 
 <div>
     <span on:mousedown={decrease} on:mouseup={stop} on:mouseleave={stop}
-          on:touchstart={decrease} on:touchend={stop} on:touchcancel={stop}
-          class="➖">-</span>
+          on:touchstart={decrease} on:touchend={stop} on:touchcancel={stop}>-</span>
     <span class="value">{formatNumber(value)}</span>
     <span on:mousedown={increase} on:mouseup={stop} on:mouseleave={stop}
           on:touchstart={increase} on:touchend={stop} on:touchcancel={stop}

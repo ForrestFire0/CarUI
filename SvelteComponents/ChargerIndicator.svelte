@@ -19,7 +19,7 @@
 
 <div class="card" style="position: relative">
     {#if $chargerData.running}
-        <h3 style="margin: 10px; display: flex; justify-content: center;">charging</h3>
+        <h3 style="display: flex; justify-content: center; margin: 5px 10px 10px;">charging</h3>
         <table transition:fade style="position: absolute; width: 75%">
             <tr>
                 <td><img src="./static/outlet.svg" alt="outlet"></td>

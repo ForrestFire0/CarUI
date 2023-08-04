@@ -1,4 +1,4 @@
-import {readable, writable, get, derived} from 'svelte/store';
+import {writable, get, derived} from 'svelte/store';
 
 /**
  * @param {string} localStorageKey The localStorageKey this should be saved under.
@@ -80,5 +80,9 @@ export const batteryGraphDurationCustomValue = storable('batteryGraphDurationCus
 export const accelerometerCalibration = storable('accelerometerCalibration', {x: 0, y: 0});
 export const active = storable('active', false);
 
-darkMode.subscribe((dm) => document.documentElement.setAttribute('data-theme', dm ? 'dark' : 'light'))
-// forceMode.set('Dark')
+darkMode.subscribe((dm) => document.documentElement.setAttribute('data-theme', dm ? 'dark' : 'light'));
+
+//We want the warning to appear any time it is night, and we go to active, also anytime we are active, and it goes to night.
+export const warning = derived([darkMode, active], ([$darkMode, $active], set) => {
+    set($darkMode && $active);
+});

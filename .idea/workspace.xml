@@ -4,14 +4,22 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="47c87456-3895-42de-b242-fcbbfc4b82a1" name="Changes" comment="logging better">
+    <list default="true" id="47c87456-3895-42de-b242-fcbbfc4b82a1" name="Changes" comment="Warnings, other things.">
+      <change afterPath="$PROJECT_DIR$/SvelteComponents/Warning.svelte" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SvelteComponents/Games/Logger.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/SvelteComponents/Games/Logger.svelte" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/App.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/App.svelte" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SvelteComponents/ChargerIndicator.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/SvelteComponents/ChargerIndicator.svelte" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SvelteComponents/Inputs/NumberInput.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/SvelteComponents/Inputs/NumberInput.svelte" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SvelteComponents/StickyInfo.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/SvelteComponents/StickyInfo.svelte" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SvelteComponents/data.js" beforeDir="false" afterPath="$PROJECT_DIR$/SvelteComponents/data.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SvelteComponents/stores.js" beforeDir="false" afterPath="$PROJECT_DIR$/SvelteComponents/stores.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/electron.js" beforeDir="false" afterPath="$PROJECT_DIR$/electron.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/fake/FAKE_FRONT.json" beforeDir="false" afterPath="$PROJECT_DIR$/fake/FAKE_FRONT.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fake/FAKE_REAR.json" beforeDir="false" afterPath="$PROJECT_DIR$/fake/FAKE_REAR.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/screens/Accessories.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/screens/Accessories.svelte" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/screens/Battery.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/screens/Battery.svelte" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/screens/Power.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/screens/Power.svelte" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/screens/Raw.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/screens/Raw.svelte" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -41,6 +49,7 @@
         <option value="NumberInput" />
         <option value="HTML File" />
         <option value="CarGame.svelte" />
+        <option value="Warning" />
       </list>
     </option>
   </component>
@@ -66,25 +75,25 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;javascript.nodejs.core.library.configured.version&quot;: &quot;16.13.1&quot;,
-    &quot;javascript.nodejs.core.library.typings.version&quot;: &quot;16.18.31&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/forre/Projects/CarUI/SvelteComponents&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;C:\\Program Files\\JetBrains\\PyCharm 2021.2.3\\plugins\\javascript-impl\\jsLanguageServicesImpl\\external&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "DefaultHtmlFileTemplate": "HTML File",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "ignore.virus.scanning.warn.message": "true",
+    "javascript.nodejs.core.library.configured.version": "16.13.1",
+    "javascript.nodejs.core.library.typings.version": "16.18.31",
+    "last_opened_file_path": "C:/Users/forre/Documents/Arduino/CarCodeWith110/RPiComms.ino",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.lookFeel",
+    "ts.external.directory.path": "C:\\Program Files\\JetBrains\\PyCharm 2021.2.3\\plugins\\javascript-impl\\jsLanguageServicesImpl\\external",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\forre\Projects\CarUI\SvelteComponents" />
@@ -255,7 +264,16 @@
       <workItem from="1684683836523" duration="10005000" />
       <workItem from="1685037905558" duration="3567000" />
       <workItem from="1685210060673" duration="3606000" />
-      <workItem from="1685383859395" duration="3286000" />
+      <workItem from="1685383859395" duration="6029000" />
+      <workItem from="1685748740872" duration="6016000" />
+      <workItem from="1686499258630" duration="1932000" />
+      <workItem from="1686517906473" duration="614000" />
+      <workItem from="1686776872309" duration="5000" />
+      <workItem from="1686964503949" duration="475000" />
+      <workItem from="1687017366054" duration="339000" />
+      <workItem from="1689020533814" duration="1080000" />
+      <workItem from="1689021635553" duration="7039000" />
+      <workItem from="1689093091665" duration="3323000" />
     </task>
     <task id="LOCAL-00001" summary="Working on New Laptop">
       <created>1640745620251</created>
@@ -313,7 +331,14 @@
       <option name="project" value="LOCAL" />
       <updated>1685044706981</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="efficiency">
+      <created>1685387984018</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1685387984018</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -341,6 +366,7 @@
     <MESSAGE value="Updated libraries, overall improvements" />
     <MESSAGE value="serial port updates." />
     <MESSAGE value="logging better" />
-    <option name="LAST_COMMIT_MESSAGE" value="logging better" />
+    <MESSAGE value="efficiency" />
+    <option name="LAST_COMMIT_MESSAGE" value="efficiency" />
   </component>
 </project>

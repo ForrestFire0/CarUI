@@ -13,14 +13,14 @@
         - Charger data will be shown on this screen when applicable "Please plug in the car to see charger data"
      */
 
-    import {BMSData, chargerData, remainingAH} from "../SvelteComponents/data";
+    import {BMSData, chargerData, numCells, remainingAH} from "../SvelteComponents/data";
 
-    import {Bar, Line} from 'svelte-chartjs';
+    import {Line} from 'svelte-chartjs';
     import 'chart.js/auto';
-    import CellViewer from "../SvelteComponents/CellViewer.svelte";
     import BatteryIndicator from "../SvelteComponents/BatteryIndicator.svelte";
     import {batteryGraphDurationCustomValue, batteryGraphDurationSelection} from "../SvelteComponents/stores";
     import ChargerIndicator from "../SvelteComponents/ChargerIndicator.svelte";
+    import NumberInput from "../SvelteComponents/Inputs/NumberInput.svelte";
 
     export let data = {
         labels: [],
@@ -80,7 +80,8 @@
         }
     }
     let interval;
-    function updateBatteryGraphDuration(sel, custom, numDatapoints=120) {
+
+    function updateBatteryGraphDuration(sel, custom, numDatapoints = 120) {
         let duration = {
             '1 m': 60 * 1000,
             '3 m': 3 * 60 * 1000,
@@ -92,7 +93,7 @@
         interval = setInterval(() => {
             if ($BMSData.batteryVoltage < 50) return;
             data.datasets[0].data.push($BMSData.batteryVoltage);
-            data.datasets[1].data.push($remainingAH * 3.7 * 21 * 0.0035);
+            data.datasets[1].data.push($remainingAH * 3.7 * numCells * 0.0035);
             const showSeconds = duration < 5 * 60 * 1000;
             const date = new Date();
             const hours = date.getHours() % 12 === 0 ? 12 : date.getHours() % 12;
@@ -118,26 +119,6 @@
 
 </script>
 
-<style>
-    table {
-        border-collapse: collapse;
-        font-size: 2.5em;
-        padding-top: 5px;
-    }
-
-    td {
-        padding: 20px;
-    }
-
-    td img {
-        width: 50px;
-    }
-
-    td:has(img) {
-        padding: 0;
-    }
-
-</style>
 <div style="position: absolute; top: 20vh; left: 2vw; height: 35vh">
     <BatteryIndicator/>
 </div>
@@ -148,7 +129,15 @@
     <ChargerIndicator/>
 </div>
 
-<div style="position: absolute; bottom: 0; width: 100vw; height: 20vw">
-    <CellViewer/>
+<div style="position: absolute; bottom: 0; width: 100vw; height: 20vw; display: flex; justify-content: center;">
+    {#if $chargerData.running}
+    <div>
+        <h3>Maximum Current</h3>
+        <NumberInput value={$chargerData.maximumCurrent} step={5} bounds={[5, 45]}
+                     on:change={(e) => window.communications.send('charger_current', Math.round(Number(e.detail)))}
+                     formatNumber={e => `${e.toFixed(0)} A`}
+        />
+    </div>
+        {/if}
 </div>
 

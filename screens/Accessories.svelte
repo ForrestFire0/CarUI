@@ -7,7 +7,7 @@
     import LabeledSwitch from "../SvelteComponents/Inputs/LabeledSwitch.svelte";
     import {
         BMSData, controllerData,
-        deviceStatusData, humanizeDuration,
+        deviceStatusData, humanizeDuration, numBMSCells,
         numCells,
         remainingAH,
         SOCFromVoltage
@@ -101,12 +101,12 @@
         <br>
         Current Value: {($deviceStatusData.twelveVolt * $twelveCorrectiveFactor).toFixed(2)} <br>
         <h4>Capacity Calibration</h4>
-        <button on:click={() => $remainingAH = 1.36 * SOCFromVoltage($BMSData.batteryVoltage/numCells)}>Set Capacity
+        <button on:click={() => $remainingAH = 1.36 * SOCFromVoltage($BMSData.batteryVoltage/numBMSCells)}>Set Capacity
             Based on Voltage
         </button>
         <br>
         <small>Current {$remainingAH.toFixed(1)}AH.
-            Calculated {(1.36 * SOCFromVoltage($BMSData.batteryVoltage / numCells)).toFixed(1)} AH
+            Calculated {(1.36 * SOCFromVoltage($BMSData.batteryVoltage / numBMSCells)).toFixed(1)} AH
             from {$BMSData.batteryVoltage.toFixed(2)}V</small>
         <h4>Accelerometer Calibration</h4>
         <button on:click={() => accelerometerCalibration.update((old) => {return {x: old.x - $controllerData.accelerometer.x,

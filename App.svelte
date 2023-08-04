@@ -8,9 +8,10 @@
     import Battery from "./screens/Battery.svelte";
     import Raw from "./screens/Raw.svelte";
     import {onMount} from "svelte";
-    import {active, currentTime, timeOffset} from "./SvelteComponents/stores";
+    import {active, currentTime, timeOffset, warning} from "./SvelteComponents/stores";
     import {write} from "./SvelteComponents/Console.svelte"
-    import {cubicInOut, cubicOut, linear} from "svelte/easing";
+    import {cubicInOut} from "svelte/easing";
+    import Warning from "./SvelteComponents/Warning.svelte";
 
     if (window.versions) {
         console.log(`This app is using Chrome (v${window.versions.chrome()}), Node.js (v${window.versions.node()}), and Electron (v${window.versions.electron()})`)
@@ -62,8 +63,8 @@
         updateBack();
     }
 
-    const screens = [Power, Battery, Accessories, Raw];
-    // const screens = [Raw];
+    // const screens = [Power, Battery, Accessories, Raw];
+    const screens = [Battery];
 
     // Every time the user scrolls, the function will be called.
     // The variable scrolling should be true if we scrolled in the last second.
@@ -168,6 +169,10 @@
         <br>
         <i style="font-size: initial">Tap to continue...</i>
     </div>
+{/if}
+
+{#if $warning}
+    <Warning text={"Turn on your headlights, Forrest!"}></Warning>
 {/if}
 
 {#if scrolling}
